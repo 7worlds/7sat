@@ -68,6 +68,8 @@ dependencies {
     // fuer den Layout Inspector
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    implementation 'com.mapbox.maps:android:10.8.1'
+
 
     //Unit tests
     testImplementation 'junit:junit:4.13.2'
