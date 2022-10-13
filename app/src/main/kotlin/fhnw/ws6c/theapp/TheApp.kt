@@ -8,7 +8,7 @@ import fhnw.ws6c.theapp.ui.AppUI
 
 
 object TheApp : EmobaApp {
-    private lateinit var model : TheModel
+    private lateinit var model: TheModel
 
     override fun initialize(activity: ComponentActivity) {
         model = TheModel
@@ -18,6 +18,4 @@ object TheApp : EmobaApp {
     override fun CreateUI() {
         AppUI(model)
     }
-
 }
-

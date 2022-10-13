@@ -17,8 +17,9 @@ fun AppUI(model : TheModel){
         Box(contentAlignment = Alignment.Center,
             modifier         = Modifier.fillMaxSize()
         ){
-            Text(text  = title,
-                 style = TextStyle(fontSize = 42.sp))
+//            Text(text  = title,
+//                 style = TextStyle(fontSize = 42.sp))
+            MapUI()
         }
     }
 }
