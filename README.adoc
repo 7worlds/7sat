@@ -2,7 +2,6 @@
 
 === Bearbeitet von
 
-* _Vorname Nachname_
-* _Vorname Nachname_
-
-
+* Andri Wild
+* Elias Bräm
+* Tobias Wyss
