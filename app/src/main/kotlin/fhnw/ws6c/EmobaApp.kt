@@ -23,7 +23,7 @@ interface EmobaApp {
      * Das gesamte UI der App.
      */
     @Composable
-    fun CreateUI()
+    fun CreateUI(activity: ComponentActivity)
 
 
     /**

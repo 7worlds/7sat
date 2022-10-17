@@ -1,5 +1,6 @@
 package fhnw.ws6c.theapp.ui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
@@ -12,14 +13,14 @@ import fhnw.ws6c.theapp.model.TheModel
 
 
 @Composable
-fun AppUI(model : TheModel){
+fun AppUI(model : TheModel, activity: ComponentActivity){
     with(model){
         Box(contentAlignment = Alignment.Center,
             modifier         = Modifier.fillMaxSize()
         ){
 //            Text(text  = title,
 //                 style = TextStyle(fontSize = 42.sp))
-            MapUI()
+            MapUI(activity)
         }
     }
 }

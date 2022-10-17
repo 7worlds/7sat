@@ -1,5 +1,6 @@
 package fhnw.ws6c.theapp
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import fhnw.ws6c.EmobaApp
@@ -15,7 +16,7 @@ object TheApp : EmobaApp {
     }
 
     @Composable
-    override fun CreateUI() {
-        AppUI(model)
+    override fun CreateUI(activity: ComponentActivity) {
+        AppUI(model, activity)
     }
 }

@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         app.initialize(activity = this)
 
         setContent {
-            app.CreateUI()
+            app.CreateUI(this)
         }
     }
 
