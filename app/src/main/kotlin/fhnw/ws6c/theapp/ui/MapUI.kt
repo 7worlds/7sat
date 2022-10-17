@@ -78,7 +78,7 @@ private fun addAnnotationToMap(mapView :MapView, activity: Context) {
 // The bitmap will be added to map style automatically.
 
         .withIconImage(it)
-        .withIconSize(1.0)
+        .withIconSize(.5)
         .withIconRotate(90.0)
 // Add the resulting pointAnnotation to the map.
       pointAnnotationManager.create(pointAnnotationOptions)
