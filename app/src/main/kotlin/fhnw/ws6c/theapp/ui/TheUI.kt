@@ -14,13 +14,9 @@ import fhnw.ws6c.theapp.model.TheModel
 
 @Composable
 fun AppUI(model : TheModel, activity: ComponentActivity){
-    with(model){
-        Box(contentAlignment = Alignment.Center,
-            modifier         = Modifier.fillMaxSize()
-        ){
-//            Text(text  = title,
-//                 style = TextStyle(fontSize = 42.sp))
-            MapUI(activity)
-        }
-    }
+  Box(contentAlignment = Alignment.Center,
+      modifier         = Modifier.fillMaxSize()
+  ){
+      MapUI(activity)
+  }
 }
