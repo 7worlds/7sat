@@ -1,4 +1,4 @@
-package fhnw.ws6c.theapp
+package fhnw.ws6c.sevensat
 
 import org.junit.Test
 
