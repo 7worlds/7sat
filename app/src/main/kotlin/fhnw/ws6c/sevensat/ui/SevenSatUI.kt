@@ -27,7 +27,7 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
   SevenSatTheme {
     Scaffold(
       scaffoldState = scaffoldState,
-      drawerContent = { Drawer(model) },
+      drawerContent = { Drawer(model, scope, scaffoldState) },
       drawerBackgroundColor = MaterialTheme.colors.background,
       drawerGesturesEnabled = false,
       floatingActionButton = {
