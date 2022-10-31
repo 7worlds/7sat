@@ -1,18 +1,16 @@
-package fhnw.ws6c.theapp
+package fhnw.ws6c.sevensat
 
-import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import fhnw.ws6c.EmobaApp
-import fhnw.ws6c.theapp.model.TheModel
-import fhnw.ws6c.theapp.ui.AppUI
+import fhnw.ws6c.sevensat.ui.AppUI
 
 
-object TheApp : EmobaApp {
-    private lateinit var model: TheModel
+object SevenSatApp : EmobaApp {
+    private lateinit var model: SevenSatApp
 
     override fun initialize(activity: ComponentActivity) {
-        model = TheModel
+        model = SevenSatApp
     }
 
     @Composable

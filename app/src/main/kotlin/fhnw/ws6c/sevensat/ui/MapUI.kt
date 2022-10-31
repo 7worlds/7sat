@@ -1,4 +1,4 @@
-package fhnw.ws6c.theapp.ui
+package fhnw.ws6c.sevensat.ui
 
 import android.content.Context
 import android.graphics.Bitmap

@@ -1,19 +1,16 @@
-package fhnw.ws6c.theapp.ui
+package fhnw.ws6c.sevensat.ui
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.sp
-import fhnw.ws6c.theapp.model.TheModel
+import fhnw.ws6c.sevensat.SevenSatApp
 
 
 @Composable
-fun AppUI(model : TheModel, activity: ComponentActivity){
+fun AppUI(model : SevenSatApp, activity: ComponentActivity){
   Box(contentAlignment = Alignment.Center,
       modifier         = Modifier.fillMaxSize()
   ){
