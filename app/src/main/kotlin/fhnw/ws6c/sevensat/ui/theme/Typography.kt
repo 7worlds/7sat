@@ -9,78 +9,26 @@ import androidx.compose.ui.unit.sp
 // Set of Material typography styles to start with
 val typography = Typography(
         h1 = TextStyle(
-                fontSize      = 96.sp,
-                fontWeight    = FontWeight.Light,
-                lineHeight    = 117.sp,
-                letterSpacing = (-1.5).sp
+                fontSize      = 16.sp,
+                fontWeight    = FontWeight.Bold,
+                lineHeight    = 20.sp,
         ),
         h2 = TextStyle(
-                fontSize      = 60.sp,
-                fontWeight    = FontWeight.Light,
-                lineHeight    = 73.sp,
-                letterSpacing = (-0.5).sp
+                fontSize      = 14.sp,
+                fontWeight    = FontWeight.SemiBold,
+                lineHeight    = 18.sp,
         ),
         h3 = TextStyle(
-                fontSize      = 50.sp,
+                fontSize      = 12.sp,
                 fontWeight    = FontWeight.Black,
-                lineHeight    = 59.sp
+                lineHeight    = 14.sp
         ),
-        h4 = TextStyle(
-                fontSize      = 30.sp,
-                fontWeight    = FontWeight.SemiBold,
-                lineHeight    = 37.sp
-        ),
-        h5 = TextStyle(
-                fontSize      = 24.sp,
-                fontWeight    = FontWeight.SemiBold,
-                lineHeight    = 29.sp
-        ),
-        h6 = TextStyle(
-                fontSize      = 20.sp,
-                fontWeight    = FontWeight.Medium,
-                letterSpacing = 0.15.sp,
-                lineHeight    = 24.sp
-        ),
-        subtitle1 = TextStyle(
-                fontSize      = 16.sp,
-                fontWeight    = FontWeight.SemiBold,
-                lineHeight    = 24.sp,
-                letterSpacing = 0.15.sp
-        ),
-        subtitle2 = TextStyle(
-                fontSize      = 14.sp,
-                fontWeight    = FontWeight.Bold,
-                lineHeight    = 24.sp,
-                letterSpacing = 0.1.sp
-        ),
+
         body1 = TextStyle(
-                fontSize      = 16.sp,
-                fontWeight    = FontWeight.Normal,
-                lineHeight    = 28.sp,
-                letterSpacing = 0.15.sp
-        ),
-        body2 = TextStyle(
-                fontSize      = 14.sp,
-                fontWeight    = FontWeight.Medium,
-                lineHeight    = 20.sp,
-                letterSpacing = 0.1.sp
-        ),
-        button = TextStyle(
-                fontSize      = 14.sp,
-                fontWeight    = FontWeight.SemiBold,
-                lineHeight    = 16.sp,
-                letterSpacing = 1.25.sp
-        ),
-        caption = TextStyle(
                 fontSize      = 12.sp,
                 fontWeight    = FontWeight.Normal,
-                lineHeight    = 16.sp,
-                letterSpacing = 0.4.sp
+                lineHeight    = 13.sp,
+
         ),
-        overline = TextStyle(
-                fontSize      = 12.sp,
-                fontWeight    = FontWeight.SemiBold,
-                lineHeight    = 16.sp,
-                letterSpacing = 1.sp
-        )
+
 )

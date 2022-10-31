@@ -9,9 +9,6 @@ fun IconButtonSS(onClick: () -> Unit, icon: Unit, color: androidx.compose.ui.gra
  IconButton(
    onClick = onClick,
    modifier = Modifier.padding(2.dp),
-
-
-
  ) {
    icon
  }
