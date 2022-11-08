@@ -1,10 +1,12 @@
 package fhnw.ws6c.sevensat.ui
 
+import BottomSheet
 import IconButtonSat
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterAlt
@@ -19,34 +21,45 @@ import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
-  val scaffoldState = rememberScaffoldState()
+  val scaffoldState = rememberBottomSheetScaffoldState(
+    bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+  )
   val scope = rememberCoroutineScope()
 
   SevenSatTheme {
-    Scaffold(
+    BottomSheetScaffold(
       scaffoldState = scaffoldState,
       drawerContent = { Drawer(model, scope, scaffoldState) },
       drawerBackgroundColor = MaterialTheme.colors.background,
       drawerGesturesEnabled = false,
       floatingActionButtonPosition = FabPosition.Center,
-
       floatingActionButton = {
         FloatingActionButton(
           backgroundColor = MaterialTheme.colors.primary,
-
           onClick = {
             scope.launch {
-              scaffoldState.drawerState.apply {
-                if (isClosed) open() else close()
+              if (scaffoldState.bottomSheetState.isCollapsed) {
+                scaffoldState.bottomSheetState.expand()
+              } else {
+                scaffoldState.bottomSheetState.collapse()
               }
             }
           }) {
           Icon(Icons.Filled.FilterList, "Filterbutton")
         }
       },
+      sheetContent = { BottomSheet(scope, scaffoldState) },
+      sheetGesturesEnabled = true,
+      sheetContentColor = MaterialTheme.colors.secondary,
+      sheetBackgroundColor = MaterialTheme.colors.background,
+      //sheetElevation = 300.dp,
+      sheetPeekHeight = 0.dp,
+      sheetShape = RoundedCornerShape(30.dp),
       content = {
+
         Box(modifier = Modifier.padding(3.dp)) {
           Column(
             modifier = Modifier.padding(it)
@@ -54,8 +67,7 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
             MapUI(activity)
           }
 
-          Column (modifier = Modifier.padding(10.dp, 30.dp)){
-
+          Column(modifier = Modifier.padding(10.dp, 30.dp)) {
             IconButtonSat(
               onClick = {
                 scope.launch {
@@ -73,12 +85,8 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
               }
             )
           }
-
         }
-
       }
-
-
     )
   }
 }

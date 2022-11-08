@@ -2,10 +2,7 @@ package fhnw.ws6c.sevensat.ui.components
 
 import IconButtonSat
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
@@ -15,8 +12,9 @@ import fhnw.ws6c.sevensat.model.SevenSatModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-public fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: ScaffoldState) {
+public fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   with(model) {
     Column(modifier = Modifier
       .padding(20.dp)

@@ -79,6 +79,7 @@ private fun addAnnotationToMap(mapView :MapView, activity: Context) {
         .withIconImage(it)
         .withIconSize(.5)
         .withIconRotate(90.0)
+        
 // Add the resulting pointAnnotation to the map.
       pointAnnotationManager.create(pointAnnotationOptions)
     }
