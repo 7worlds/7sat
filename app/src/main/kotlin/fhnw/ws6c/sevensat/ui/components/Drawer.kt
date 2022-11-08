@@ -1,6 +1,7 @@
 package fhnw.ws6c.sevensat.ui.components
 
 import IconButtonSS
+import IconButtonSat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -9,6 +10,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +32,7 @@ public fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: Sc
           text = "Filter",
           style = MaterialTheme.typography.h4
         )
-        IconButtonSS(
+        IconButtonSat(
           onClick = {
             scope.launch {
               scaffoldState.drawerState.apply {
@@ -38,8 +40,7 @@ public fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: Sc
               }
             }
           },
-          icon = Icon(Icons.Filled.Close, "Filterbutton"),
-          color = MaterialTheme.colors.primary
+        icon = { Icon(Icons.Filled.Close, "Filterbutton", tint=MaterialTheme.colors.secondary) }
         )
 
       }
