@@ -11,6 +11,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
+import java.time.LocalDate
 import java.util.Date
 
 /**
@@ -22,25 +23,29 @@ import java.util.Date
  */
 
 class ParseTLETest {
-    private val testDispatcher = StandardTestDispatcher()
-    private val dataParser = TLEParser(testDispatcher)
+  private val testDispatcher = StandardTestDispatcher()
+  private val dataParser = TLEParser(testDispatcher)
 
-    private val validTLEStream = """
+  private val validTLEStream = """
         ISS (ZARYA)
         1 25544U 98067A   22312.10734271  .00013585  00000-0  24681-3 0  9991
         2 25544  51.6458 343.6266 0006659  48.7066  47.2159 15.49845562367506
     """.trimIndent().byteInputStream()
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `Given valid TLE stream returns valid data`() = runTest(testDispatcher) {
-        val parsedList = dataParser.parseTLEStream(validTLEStream)
-//        assert(parsedList[0].epoch == 21320.51955234)
-        val satellite = parsedList.first().getSatellite()
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun `Given valid TLE stream returns valid data`() = runTest(testDispatcher) {
+    val parsedList = dataParser.parseTLEStream(validTLEStream)
+    assert(parsedList[0].epoch == 22312.10734271)
+    val satellite = parsedList.first().getSatellite()
 
-        val satPos = satellite.getPosition(GeoPos(8.220250, 47.478519), Date().time)
+    val satPos = satellite.getPosition(
+      GeoPos(8.220250, 47.478519),
+      1667895364
+    )
 
-        assertTrue(satPos.latitude.toDegrees() > 0)
-    }
+    assert(satPos.latitude.toDegrees() == -40.25788239876213)
+    assert(satPos.longitude.toDegrees() == 147.84377862894618)
+  }
 }
