@@ -1,16 +1,10 @@
 package fhnw.ws6c.sevensat.ext
 
-import android.content.Context
-import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
-import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import fhnw.ws6c.R
-import fhnw.ws6c.sevensat.model.Satellite
+import fhnw.ws6c.sevensat.model.OrbitalData
 //import fhnw.ws6c.sevensat.ui.bitmapFromDrawableRes
 
-fun MapView.addSatellite(sat: Satellite) {
+fun MapView.addSatellite(sat: OrbitalData) {
 
 }
 

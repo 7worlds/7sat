@@ -1,12 +1,23 @@
-package fhnw.ws6c.sevensat.base
+package fhnw.ws6c.sevensat.orbital
 
+import fhnw.ws6c.sevensat.model.DeepSpaceOrbitalData
+import fhnw.ws6c.sevensat.model.MIN_PER_DAY
+import fhnw.ws6c.sevensat.model.NearEarthOrbitalData
+import fhnw.ws6c.sevensat.model.OrbitalData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import kotlin.math.pow
 
-class TLEParser(private val defaultDispatcher: CoroutineDispatcher) {
-  suspend fun parseTLEStream(tleStream: InputStream): List<OrbitalData> =
+class TLEParser {
+
+  fun parseSingleTLE(name: String, tleLine1: String, tleLine2: String): OrbitalData? =
+    parseTLE(listOf(name, tleLine1, tleLine2))
+
+  suspend fun parseTLELines(
+    tleStream: InputStream,
+    defaultDispatcher: CoroutineDispatcher
+  ): List<OrbitalData> =
     withContext(defaultDispatcher) {
       val tleStrings = mutableListOf(String(), String(), String())
       val parsedItems = mutableListOf<OrbitalData>()
@@ -16,9 +27,7 @@ class TLEParser(private val defaultDispatcher: CoroutineDispatcher) {
         if (lineIndex < 2) {
           lineIndex++
         } else {
-          val isLineOneValid = tleStrings[1].substring(0, 1) == "1"
-          val isLineTwoValid = tleStrings[2].substring(0, 1) == "2"
-          if (!isLineOneValid && !isLineTwoValid) return@forEachLine
+          if (tleIsValid(tleStrings[1], tleStrings[2])) return@forEachLine
           parseTLE(tleStrings)?.let { tle -> parsedItems.add(tle) }
           lineIndex = 0
         }
@@ -26,10 +35,15 @@ class TLEParser(private val defaultDispatcher: CoroutineDispatcher) {
       return@withContext parsedItems
     }
 
+  private fun tleIsValid(line1: String, line2: String): Boolean {
+    val lineOneIsValid = line1.substring(0, 1) == "1"
+    val lineTwoIsValid = line2.substring(0, 1) == "2"
+    if (lineOneIsValid && lineTwoIsValid) return true
+    return false
+  }
+
   private fun parseTLE(tle: List<String>): OrbitalData? {
-    if (tle[1].substring(0, 1) != "1" && tle[2].substring(0, 1) != "2") {
-      return null
-    }
+    if (!tleIsValid(tle[1], tle[2])) return null
     try {
       val name: String = tle[0].trim()
       val epoch: Double = tle[1].substring(18, 32).toDouble()
@@ -42,7 +56,13 @@ class TLEParser(private val defaultDispatcher: CoroutineDispatcher) {
       val catnum: Int = tle[1].substring(2, 7).trim().toInt()
       val bstar: Double = 1.0e-5 * tle[1].substring(53, 59).toDouble() /
           10.0.pow(tle[1].substring(60, 61).toDouble())
-      return OrbitalData(name, epoch, meanmo, eccn, incl, raan, argper, meanan, catnum, bstar)
+      val orbitalPeriod: Double = MIN_PER_DAY / meanmo
+      val isDeepSpace: Boolean = orbitalPeriod >= 225.0
+      return if (isDeepSpace) {
+        DeepSpaceOrbitalData(name, epoch, meanmo, eccn, incl, raan, argper, meanan, catnum, bstar)
+      } else {
+        NearEarthOrbitalData(name, epoch, meanmo, eccn, incl, raan, argper, meanan, catnum, bstar)
+      }
     } catch (exception: Exception) {
       return null
     }

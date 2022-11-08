@@ -26,7 +26,7 @@ class PositionCallTest : N2yoCallTest() {
 
     //then
     val json = call.getResponse()
-    val sat = SatelliteBuilder().withPositionData(json!!).build()
+    val sat = SatelliteBuilder().withPositionData(json!!)
 
     assertEquals(sat.noradId, issId)
     assertEquals(sat.name, "SPACE STATION")

@@ -24,7 +24,7 @@ class TleCallTest : N2yoCallTest(){
 
     //then
     val json = call.getResponse()
-    val sat = SatelliteBuilder().withTleJsonData(json!!).build()
+    val sat = SatelliteBuilder().withTleJsonData(json!!)
 
     assertEquals(sat.noradId, idISS)
     assertEquals(sat.name,     "SPACE STATION")

@@ -1,16 +1,18 @@
 package fhnw.ws6c.sevensat.model.satellite
 
+import fhnw.ws6c.sevensat.model.OrbitalData
+import fhnw.ws6c.sevensat.orbital.TLEParser
 import org.json.JSONObject
 import java.util.*
 
 class SatelliteBuilder {
-
   var noradId:      Long   = -1
   var name:         String = ""
   var description:  String = ""
   var tleLine1:     String = ""
   var tleLine2:     String = ""
   var coordinates:  Map<Long, Triple<Double, Double, Double>> = Collections.emptyMap() // lat, lng, alt
+  var orbitalData: OrbitalData? = null
 
   fun withTleJsonData(jsonObject: JSONObject) : SatelliteBuilder{
     val info  = jsonObject.getJSONObject("info")
@@ -42,6 +44,11 @@ class SatelliteBuilder {
   }
 
   fun build() : Satellite {
-    return Satellite(this)
+      val tleParser = TLEParser()
+      // TODO: what todo if tle is empty or invalid?
+      orbitalData = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
+
+      tleParser.parseSingleTLE(name, tleLine1, tleLine2)
+      return Satellite(this)
   }
 }

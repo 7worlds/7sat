@@ -1,10 +1,18 @@
 package fhnw.ws6c.sevensat.model
 
-import fhnw.ws6c.sevensat.base.OrbitalData
 import kotlin.math.*
 
 
-abstract class Satellite(val data: OrbitalData) {
+abstract class OrbitalData(
+  val name: String = "",
+  val epoch: Double = 0.0,
+  val meanmo: Double = 0.0,
+  val eccn: Double = 0.0,
+  val incl: Double = 0.0,
+  val orbitalPeriod: Double = MIN_PER_DAY / meanmo,
+  // Space objects are classified as NearEarth (period < 225 min) or DeepSpace (period >= 225 min)
+  val isDeepSpace: Boolean = orbitalPeriod >= 225.0
+) {
 
   private val position = Vector4()
   private val velocity = Vector4()
@@ -17,11 +25,11 @@ abstract class Satellite(val data: OrbitalData) {
   var s4 = 0.0
 
   internal fun willBeSeen(pos: GeoPos): Boolean {
-    return if (data.meanmo < 1e-8) false
+    return if (meanmo < 1e-8) false
     else {
-      val sma = 331.25 * exp(ln(MIN_PER_DAY / data.meanmo) * (2.0 / 3.0))
-      val apogee = sma * (1.0 + data.eccn) - EARTH_RADIUS
-      var lin = data.incl
+      val sma = 331.25 * exp(ln(MIN_PER_DAY / meanmo) * (2.0 / 3.0))
+      val apogee = sma * (1.0 + eccn) - EARTH_RADIUS
+      var lin = incl
       if (lin >= 90.0) lin = 180.0 - lin
       acos(EARTH_RADIUS / (apogee + EARTH_RADIUS)) + lin * DEG2RAD > abs(pos.lat * DEG2RAD)
     }
@@ -32,7 +40,7 @@ abstract class Satellite(val data: OrbitalData) {
     // Date/time at which the position and velocity were calculated
     julUTC = calcCurrentDaynum(time) + 2444238.5
     // Convert satellite's epoch time to Julian and calculate time since epoch in minutes
-    val julEpoch = juliandDateOfEpoch(data.epoch)
+    val julEpoch = juliandDateOfEpoch(epoch)
     val tsince = (julUTC - julEpoch) * MIN_PER_DAY
     calculateSDP4orSGP4(tsince)
     // Scale position and velocity vectors to km and km/sec
@@ -73,8 +81,8 @@ abstract class Satellite(val data: OrbitalData) {
   }
 
   private fun calculateSDP4orSGP4(tsince: Double) {
-    if (data.isDeepSpace) (this as DeepSpaceSat).calculateSDP4(tsince)
-    else (this as NearEarthSat).calculateSGP4(tsince)
+    if (isDeepSpace) (this as DeepSpaceOrbitalData).calculateSDP4(tsince)
+    else (this as NearEarthOrbitalData).calculateSGP4(tsince)
   }
 
   // Converts the sat position and velocity vectors to km and km/sec
