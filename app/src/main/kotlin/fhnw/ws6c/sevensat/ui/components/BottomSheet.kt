@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import fhnw.ws6c.sevensat.ui.components.YoutubePlayer
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -56,7 +57,7 @@ fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(text = "Höhe", style = MaterialTheme.typography.h2)
-        Text(text = "3000m", style = MaterialTheme.typography.body1)
+        Text(text = "418km", style = MaterialTheme.typography.body1)
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(text = "Sichtbarkeit", style = MaterialTheme.typography.h2)
@@ -72,27 +73,4 @@ fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) 
     YoutubePlayer(key = "86YLFOog4GM")
     
   }
-}
-@Composable
-fun YoutubePlayer(key: String) {
-  val activityLifecycle = LocalLifecycleOwner.current.lifecycle
-  val context = LocalContext.current
-  val youtubePlayer = remember(key) {
-    YouTubePlayerView(context).apply {
-      activityLifecycle.addObserver(this)
-      enableAutomaticInitialization = false
-      initialize(object : AbstractYouTubePlayerListener() {
-        override fun onReady(youTubePlayer: YouTubePlayer) {
-          youTubePlayer.cueVideo(key, 0f)
-        }
-      })
-    }
-  }
-  AndroidView(
-    factory = { youtubePlayer },
-    modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight(),
-    update = {}
-  )
 }
