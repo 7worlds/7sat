@@ -8,8 +8,8 @@ import org.junit.Test
 class PositionCallTest : N2yoCallTest() {
 
   private val issId = 25544L
-  private val lng = -76.014
-  private val lat = 41.702
+  private val lng   = -76.014
+  private val lat   = 41.702
 
   override fun newApiCall(): N2yoCall {
     return PositionCall(issId, 1, lng, lat)
@@ -34,5 +34,4 @@ class PositionCallTest : N2yoCallTest() {
     assertEquals(sat.coordinates[issId]?.second,  -50.00177714 )
     assertEquals(sat.coordinates[issId]?.third,   419.97 )
   }
-
 }

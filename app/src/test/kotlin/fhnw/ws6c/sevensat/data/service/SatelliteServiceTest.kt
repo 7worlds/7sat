@@ -69,7 +69,7 @@ class SatelliteServiceTest {
     //when
     service.loadRemoteData(call)
 
-      //then
+    //then
     assertTrue(call.hasError())
     assertTrue(call.getError() is JSONException)
   }
@@ -83,7 +83,7 @@ class SatelliteServiceTest {
     val call = createRequestObject({ "/tle/25544/" }, { throw IOException(errorMessage) })
 
     //when
-    val result = service.loadRemoteData(call)
+    service.loadRemoteData(call)
 
     //then
     assertTrue(call.hasError())
