@@ -1,27 +1,19 @@
 package fhnw.ws6c.sevensat.ui
 
-import IconButtonSS
 import IconButtonSat
-import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import fhnw.ws6c.sevensat.model.SevenSatModel
-import fhnw.ws6c.sevensat.ui.components.Body
 import fhnw.ws6c.sevensat.ui.components.Drawer
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import kotlinx.coroutines.launch
@@ -59,8 +51,9 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
           Column(
             modifier = Modifier.padding(it)
           ) {
-            Body(model = model, activity = activity)
+            MapUI(activity)
           }
+
           Column (modifier = Modifier.padding(10.dp, 30.dp)){
 
             IconButtonSat(
