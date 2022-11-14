@@ -73,6 +73,7 @@ private fun addAnnotationToMap(mapView :MapView, activity: Context) {
       val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
 // Define a geographic coordinate.
         .withPoint(Point.fromLngLat(8.220250, 47.478519 ))
+
 // Specify the bitmap you assigned to the point annotation
 // The bitmap will be added to map style automatically.
 
