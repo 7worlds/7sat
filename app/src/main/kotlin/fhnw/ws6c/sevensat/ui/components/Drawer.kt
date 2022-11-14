@@ -12,13 +12,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import fhnw.ws6c.sevensat.SevenSatApp
 import fhnw.ws6c.sevensat.model.SevenSatModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-public fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+public fun Drawer(model: SevenSatApp, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   val checkedState = remember { mutableStateOf(false) }
   with(model) {
     Column(modifier = Modifier

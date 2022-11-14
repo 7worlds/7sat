@@ -15,15 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import fhnw.ws6c.sevensat.SevenSatApp
+import fhnw.ws6c.sevensat.data.service.SatelliteService
 import fhnw.ws6c.sevensat.model.SevenSatModel
 import fhnw.ws6c.sevensat.ui.components.Drawer
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
+fun SevenSatUI(model: SevenSatApp, activity: ComponentActivity) {
   val scaffoldState = rememberBottomSheetScaffoldState(
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
   )
@@ -64,7 +67,10 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
           Column(
             modifier = Modifier.padding(it)
           ) {
-            MapUI(activity)
+            val jsonService = SatelliteService<JSONObject>()
+            val stringService = SatelliteService<String>()
+            val model = SevenSatModel(jsonService, stringService)
+            MapUI(model)
           }
 
           Column(modifier = Modifier.padding(10.dp, 30.dp)) {

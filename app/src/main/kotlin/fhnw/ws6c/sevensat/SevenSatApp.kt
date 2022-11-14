@@ -8,10 +8,10 @@ import fhnw.ws6c.sevensat.ui.SevenSatUI
 
 
 object SevenSatApp : EmobaApp {
-    private lateinit var model: SevenSatModel
+    private lateinit var model: SevenSatApp
 
     override fun initialize(activity: ComponentActivity) {
-        model = SevenSatModel
+        model = SevenSatApp
     }
 
     @Composable

@@ -46,6 +46,10 @@ android {
         }
     }
     namespace 'fhnw.ws6c'
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/code'
+    }
 }
 
 dependencies {
@@ -76,6 +80,8 @@ dependencies {
 
     //Unit tests
     testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
+
     // Required for instrumented tests
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

@@ -1,0 +1,90 @@
+# https://www.n2yo.com/api
+# BN: seven_satellite
+# PW: seven_satellite
+
+@base-url-n2yo = https://api.n2yo.com/rest/v1
+@api-key = 7VQNXG-LKUJR6-FW9HLQ-4XGS
+@norad_id = 25544
+@lng = -76.014
+@lat = 41.702
+@alt = 0
+@seconds = 1
+@radius = 70
+@satellite_category = 0
+
+###
+
+
+GET {{base-url-n2yo}}/satellite/positions/{{norad_id}}/{{lat}}/{{lng}}/{{alt}}/{{seconds}}
+    &apiKey={{api-key}} HTTP/1.1
+Content-Type: application/json
+
+
+###
+
+GET {{base-url-n2yo}}/satellite/above/{{lat}}/{{lng}}/{{alt}}/{{radius}}/{{satellite_category}}
+    &apiKey={{api-key}} HTTP/1.1
+Content-Type: application/json
+
+
+###
+
+GET {{base-url-n2yo}}/satellite/tle/{{norad_id}}
+    &apiKey={{api-key}} HTTP/1.1
+Content-Type: application/json
+
+###
+
+GET http://tle.ivanstanojevic.me/api/tle
+
+
+
+
+
+### DEPRECATED ###
+
+# https://rapidapi.com/uphere.space/api/uphere-space1
+# https://uphere.space/development/api/documentation
+
+@base-url = https://uphere-space1.p.rapidapi.com
+@X-RapidAPI-Key = dfd34f26efmsh1fa5f627eb62099p1e37c9jsn4bae64a5e58a
+@X-RapidAPI-Host = uphere-space1.p.rapidapi.com
+
+### List of all satellites filtered by a text
+GET {{base-url}}/satellite/list
+    ?page=1
+    &text=starlink
+    &country=US HTTP/1.1
+Content-Type: application/json
+X-RapidAPI-Key: {{X-RapidAPI-Key}}
+X-RapidAPI-Host: {{X-RapidAPI-Host}}
+
+### Most popular satellites
+GET {{base-url}}/satellite/top
+    ?days=1 HTTP/1.1
+Content-Type: application/json
+X-RapidAPI-Key: {{X-RapidAPI-Key}}
+X-RapidAPI-Host: {{X-RapidAPI-Host}}
+
+### Satellite details
+GET {{base-url}}/satellite/43226/details HTTP/1.1
+Content-Type: application/json
+X-RapidAPI-Key: {{X-RapidAPI-Key}}
+X-RapidAPI-Host: {{X-RapidAPI-Host}}
+
+### Satellite orbit informations
+GET {{base-url}}/satellite/43226/orbit
+    ?period=1 HTTP/1.1
+Content-Type: application/json
+X-RapidAPI-Key: {{X-RapidAPI-Key}}
+X-RapidAPI-Host: {{X-RapidAPI-Host}}
+
+### Visible satellites
+### Geht leider noch nicht
+GET {{base-url}}/user/visible
+    ?lat=32.1433
+    &lng=-117.9833 HTTP/1.1
+Content-Type: application/json
+X-RapidAPI-Key: {{X-RapidAPI-Key}}
+X-RapidAPI-Host: {{X-RapidAPI-Host}}
+
