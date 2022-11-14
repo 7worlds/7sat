@@ -41,7 +41,7 @@ fun MapUI(model: SevenSatModel) {
             mapView.addSatellite(satPos, localContext){ satellite ->
             }
           }
-//          mapView.addFlightLine(model.clickedSatelliteRoute, localContext)
+          mapView.addFlightLine(model.clickedSatelliteRoute, localContext)
         },
         factory = { context ->
           ResourceOptionsManager.getDefault(
@@ -62,10 +62,10 @@ fun MapUI(model: SevenSatModel) {
       Button(onClick = { model.loadSatellites() }) {
         Text(text = "Load satellites")
       }
-      Button(onClick = {
-      }) {
-        Text(text = "select satellite")
-      }
+//      Button(onClick = {
+//      }) {
+//        Text(text = "select satellite")
+//      }
     }
   }
 

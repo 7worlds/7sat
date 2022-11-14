@@ -74,7 +74,7 @@ fun MapView.addSatellite(
 fun MapView.addFlightLine(points: List<SatPos>, context: Context) {
   val pointAnnotationManager = MapModel.getPointAnnotationManager(this)
 
-//  this.deleteCurrentMapLine()
+  this.deleteCurrentMapLine()
   AppCompatResources.getDrawable(context, R.drawable.point)?.toBitMap()?.let {
     val pointAnnotations = points.map { point ->
       // Set options for the resulting symbol layer.
