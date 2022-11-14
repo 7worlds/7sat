@@ -10,8 +10,8 @@ abstract class N2yoCall: ApiCallable<JSONObject> {
   var jsonResponse: JSONObject?   = null
   var exception:    Exception?    = null
 
-  override fun setResponse(jsonObject: JSONObject) {
-    jsonResponse = jsonObject
+  override fun setResponse(jsonString: String) {
+    jsonResponse = JSONObject(jsonString)
   }
 
   override fun getResponse(): JSONObject? {

@@ -3,6 +3,7 @@ package fhnw.ws6c.sevensat.data.n2yo
 import fhnw.ws6c.sevensat.data.service.DefaultService
 import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
+import org.json.JSONObject
 import org.junit.Test
 
 class PositionCallTest : N2yoCallTest() {
@@ -19,7 +20,7 @@ class PositionCallTest : N2yoCallTest() {
   fun resultTest() {
     //given
     val call = PositionCall(issId, 1, lng, lat)
-    val service = DefaultService()
+    val service = DefaultService<JSONObject>()
 
     //when
     service.loadRemoteData(call)

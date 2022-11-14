@@ -4,6 +4,7 @@ import fhnw.ws6c.sevensat.data.n2yo.PositionCall
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.DefaultService
 import junit.framework.Assert.assertEquals
+import org.json.JSONObject
 import org.junit.Test
 
 
@@ -13,7 +14,7 @@ class SatelliteBuilderTest {
   fun dataCombineTest() {
 
     //given
-    val service = DefaultService()
+    val service = DefaultService<JSONObject>()
     val tle = TleCall(-1)
     val pos = PositionCall(-1, -1, -1, -1)
 

@@ -1,8 +1,7 @@
-package fhnw.ws6c.sevensat.orbital
+package fhnw.ws6c.sevensat.model.orbitaldata
 
 import fhnw.ws6c.sevensat.util.tle.TLEParser
 import fhnw.ws6c.sevensat.util.extensions.toDegrees
-import fhnw.ws6c.sevensat.model.orbitaldata.GeoPos
 import org.junit.Test
 
 /**

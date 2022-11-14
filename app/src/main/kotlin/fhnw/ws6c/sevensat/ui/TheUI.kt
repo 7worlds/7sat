@@ -10,6 +10,7 @@ import fhnw.ws6c.sevensat.SevenSatApp
 import fhnw.ws6c.sevensat.data.service.DefaultService
 import fhnw.ws6c.sevensat.data.service.SatelliteService
 import fhnw.ws6c.sevensat.model.SevenSatModel
+import org.json.JSONObject
 
 
 @Composable
@@ -17,8 +18,9 @@ fun AppUI(app : SevenSatApp, activity: ComponentActivity){
   Box(contentAlignment = Alignment.Center,
       modifier         = Modifier.fillMaxSize()
   ){
-      val service = SatelliteService()
-      val model = SevenSatModel(service)
+      val jsonService = SatelliteService<JSONObject>()
+      val stringService = SatelliteService<String>()
+      val model = SevenSatModel(jsonService, stringService)
       MapUI(model)
   }
 }

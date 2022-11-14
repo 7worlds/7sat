@@ -15,8 +15,8 @@ class SatelliteServiceTest {
   private fun createRequestObject(
     urlTarget: () -> String,
     responseAction: (JSONObject) -> Unit,
-  ) : ApiCallable {
-    val request = object :ApiCallable {
+  ) : ApiCallable<JSONObject> {
+    val request = object :ApiCallable<JSONObject> {
       var exception: Exception? = null
       var jsonResponse: JSONObject? = null
 
@@ -29,9 +29,9 @@ class SatelliteServiceTest {
         return jsonResponse
       }
 
-      override fun setResponse(jsonObject: JSONObject) {
-        jsonResponse = jsonObject
-        responseAction(jsonObject)
+      override fun setResponse(response: String) {
+        jsonResponse = JSONObject(response)
+        responseAction(jsonResponse!!)
       }
 
       override fun hasError(): Boolean { return null != exception }
@@ -47,7 +47,7 @@ class SatelliteServiceTest {
   fun simpleRequestTest() {
 
     //given
-    val service = SatelliteService()
+    val service = SatelliteService<JSONObject>()
     val call = createRequestObject ({ "/tle/25544/" }, {} )
 
     //when
@@ -63,7 +63,7 @@ class SatelliteServiceTest {
   fun callThrowsJSONExceptionTest() {
 
     //given
-    val service = SatelliteService()
+    val service = SatelliteService<JSONObject>()
     val call = createRequestObject({ "/tobias/bräm/" }, {})
 
     //when
@@ -79,7 +79,7 @@ class SatelliteServiceTest {
 
     //given
     val errorMessage = "Something went wrong"
-    val service = SatelliteService()
+    val service = SatelliteService<JSONObject>()
     val call = createRequestObject({ "/tle/25544/" }, { throw IOException(errorMessage) })
 
     //when

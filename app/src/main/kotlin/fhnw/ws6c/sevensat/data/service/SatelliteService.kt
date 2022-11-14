@@ -9,9 +9,9 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-class SatelliteService : Service {
+class SatelliteService<T> : Service<T> {
 
-  override fun loadRemoteData (call: ApiCallable) {
+  override fun loadRemoteData (call: ApiCallable<T>) {
 
     try {
       val url = URL(call.getTargetUrl())
@@ -21,7 +21,7 @@ class SatelliteService : Service {
       try {
         val reader = BufferedReader(InputStreamReader(connection.inputStream))
         val jsonString = reader.readText()
-        call.setResponse(JSONObject(jsonString))
+        call.setResponse(jsonString)
         reader.close()
       } catch (jsonError: JSONException) {
         call.setError(jsonError)

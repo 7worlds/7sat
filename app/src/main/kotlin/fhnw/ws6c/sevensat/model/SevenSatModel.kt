@@ -13,9 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.*
 
-class SevenSatModel(val service: Service) {
+class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Service<String>) {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())
@@ -38,7 +39,7 @@ class SevenSatModel(val service: Service) {
     val tleCall = TleCall(25544)
     val pos = PositionCall(25544, -1, -1, -1)
     modelScope.launch {
-      service.loadRemoteData(tleCall);
+      jsonService.loadRemoteData(tleCall);
       val sat = SatelliteBuilder()
         .withTleJsonData(tleCall.getResponse()!!).build()
       satellitesMap[sat] = sat.getPosition(Date().time)
