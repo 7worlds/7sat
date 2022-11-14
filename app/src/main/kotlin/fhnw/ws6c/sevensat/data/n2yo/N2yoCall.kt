@@ -5,7 +5,7 @@ import org.json.JSONObject
 const val n2yoApiKey  = "&apiKey=7VQNXG-LKUJR6-FW9HLQ-4XGS"
 const val n2yoBaseURL = "https://api.n2yo.com/rest/v1/satellite"
 
-abstract class N2yoCall: ApiCallable {
+abstract class N2yoCall: ApiCallable<JSONObject> {
 
   var jsonResponse: JSONObject?   = null
   var exception:    Exception?    = null

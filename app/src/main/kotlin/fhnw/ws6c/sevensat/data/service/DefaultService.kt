@@ -13,7 +13,7 @@ import java.net.URL
 
 class DefaultService : Service {
 
-  override fun loadRemoteData(call: ApiCallable) {
+  override fun loadRemoteData(call: ApiCallable<JSONObject>) {
 
     var data = ""
     when (call) {
