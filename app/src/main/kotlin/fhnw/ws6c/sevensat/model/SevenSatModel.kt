@@ -31,7 +31,7 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
         satellitesMap.keys.forEach { satellite ->
           satellitesMap[satellite] = satellite.getPosition(Date().time)
         }
-        mainHandler.postDelayed(this, 5000)
+        mainHandler.postDelayed(this, 10000)
       }
     })
   }
@@ -53,10 +53,15 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
     if (iss != null) {
       val calendar = Calendar.getInstance()
       calendar.time = Date()
+      val points = mutableListOf<SatPos>()
+      val start = System.currentTimeMillis()
       for (i in 0..90 step 5) {
         calendar.add(Calendar.MINUTE, 5)
-        clickedSatelliteRoute.add(iss.getPosition(calendar.time.time))
+        points.add(iss.getPosition(calendar.time.time))
       }
+      val end = System.currentTimeMillis()
+      println(end-start)
+        clickedSatelliteRoute.addAll(points)
     }
 
   }

@@ -75,6 +75,7 @@ fun MapView.addFlightLine(points: List<SatPos>, context: Context) {
   val pointAnnotationManager = MapModel.getPointAnnotationManager(this)
 
   this.deleteCurrentMapLine()
+  val start = System.currentTimeMillis()
   AppCompatResources.getDrawable(context, R.drawable.point)?.toBitMap()?.let {
     val pointAnnotations = points.map { point ->
       // Set options for the resulting symbol layer.
@@ -86,19 +87,6 @@ fun MapView.addFlightLine(points: List<SatPos>, context: Context) {
         pointAnnotationManager.create(pointAnnotationOptions)
     }
     MapModel.setFlightLinePoints(pointAnnotations)
-
+    val end = System.currentTimeMillis()
   }
-
-//  // Set options for the resulting symbol layer.
-//  val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-//    // Define a geographic coordinate.
-//    .withPoint(Point.fromLngLat(satPosition.longDeg(), satPosition.latDeg()))
-//    // Specify the bitmap you assigned to the point annotation
-//    // The bitmap will be added to map style automatically.
-//
-//    .withIconImage(it)
-//    .withIconSize(.5)
-//    .withIconRotate(90.0)
-  // Add the resulting pointAnnotation to the map.
-//  lineAnnotationManager.create(options)
 }

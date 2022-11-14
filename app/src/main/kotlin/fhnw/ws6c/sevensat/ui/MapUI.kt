@@ -25,6 +25,7 @@ import fhnw.ws6c.sevensat.util.extensions.addFlightLine
 
 @Composable
 fun MapUI(model: SevenSatModel) {
+  model.loadSatellites()
   model.refreshSatellites()
   Row {
     Box(
@@ -59,13 +60,6 @@ fun MapUI(model: SevenSatModel) {
             }
           }
         })
-      Button(onClick = { model.loadSatellites() }) {
-        Text(text = "Load satellites")
-      }
-//      Button(onClick = {
-//      }) {
-//        Text(text = "select satellite")
-//      }
     }
   }
 
