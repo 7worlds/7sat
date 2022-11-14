@@ -11,8 +11,9 @@ import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
+import fhnw.ws6c.sevensat.model.satellite.Satellite
 
-fun MapView.addSatellite(satPosition: SatPos, context: Context) {
+fun MapView.addSatellite(satPosition: SatPos, context: Context, onClick: (satellite: Satellite) -> Unit) {
   // Create an instance of the Annotation API and get the PointAnnotationManager.
   AppCompatResources.getDrawable(context, R.drawable.sat)?.toBitMap()?.let {
 
@@ -28,8 +29,9 @@ fun MapView.addSatellite(satPosition: SatPos, context: Context) {
       .withIconImage(it)
       .withIconSize(.5)
       .withIconRotate(90.0)
+
     // Add the resulting pointAnnotation to the map.
-    pointAnnotationManager.create(pointAnnotationOptions)
+    val test = pointAnnotationManager.create(pointAnnotationOptions).point
   }
 
 }

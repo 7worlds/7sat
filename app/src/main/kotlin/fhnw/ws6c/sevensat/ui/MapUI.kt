@@ -36,11 +36,12 @@ fun MapUI(model: SevenSatModel) {
         modifier = Modifier,
         update = { mapView ->
           model.satellitesMap.values.forEach { satPos ->
-            mapView.addSatellite(satPos, localContext)
+            mapView.addSatellite(satPos, localContext){ satellite ->
+            }
             println("lat: ${satPos.latDeg()}, long: ${satPos.longDeg() - 360}")
           }
           model.clickedSatelliteRoute.forEach {
-            mapView.addSatellite(it, localContext)
+            mapView.addSatellite(it, localContext){}
           }
         },
         factory = { context ->
