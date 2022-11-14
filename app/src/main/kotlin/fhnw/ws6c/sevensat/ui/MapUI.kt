@@ -38,7 +38,9 @@ fun MapUI(model: SevenSatModel, scaffoldState: BottomSheetScaffoldState, scope: 
         modifier = Modifier,
         update = { mapView ->
           model.satellitesMap.values.forEach { satPos ->
-            mapView.addSatellite(satPos, localContext){ satellite -> model.selectedSatellite = satellite; scope.launch {scaffoldState.bottomSheetState.expand()}
+            mapView.addSatellite(satPos, localContext){ satellite ->
+             model.selectedSatellites.add(satellite);
+             scope.launch {scaffoldState.bottomSheetState.expand()}
             }
             println("lat: ${satPos.latDeg()}, long: ${satPos.longDeg() - 360}")
           }

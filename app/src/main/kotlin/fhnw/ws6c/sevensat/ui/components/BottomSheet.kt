@@ -31,7 +31,7 @@ fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, 
     .fillMaxWidth()) {
     Row (modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceBetween,){
-      Text(text = model.selectedSatellite.name, style = MaterialTheme.typography.h1)
+      Text(text = model.selectedSatellites.elementAt(0).name, style = MaterialTheme.typography.h1)
       IconButtonSat(onClick =  {
         scope.launch {
           if (scaffoldState.bottomSheetState.isCollapsed) {
