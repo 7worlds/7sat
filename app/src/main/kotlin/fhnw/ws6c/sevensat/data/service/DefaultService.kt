@@ -11,16 +11,16 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DefaultService : Service {
+class DefaultService<T> : Service<T> {
 
-  override fun loadRemoteData(call: ApiCallable) {
+  override fun loadRemoteData(call: ApiCallable<T>) {
 
     var data = ""
     when (call) {
       is TleCall      -> data = tleDefaultData()
       is PositionCall -> data = positionDefaultData()
     }
-    call.setResponse(JSONObject(data))
+    call.setResponse(data)
   }
 
   fun tleDefaultData(): String {
