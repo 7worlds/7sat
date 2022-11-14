@@ -19,18 +19,19 @@ import kotlinx.coroutines.launch
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import fhnw.ws6c.sevensat.model.SevenSatModel
 import fhnw.ws6c.sevensat.ui.components.YoutubePlayer
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model:SevenSatModel) {
   val image: Painter = painterResource(id = R.drawable.iss)
   Column (modifier = Modifier
     .padding(20.dp)
     .fillMaxWidth()) {
     Row (modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceBetween,){
-      Text(text = "International Space Station (ISS)", style = MaterialTheme.typography.h1)
+      Text(text = model.selectedSatellite.name, style = MaterialTheme.typography.h1)
       IconButtonSat(onClick =  {
         scope.launch {
           if (scaffoldState.bottomSheetState.isCollapsed) {

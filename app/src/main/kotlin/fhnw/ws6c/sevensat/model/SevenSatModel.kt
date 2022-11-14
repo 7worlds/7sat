@@ -3,6 +3,7 @@ package fhnw.ws6c.sevensat.model
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions.Companion.default
 import fhnw.ws6c.sevensat.data.n2yo.PositionCall
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
@@ -17,10 +18,16 @@ import org.json.JSONObject
 import java.util.*
 
 class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Service<String>) {
+
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())
   val satellitesMap = mutableStateMapOf<Satellite, SatPos>()
+
+  var selectedSatellite by mutableStateOf<Satellite>(
+    SatelliteBuilder()
+    .withDescription("bitte wählen")
+    .build());
 
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 

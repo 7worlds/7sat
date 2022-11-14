@@ -1,10 +1,12 @@
 package fhnw.ws6c.sevensat.util.extensions
 
 import android.content.Context
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
@@ -19,6 +21,13 @@ fun MapView.addSatellite(satPosition: SatPos, context: Context, onClick: (satell
 
     val pointAnnotationManager = this.annotations.createPointAnnotationManager()
     pointAnnotationManager.deleteAll()
+
+    pointAnnotationManager.apply {
+      addClickListener(
+        OnPointAnnotationClickListener { onClick; false
+        }
+      )
+    }
     // Set options for the resulting symbol layer.
     val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
     // Define a geographic coordinate.

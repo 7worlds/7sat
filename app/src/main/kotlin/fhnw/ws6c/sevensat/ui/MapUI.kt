@@ -4,8 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,10 +18,13 @@ import com.mapbox.maps.dsl.cameraOptions
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.util.extensions.addSatellite
 import fhnw.ws6c.sevensat.model.SevenSatModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapUI(model: SevenSatModel) {
+fun MapUI(model: SevenSatModel, scaffoldState: BottomSheetScaffoldState, scope: CoroutineScope) {
   model.refreshSatellites()
   Row {
     Box(
@@ -36,7 +38,7 @@ fun MapUI(model: SevenSatModel) {
         modifier = Modifier,
         update = { mapView ->
           model.satellitesMap.values.forEach { satPos ->
-            mapView.addSatellite(satPos, localContext){ satellite ->
+            mapView.addSatellite(satPos, localContext){ satellite -> model.selectedSatellite = satellite; scope.launch {scaffoldState.bottomSheetState.expand()}
             }
             println("lat: ${satPos.latDeg()}, long: ${satPos.longDeg() - 360}")
           }

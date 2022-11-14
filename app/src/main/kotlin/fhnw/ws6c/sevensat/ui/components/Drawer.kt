@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-public fun Drawer(model: SevenSatApp, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+public fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   val checkedState = remember { mutableStateOf(false) }
   with(model) {
     Column(modifier = Modifier

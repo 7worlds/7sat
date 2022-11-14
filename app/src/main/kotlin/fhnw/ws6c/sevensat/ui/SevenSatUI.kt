@@ -26,7 +26,7 @@ import org.json.JSONObject
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SevenSatUI(model: SevenSatApp, activity: ComponentActivity) {
+fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
   val scaffoldState = rememberBottomSheetScaffoldState(
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
   )
@@ -54,7 +54,7 @@ fun SevenSatUI(model: SevenSatApp, activity: ComponentActivity) {
           Icon(Icons.Filled.FilterList, "Filterbutton")
         }
       },
-      sheetContent = { BottomSheet(scope, scaffoldState) },
+      sheetContent = { BottomSheet(scope, scaffoldState, model) },
       sheetGesturesEnabled = true,
       sheetContentColor = MaterialTheme.colors.secondary,
       sheetBackgroundColor = MaterialTheme.colors.background,
@@ -67,10 +67,8 @@ fun SevenSatUI(model: SevenSatApp, activity: ComponentActivity) {
           Column(
             modifier = Modifier.padding(it)
           ) {
-            val jsonService = SatelliteService<JSONObject>()
-            val stringService = SatelliteService<String>()
-            val model = SevenSatModel(jsonService, stringService)
-            MapUI(model)
+
+            MapUI(model, scaffoldState, scope)
           }
 
           Column(modifier = Modifier.padding(10.dp, 30.dp)) {
