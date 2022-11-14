@@ -1,4 +1,4 @@
-package fhnw.ws6c.sevensat.model
+package fhnw.ws6c.sevensat.model.orbitaldata
 
 import kotlin.math.*
 

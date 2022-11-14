@@ -1,9 +1,9 @@
-package fhnw.ws6c.sevensat.orbital
+package fhnw.ws6c.sevensat.util.tle
 
-import fhnw.ws6c.sevensat.model.DeepSpaceOrbitalData
-import fhnw.ws6c.sevensat.model.MIN_PER_DAY
-import fhnw.ws6c.sevensat.model.NearEarthOrbitalData
-import fhnw.ws6c.sevensat.model.OrbitalData
+import fhnw.ws6c.sevensat.model.orbitaldata.DeepSpaceOrbitalData
+import fhnw.ws6c.sevensat.model.orbitaldata.MIN_PER_DAY
+import fhnw.ws6c.sevensat.model.orbitaldata.NearEarthOrbitalData
+import fhnw.ws6c.sevensat.model.orbitaldata.OrbitalData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.InputStream

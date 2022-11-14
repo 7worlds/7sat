@@ -1,4 +1,4 @@
-package fhnw.ws6c.sevensat.ext
+package fhnw.ws6c.sevensat.util.extensions
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

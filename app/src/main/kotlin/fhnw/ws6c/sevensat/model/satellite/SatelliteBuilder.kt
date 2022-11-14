@@ -1,7 +1,7 @@
 package fhnw.ws6c.sevensat.model.satellite
 
-import fhnw.ws6c.sevensat.model.OrbitalData
-import fhnw.ws6c.sevensat.orbital.TLEParser
+import fhnw.ws6c.sevensat.model.orbitaldata.OrbitalData
+import fhnw.ws6c.sevensat.util.tle.TLEParser
 import org.json.JSONObject
 import java.util.*
 
@@ -22,6 +22,10 @@ class SatelliteBuilder {
     val tleLines = jsonObject.getString("tle").split("\n")
     tleLine1  = tleLines[0].dropLast(1) // remove "\r" at the end of the string
     tleLine2  = tleLines[1]
+
+    val tleParser = TLEParser()
+    // TODO: what todo if tle is empty or invalid?
+    orbitalData = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
     return this
   }
 
@@ -44,11 +48,8 @@ class SatelliteBuilder {
   }
 
   fun build() : Satellite {
-      val tleParser = TLEParser()
-      // TODO: what todo if tle is empty or invalid?
-      orbitalData = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
 
-      tleParser.parseSingleTLE(name, tleLine1, tleLine2)
+//      tleParser.parseSingleTLE(name, tleLine1, tleLine2)
       return Satellite(this)
   }
 }

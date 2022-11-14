@@ -1,5 +1,6 @@
-package fhnw.ws6c.sevensat.model
+package fhnw.ws6c.sevensat.model.orbitaldata
 
+import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import kotlin.math.*
 
 data class SatPos(
@@ -17,6 +18,10 @@ data class SatPos(
     var eclipsed: Boolean = false,
     var aboveHorizon: Boolean = false
 ) {
+
+    fun latDeg(): Double = latitude.toDegrees()
+    fun longDeg(): Double = longitude.toDegrees()
+
 
     fun getDownlinkFreq(freq: Long): Long {
         return (freq.toDouble() * (SPEED_OF_LIGHT - distanceRate * 1000.0) / SPEED_OF_LIGHT).toLong()

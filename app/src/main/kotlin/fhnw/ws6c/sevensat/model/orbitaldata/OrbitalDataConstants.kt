@@ -1,4 +1,4 @@
-package fhnw.ws6c.sevensat.model
+package fhnw.ws6c.sevensat.model.orbitaldata
 
 const val ASTRONOMICAL_UNIT = 1.49597870691E8
 const val DEG2RAD = 0.017453292519943295
