@@ -16,9 +16,11 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.util.extensions.addSatellite
 import fhnw.ws6c.sevensat.model.SevenSatModel
+import fhnw.ws6c.sevensat.util.extensions.addFlightLine
 
 
 @Composable
@@ -38,11 +40,8 @@ fun MapUI(model: SevenSatModel) {
           model.satellitesMap.values.forEach { satPos ->
             mapView.addSatellite(satPos, localContext){ satellite ->
             }
-            println("lat: ${satPos.latDeg()}, long: ${satPos.longDeg() - 360}")
           }
-          model.clickedSatelliteRoute.forEach {
-            mapView.addSatellite(it, localContext){}
-          }
+//          mapView.addFlightLine(model.clickedSatelliteRoute, localContext)
         },
         factory = { context ->
           ResourceOptionsManager.getDefault(
@@ -62,6 +61,10 @@ fun MapUI(model: SevenSatModel) {
         })
       Button(onClick = { model.loadSatellites() }) {
         Text(text = "Load satellites")
+      }
+      Button(onClick = {
+      }) {
+        Text(text = "select satellite")
       }
     }
   }

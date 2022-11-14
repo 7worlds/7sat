@@ -22,6 +22,7 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
   val mainHandler = Handler(Looper.getMainLooper())
   val satellitesMap = mutableStateMapOf<Satellite, SatPos>()
 
+
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 
   fun refreshSatellites() {
