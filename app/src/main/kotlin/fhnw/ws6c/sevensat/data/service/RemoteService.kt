@@ -9,7 +9,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-class SatelliteService<T> : Service<T> {
+abstract class RemoteService<T> : Service<T> {
 
   override fun loadRemoteData (call: ApiCallable<T>) {
 
@@ -17,12 +17,9 @@ class SatelliteService<T> : Service<T> {
       val url = URL(call.getTargetUrl())
       val connection = url.openConnection() as HttpURLConnection
       connection.connect()
-
       try {
-        val reader = BufferedReader(InputStreamReader(connection.inputStream))
-        val jsonString = reader.readText()
-        call.setResponse(jsonString)
-        reader.close()
+        val answer = collectingStrategy(connection)
+        call.setResponse(answer)
       } catch (jsonError: JSONException) {
         call.setError(jsonError)
       }
@@ -31,4 +28,11 @@ class SatelliteService<T> : Service<T> {
       call.setError(ioError)
     }
   }
+
+//  override fun collectingStrategy(connection: HttpURLConnection): T {
+//    val reader = BufferedReader(InputStreamReader(connection.inputStream))
+//    val result = reader.readText()
+//    reader.close()
+//    return result
+//  }
 }
