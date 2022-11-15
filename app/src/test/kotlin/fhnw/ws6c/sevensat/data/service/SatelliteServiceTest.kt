@@ -1,10 +1,10 @@
 package fhnw.ws6c.sevensat.data.service
 
 import fhnw.ws6c.sevensat.data.ApiCallable
+import fhnw.ws6c.sevensat.data.celestrak.TleCall
 import fhnw.ws6c.sevensat.data.n2yo.n2yoApiKey
 import fhnw.ws6c.sevensat.data.n2yo.n2yoBaseURL
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
+import junit.framework.Assert.*
 import org.json.JSONException
 import org.json.JSONObject
 import org.junit.Test
@@ -29,8 +29,8 @@ class SatelliteServiceTest {
         return jsonResponse
       }
 
-      override fun setResponse(response: String) {
-        jsonResponse = JSONObject(response)
+      override fun setResponse(response: JSONObject) {
+        jsonResponse = response
         responseAction(jsonResponse!!)
       }
 
@@ -47,7 +47,7 @@ class SatelliteServiceTest {
   fun simpleRequestTest() {
 
     //given
-    val service = SatelliteService<JSONObject>()
+    val service = ApiService()
     val call = createRequestObject ({ "/tle/25544/" }, {} )
 
     //when
@@ -63,7 +63,7 @@ class SatelliteServiceTest {
   fun callThrowsJSONExceptionTest() {
 
     //given
-    val service = SatelliteService<JSONObject>()
+    val service = ApiService()
     val call = createRequestObject({ "/tobias/bräm/" }, {})
 
     //when
@@ -79,7 +79,7 @@ class SatelliteServiceTest {
 
     //given
     val errorMessage = "Something went wrong"
-    val service = SatelliteService<JSONObject>()
+    val service = ApiService()
     val call = createRequestObject({ "/tle/25544/" }, { throw IOException(errorMessage) })
 
     //when
@@ -89,5 +89,20 @@ class SatelliteServiceTest {
     assertTrue(call.hasError())
     assertTrue(call.getError() is IOException)
     assertEquals(call.getError()?.message, errorMessage)
+  }
+
+  @Test
+  fun tleServiceTest() {
+    //given
+    val service = TleService()
+    val tleCall = TleCall()
+
+    //when
+    service.loadRemoteData(tleCall)
+
+    //then
+    val result = tleCall.getResponse()
+    assertFalse(result!!.isEmpty())
+    assertEquals(result[25544]!!.first.trim(), "ISS (ZARYA)".trim())
   }
 }

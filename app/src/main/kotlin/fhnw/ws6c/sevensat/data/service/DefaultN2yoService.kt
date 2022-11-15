@@ -3,24 +3,19 @@ package fhnw.ws6c.sevensat.data.service
 import fhnw.ws6c.sevensat.data.ApiCallable
 import fhnw.ws6c.sevensat.data.n2yo.PositionCall
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 import java.net.HttpURLConnection
-import java.net.URL
 
-class DefaultService<T> : Service<T> {
+class DefaultN2yoService : Service<JSONObject> {
 
-  override fun loadRemoteData(call: ApiCallable<T>) {
+  override fun loadRemoteData(call: ApiCallable<JSONObject>) {
 
     var data = ""
     when (call) {
       is TleCall      -> data = tleDefaultData()
       is PositionCall -> data = positionDefaultData()
     }
-    call.setResponse(data)
+    call.setResponse(JSONObject(data))
   }
 
   fun tleDefaultData(): String {
@@ -59,6 +54,10 @@ class DefaultService<T> : Service<T> {
         ]
       }
     """.trimIndent()
+  }
+
+  override fun collectingStrategy(connection: HttpURLConnection): JSONObject {
+    TODO("Not yet implemented")
   }
 
 
