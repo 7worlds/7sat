@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
@@ -33,31 +32,48 @@ fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaff
         .background(Color.Black)
         .fillMaxSize()
     ) {
-      AndroidView(
-        modifier = Modifier,
-        update = {
-          model.satellitesMap.forEach { satellite ->
-            mapModel.addSatellite(satellite.key, satellite.value)
-          }
-          mapModel.addFlightLine(model.clickedSatelliteRoute)
-        },
-        factory = { context ->
-          ResourceOptionsManager.getDefault(context, context.getString(R.string.mapbox_access_token))
-          val map = mapModel.getMapView()
-          mapModel.onSatellitePointClick { norad -> onSatelliteClick(model, norad, scope, scaffoldState) }
-          map.apply {
-            getMapboxMap().loadStyleUri(
-              Style.DARK
-            ) {
-              cameraOptions {
-                zoom(19.0)
-              }
-            }
-          }
-        })
+      MapView(model, mapModel, scope, scaffoldState)
     }
   }
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun MapView(
+  model: SevenSatModel,
+  mapModel: MapModel,
+  scope: CoroutineScope,
+  scaffoldState: BottomSheetScaffoldState
+) {
+  AndroidView(
+    modifier = Modifier,
+    update = {
+      model.satellitesMap.forEach { satellite ->
+        mapModel.addSatellite(satellite.key, satellite.value)
+      }
+      mapModel.addFlightLine(model.clickedSatelliteRoute)
+    },
+    factory = { context ->
+      ResourceOptionsManager.getDefault(context, context.getString(R.string.mapbox_access_token))
+      val map = mapModel.getMapView()
+      mapModel.onSatellitePointClick { norad ->
+        onSatelliteClick(
+          model,
+          norad,
+          scope,
+          scaffoldState
+        )
+      }
+      map.apply {
+        getMapboxMap().loadStyleUri(
+          Style.DARK
+        ) {
+          cameraOptions {
+            zoom(19.0)
+          }
+        }
+      }
+    })
 }
 
 @OptIn(ExperimentalMaterialApi::class)

@@ -39,7 +39,6 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
       sheetPeekHeight = 0.dp,
       sheetShape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp),
       content = {
-
         Box(modifier = Modifier.padding(3.dp)) {
           Column(
             modifier = Modifier.padding(it)
