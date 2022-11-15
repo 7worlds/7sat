@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import fhnw.ws6c.sevensat.SevenSatApp
-import fhnw.ws6c.sevensat.data.service.DefaultService
 import fhnw.ws6c.sevensat.data.service.SatelliteService
+import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
 import org.json.JSONObject
 
@@ -20,7 +20,8 @@ fun AppUI(app : SevenSatApp, activity: ComponentActivity){
   ){
       val jsonService = SatelliteService<JSONObject>()
       val stringService = SatelliteService<String>()
-      val model = SevenSatModel(jsonService, stringService)
-      MapUI(model)
+      val sevenSatModel = SevenSatModel(jsonService, stringService)
+      val mapModel = MapModel(activity)
+      MapUI(sevenSatModel, mapModel)
   }
 }
