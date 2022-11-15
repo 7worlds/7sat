@@ -25,58 +25,73 @@ import fhnw.ws6c.sevensat.ui.components.YoutubePlayer
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model:SevenSatModel) {
+fun BottomSheet(
+  scope: CoroutineScope,
+  scaffoldState: BottomSheetScaffoldState,
+  model: SevenSatModel
+) {
   val image: Painter = painterResource(id = R.drawable.iss)
-  Column (modifier = Modifier
-    .padding(20.dp)
-    .fillMaxWidth()) {
-    Row (modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,){
-      if (model.selectedSatellites.isNotEmpty()){
-      Text(text = model.selectedSatellites.get(0).name, style = MaterialTheme.typography.h1)
-      }
-
-
-        IconButtonSat(onClick =  {
-          scope.launch {
-            if (scaffoldState.bottomSheetState.isCollapsed) {
-              scaffoldState.bottomSheetState.expand()
-            } else {
-              scaffoldState.bottomSheetState.collapse()
-            }
+  Column(
+    modifier = Modifier
+      .padding(20.dp)
+      .fillMaxWidth()
+  ) {
+      if (model.selectedSatellites.isNotEmpty()) {
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+    )
+    {
+        Text(
+          text = model.selectedSatellites[0].name,
+          style = MaterialTheme.typography.h1
+        )
+      IconButtonSat(
+        onClick = {
+        scope.launch {
+          if (scaffoldState.bottomSheetState.isCollapsed) {
+            scaffoldState.bottomSheetState.expand()
+          } else {
+            scaffoldState.bottomSheetState.collapse()
           }
-        }) {
-          Icon(
-            Icons.Filled.Close,
-            "close",
-            tint = MaterialTheme.colors.secondary
-          )
-
         }
-      }
-    }
-    Spacer(modifier = Modifier.height(20.dp))
-    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
-      Column {
-        Text(text = "Position", style = MaterialTheme.typography.h2)
-        Text(text = "lat: 23436456i34834593", style = MaterialTheme.typography.body1)
-        Text(text = "long: 83745983274598235", style = MaterialTheme.typography.body1)
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(text = "Höhe", style = MaterialTheme.typography.h2)
-        Text(text = "418km", style = MaterialTheme.typography.body1)
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(text = "Sichtbarkeit", style = MaterialTheme.typography.h2)
-        Text(text = "Ja", style = MaterialTheme.typography.body1)
-
+      })
+    {
+        Icon(
+          Icons.Filled.Close,
+          "close",
+          tint = MaterialTheme.colors.secondary
+        )
 
       }
-      Image(painter = image, contentDescription = "Bild", modifier = Modifier.width(150.dp))
+      }
+  Spacer(modifier = Modifier.height(20.dp))
+  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Column (modifier = Modifier.width(150.dp)){
+      Text(text = "Position", style = MaterialTheme.typography.h2)
+      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.latDeg().toString(), style = MaterialTheme.typography.body1)
+      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.longDeg().toString(), style = MaterialTheme.typography.body1)
+      Spacer(modifier = Modifier.height(20.dp))
+
+      Text(text = "Höhe", style = MaterialTheme.typography.h2)
+      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.latitude.toString(), style = MaterialTheme.typography.body1)
+      Spacer(modifier = Modifier.height(20.dp))
+
+      Text(text = "NoradID", style = MaterialTheme.typography.h2)
+      Text(text = model.selectedSatellites[0].noradId.toString(), style = MaterialTheme.typography.body1)
+
+
     }
-    Spacer(modifier = Modifier.height(20.dp))
-    Text(text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", style = MaterialTheme.typography.body1)
-    Spacer(modifier = Modifier.height(20.dp))
-    YoutubePlayer(key = "86YLFOog4GM")
-    
+    Image(painter = image, contentDescription = "Bild", modifier = Modifier.width(150.dp))
   }
+  Spacer(modifier = Modifier.height(20.dp))
+  Text(
+    text = model.selectedSatellites[0].description,
+    style = MaterialTheme.typography.body1
+  )
+  Spacer(modifier = Modifier.height(20.dp))
+  YoutubePlayer(key = "86YLFOog4GM")
+  }
+    }
+
+}

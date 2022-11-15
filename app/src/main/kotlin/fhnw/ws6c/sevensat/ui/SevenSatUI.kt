@@ -29,10 +29,10 @@ import org.json.JSONObject
 @Composable
 fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
   val mapModel = MapModel(activity)
+  val scope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState(
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
   )
-  val scope = rememberCoroutineScope()
 
   SevenSatTheme {
     BottomSheetScaffold(
@@ -57,24 +57,24 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
             MapUI(model, mapModel,scope, scaffoldState)
           }
 
-          Column(modifier = Modifier.padding(10.dp, 30.dp)) {
-            IconButtonSat(
-              onClick = {
-                scope.launch {
-                  scaffoldState.drawerState.apply {
-                    if (isClosed) open() else close()
-                  }
-                }
-              },
-              icon = {
-                Icon(
-                  Icons.Filled.FilterAlt,
-                  "Filterbutton",
-                  tint = MaterialTheme.colors.secondary
-                )
-              }
-            )
-          }
+//          Column(modifier = Modifier.padding(10.dp, 30.dp)) {
+//            IconButtonSat(
+//              onClick = {
+//                scope.launch {
+//                  scaffoldState.drawerState.apply {
+//                    if (isClosed) open() else close()
+//                  }
+//                }
+//              },
+//              icon = {
+//                Icon(
+//                  Icons.Filled.FilterAlt,
+//                  "Filterbutton",
+//                  tint = MaterialTheme.colors.secondary
+//                )
+//              }
+//            )
+//          }
         }
       }
     )

@@ -11,13 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.plugin.animation.flyTo
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
+import fhnw.ws6c.sevensat.model.satellite.Satellite
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -25,7 +29,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
-  model.loadSatellites()
+  model.loadSatellites(mapModel.getMapView())
   model.refreshSatellites()
   Row {
     Box(
@@ -42,6 +46,8 @@ fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaff
             mapModel.addSatellite(satellite.key, satellite.value)
           }
           mapModel.addFlightLine(model.clickedSatelliteRoute)
+          //val sat = model.satellitesMap.iterator().next().key
+
         },
         factory = { context ->
           ResourceOptionsManager.getDefault(context, context.getString(R.string.mapbox_access_token))

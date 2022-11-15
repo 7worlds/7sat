@@ -3,6 +3,10 @@ package fhnw.ws6c.sevensat.model
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
+import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
+import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.plugin.animation.flyTo
 import fhnw.ws6c.sevensat.data.n2yo.PositionCall
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
@@ -36,7 +40,7 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
     })
   }
 
-  fun loadSatellites() {
+  fun loadSatellites(mapView: MapView) {
     val tleCall = TleCall(25544)
     val pos = PositionCall(25544, -1, -1, -1)
     modelScope.launch {
@@ -44,7 +48,13 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
       val sat = SatelliteBuilder()
         .withTleJsonData(tleCall.getResponse()!!).build()
       satellitesMap[sat] = sat.getPosition(Date().time)
+//     mapView.apply {
+//        getMapboxMap().flyTo(cameraOptions{
+//          center(Point.fromLngLat(satellitesMap[sat]!!.longDeg(), satellitesMap[sat]!!.latDeg(),))
+//        } )
+//      }
       calculateISSLine()
+
     }
   }
 
