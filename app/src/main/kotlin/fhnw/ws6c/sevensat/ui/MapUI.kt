@@ -16,7 +16,7 @@ import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
 import fhnw.ws6c.R
-import fhnw.ws6c.sevensat.util.extensions.addSatellite
+import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapUI(model: SevenSatModel, scaffoldState: BottomSheetScaffoldState, scope: CoroutineScope) {
+fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+  model.loadSatellites()
   model.refreshSatellites()
   Row {
     Box(
@@ -37,23 +38,15 @@ fun MapUI(model: SevenSatModel, scaffoldState: BottomSheetScaffoldState, scope: 
       AndroidView(
         modifier = Modifier,
         update = { mapView ->
-          model.satellitesMap.values.forEach { satPos ->
-            mapView.addSatellite(satPos, localContext){ satellite ->
-             model.selectedSatellites.add(satellite);
-             scope.launch {scaffoldState.bottomSheetState.expand()}
-            }
-            println("lat: ${satPos.latDeg()}, long: ${satPos.longDeg() - 360}")
+          model.satellitesMap.forEach { satellite ->
+            mapModel.addSatellite(satellite.key, satellite.value)
           }
-          model.clickedSatelliteRoute.forEach {
-            mapView.addSatellite(it, localContext){}
-          }
+          mapModel.addFlightLine(model.clickedSatelliteRoute)
         },
         factory = { context ->
-          ResourceOptionsManager.getDefault(
-            context,
-            context.getString(R.string.mapbox_access_token)
-          )
-          val map = MapView(context)
+          ResourceOptionsManager.getDefault(context, context.getString(R.string.mapbox_access_token))
+          val map = mapModel.getMapView()
+          mapModel.onSatellitePointClick { norad -> onSatelliteClick(model, norad, scope, scaffoldState) }
           map.apply {
             getMapboxMap().loadStyleUri(
               Style.DARK
@@ -64,10 +57,18 @@ fun MapUI(model: SevenSatModel, scaffoldState: BottomSheetScaffoldState, scope: 
             }
           }
         })
-      Button(onClick = { model.loadSatellites() }) {
-        Text(text = "Load satellites")
-      }
     }
   }
 
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+fun onSatelliteClick(model: SevenSatModel, clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+  val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
+  if (found.isNotEmpty()) {
+    val sat = found.entries.iterator().next().key
+    model.selectedSatellites.add(sat);
+    scope.launch {scaffoldState.bottomSheetState.expand()}
+  }
+  println(clickedSatelliteNorad)
 }

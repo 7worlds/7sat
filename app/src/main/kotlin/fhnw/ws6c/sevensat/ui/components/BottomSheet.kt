@@ -32,8 +32,8 @@ fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, 
     .fillMaxWidth()) {
     Row (modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceBetween,){
-      if (model.selectedSatellites.isEmpty()){
-      Text(text ="Bitte wählen")
+      if (model.selectedSatellites.isNotEmpty()){
+      Text(text = model.selectedSatellites.get(0).name, style = MaterialTheme.typography.h1)
       }
 
 

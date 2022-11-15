@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fhnw.ws6c.sevensat.SevenSatApp
 import fhnw.ws6c.sevensat.data.service.SatelliteService
+import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
 import fhnw.ws6c.sevensat.ui.components.Drawer
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
@@ -27,6 +28,7 @@ import org.json.JSONObject
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
+  val mapModel = MapModel(activity)
   val scaffoldState = rememberBottomSheetScaffoldState(
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
   )
@@ -38,23 +40,7 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
       drawerContent = { Drawer(model, scope, scaffoldState) },
       drawerBackgroundColor = MaterialTheme.colors.background,
       drawerGesturesEnabled = false,
-      floatingActionButtonPosition = FabPosition.Center,
-      floatingActionButton = {
-        FloatingActionButton(
-          backgroundColor = MaterialTheme.colors.primary,
-          onClick = {
-            scope.launch {
-              if (scaffoldState.bottomSheetState.isCollapsed) {
-                scaffoldState.bottomSheetState.expand()
-              } else {
-                scaffoldState.bottomSheetState.collapse()
-              }
-            }
-          }) {
-          Icon(Icons.Filled.FilterList, "Filterbutton")
-        }
-      },
-      sheetContent = { BottomSheet(scope, scaffoldState, model) },
+           sheetContent = { BottomSheet(scope, scaffoldState, model) },
       sheetGesturesEnabled = true,
       sheetContentColor = MaterialTheme.colors.secondary,
       sheetBackgroundColor = MaterialTheme.colors.background,
@@ -68,7 +54,7 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
             modifier = Modifier.padding(it)
           ) {
 
-            MapUI(model, scaffoldState, scope)
+            MapUI(model, mapModel,scope, scaffoldState)
           }
 
           Column(modifier = Modifier.padding(10.dp, 30.dp)) {
