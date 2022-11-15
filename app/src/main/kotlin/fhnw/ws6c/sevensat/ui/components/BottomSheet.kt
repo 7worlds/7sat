@@ -74,13 +74,11 @@ fun BottomSheet(
       Spacer(modifier = Modifier.height(20.dp))
 
       Text(text = "Höhe", style = MaterialTheme.typography.h2)
-      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.latitude.toString(), style = MaterialTheme.typography.body1)
+      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.altitude.toString(), style = MaterialTheme.typography.body1)
       Spacer(modifier = Modifier.height(20.dp))
 
       Text(text = "NoradID", style = MaterialTheme.typography.h2)
       Text(text = model.selectedSatellites[0].noradId.toString(), style = MaterialTheme.typography.body1)
-
-
     }
     Image(painter = image, contentDescription = "Bild", modifier = Modifier.width(150.dp))
   }
