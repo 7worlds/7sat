@@ -1,23 +1,22 @@
 package fhnw.ws6c.sevensat.data.celestrak
 
 import fhnw.ws6c.sevensat.data.ApiCallable
-import org.json.JSONObject
 
 const val celestrakBaseURL = "https://celestrak.org/NORAD/elements/gp.php"
 
 
-class TleCall: ApiCallable<String> {
-  var stringResponse: String?   = null
+class TleCall: ApiCallable<Map<Long, Triple<String, String, String>>> {
+  var mapResponse: Map<Long, Triple<String, String, String>>?   = null
   var exception:    Exception?    = null
 
   override fun getTargetUrl(): String = "$celestrakBaseURL?GROUP=active&FORMAT=tle"
 
-  override fun getResponse(): String? {
-    return stringResponse
+  override fun getResponse(): Map<Long, Triple<String, String, String>>? {
+    return mapResponse
   }
 
-  override fun setResponse(response: String) {
-    stringResponse = response
+  override fun setResponse(response: Map<Long, Triple<String, String, String>>) {
+    mapResponse = response
   }
 
   override fun hasError(): Boolean {

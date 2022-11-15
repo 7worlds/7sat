@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
-class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Service<String>) {
+class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Service<Map<Long, Triple<String, String, String>>>) {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())

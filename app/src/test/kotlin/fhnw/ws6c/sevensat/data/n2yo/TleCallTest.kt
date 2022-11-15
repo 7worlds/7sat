@@ -1,6 +1,6 @@
 package fhnw.ws6c.sevensat.data.n2yo
 
-import fhnw.ws6c.sevensat.data.service.DefaultService
+import fhnw.ws6c.sevensat.data.service.DefaultN2yoService
 import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
 import org.json.JSONObject
@@ -18,7 +18,7 @@ class TleCallTest : N2yoCallTest(){
   fun resultTest() {
     //given
     val call = TleCall(idISS)
-    val service = DefaultService<JSONObject>()
+    val service = DefaultN2yoService()
 
     //when
     service.loadRemoteData(call)
