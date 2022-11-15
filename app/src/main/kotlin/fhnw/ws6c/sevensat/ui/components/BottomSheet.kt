@@ -20,6 +20,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import fhnw.ws6c.sevensat.model.SevenSatModel
+import fhnw.ws6c.sevensat.model.satellite.Satellite
 import fhnw.ws6c.sevensat.ui.components.YoutubePlayer
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -31,22 +32,27 @@ fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, 
     .fillMaxWidth()) {
     Row (modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceBetween,){
-      Text(text = model.selectedSatellites.elementAt(0).name, style = MaterialTheme.typography.h1)
-      IconButtonSat(onClick =  {
-        scope.launch {
-          if (scaffoldState.bottomSheetState.isCollapsed) {
-            scaffoldState.bottomSheetState.expand()
-          } else {
-            scaffoldState.bottomSheetState.collapse()
-          }
-        }
-      }) {
-        Icon(
-          Icons.Filled.Close,
-          "close",
-          tint = MaterialTheme.colors.secondary
-        )
+      if (model.selectedSatellites.isEmpty()){
+      Text(text ="Bitte wählen")
+      }
 
+
+        IconButtonSat(onClick =  {
+          scope.launch {
+            if (scaffoldState.bottomSheetState.isCollapsed) {
+              scaffoldState.bottomSheetState.expand()
+            } else {
+              scaffoldState.bottomSheetState.collapse()
+            }
+          }
+        }) {
+          Icon(
+            Icons.Filled.Close,
+            "close",
+            tint = MaterialTheme.colors.secondary
+          )
+
+        }
       }
     }
     Spacer(modifier = Modifier.height(20.dp))
@@ -74,4 +80,3 @@ fun BottomSheet(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, 
     YoutubePlayer(key = "86YLFOog4GM")
     
   }
-}
