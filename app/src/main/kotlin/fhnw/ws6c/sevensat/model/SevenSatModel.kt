@@ -2,11 +2,9 @@ package fhnw.ws6c.sevensat.model
 
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.runtime.*
-import com.mapbox.geojson.Point
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import com.mapbox.maps.MapView
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.plugin.animation.flyTo
 import fhnw.ws6c.sevensat.data.n2yo.PositionCall
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
@@ -20,7 +18,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
-class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Service<Map<Long, Triple<String, String, String>>>) {
+class SevenSatModel(private val jsonService: Service<JSONObject>, val stringService: Service<Map<Long, Triple<String, String, String>>>) {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())
@@ -42,23 +40,16 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
 
   fun loadSatellites(mapView: MapView) {
     val tleCall = TleCall(25544)
-    val pos = PositionCall(25544, -1, -1, -1)
     modelScope.launch {
       jsonService.loadRemoteData(tleCall);
       val sat = SatelliteBuilder()
         .withTleJsonData(tleCall.getResponse()!!).build()
       satellitesMap[sat] = sat.getPosition(Date().time)
-//     mapView.apply {
-//        getMapboxMap().flyTo(cameraOptions{
-//          center(Point.fromLngLat(satellitesMap[sat]!!.longDeg(), satellitesMap[sat]!!.latDeg(),))
-//        } )
-//      }
       calculateISSLine()
-
     }
   }
 
-  fun calculateISSLine() {
+  private fun calculateISSLine() {
     val iss = satellitesMap.keys.find { it.noradId == 25544L }
     if (iss != null) {
       val calendar = Calendar.getInstance()
@@ -73,6 +64,5 @@ class SevenSatModel(val jsonService: Service<JSONObject>, val stringService: Ser
       println(end-start)
         clickedSatelliteRoute.addAll(points)
     }
-
   }
 }
