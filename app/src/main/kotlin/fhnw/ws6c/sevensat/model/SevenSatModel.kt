@@ -4,8 +4,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
-import fhnw.ws6c.sevensat.data.n2yo.PositionCall
+import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.plugin.animation.flyTo
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -18,7 +20,10 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
-class SevenSatModel(private val jsonService: Service<JSONObject>, val stringService: Service<Map<Long, Triple<String, String, String>>>) {
+class SevenSatModel(
+  private val jsonService: Service<JSONObject>,
+  val stringService: Service<Map<Long, Triple<String, String, String>>>
+) {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())
@@ -47,6 +52,7 @@ class SevenSatModel(private val jsonService: Service<JSONObject>, val stringServ
       satellitesMap[sat] = sat.getPosition(Date().time)
       calculateISSLine()
     }
+
   }
 
   private fun calculateISSLine() {
@@ -61,8 +67,8 @@ class SevenSatModel(private val jsonService: Service<JSONObject>, val stringServ
         points.add(iss.getPosition(calendar.time.time))
       }
       val end = System.currentTimeMillis()
-      println(end-start)
-        clickedSatelliteRoute.addAll(points)
+      println(end - start)
+      clickedSatelliteRoute.addAll(points)
     }
   }
 }
