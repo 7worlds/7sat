@@ -28,11 +28,4 @@ abstract class RemoteService<T> : Service<T> {
       call.setError(ioError)
     }
   }
-
-//  override fun collectingStrategy(connection: HttpURLConnection): T {
-//    val reader = BufferedReader(InputStreamReader(connection.inputStream))
-//    val result = reader.readText()
-//    reader.close()
-//    return result
-//  }
 }

@@ -2,6 +2,7 @@ package fhnw.ws6c.sevensat.data.celestrak
 
 import fhnw.ws6c.sevensat.data.service.DefaultCelestrakService
 import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertTrue
 import org.junit.Test
 
 class TleCallTest {
@@ -33,9 +34,7 @@ class TleCallTest {
       "2 01361  32.1443  51.2440 0011664  45.4888 314.6561  9.89302012 79995"
     )
     assertEquals(result!![900], testTripe1)
-
-    assertEquals( result[902], testTripe2)
-
-    assertEquals( result[1361], testTripe3)
+    assertEquals(result[902],   testTripe2)
+    assertEquals(result[1361],  testTripe3)
   }
 }

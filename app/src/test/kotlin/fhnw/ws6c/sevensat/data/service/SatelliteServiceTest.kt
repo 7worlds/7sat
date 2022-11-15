@@ -4,8 +4,7 @@ import fhnw.ws6c.sevensat.data.ApiCallable
 import fhnw.ws6c.sevensat.data.celestrak.TleCall
 import fhnw.ws6c.sevensat.data.n2yo.n2yoApiKey
 import fhnw.ws6c.sevensat.data.n2yo.n2yoBaseURL
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
+import junit.framework.Assert.*
 import org.json.JSONException
 import org.json.JSONObject
 import org.junit.Test
@@ -102,6 +101,8 @@ class SatelliteServiceTest {
     service.loadRemoteData(tleCall)
 
     //then
-    assertEquals(tleCall.getResponse()!![25544]!!.first.trim(), "ISS (ZARYA)".trim())
+    val result = tleCall.getResponse()
+    assertFalse(result!!.isEmpty())
+    assertEquals(result[25544]!!.first.trim(), "ISS (ZARYA)".trim())
   }
 }
