@@ -1,6 +1,7 @@
 package fhnw.ws6c.sevensat.ui
 
 import BottomSheet
+import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import fhnw.ws6c.sevensat.ui.components.Drawer
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 
 
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
@@ -26,7 +28,7 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
   )
 
-  SevenSatTheme {
+
     BottomSheetScaffold(
       scaffoldState = scaffoldState,
       drawerContent = { Drawer(model, scope, scaffoldState) },
@@ -49,4 +51,3 @@ fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
       }
     )
   }
-}

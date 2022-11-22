@@ -10,7 +10,7 @@ private val Colors = darkColors(
   //Background colors
   primary          = Color(0xFFFED428),
   secondary          = Color(0xFFFFFFFF),
-  background       = Color(0xFF1E1E1E),
+  background       = Color(0xFF1A1F25),
   error            = Color(0xFFCF6679),
 
   secondaryVariant = Color(0xFF666666),
