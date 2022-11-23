@@ -1,31 +1,72 @@
 package fhnw.ws6c.sevensat.model
 
-import android.content.Context
+import android.app.Activity
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import fhnw.ws6c.R
+import fhnw.ws6c.sevensat.data.gps.UserLocationSubject
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
 import fhnw.ws6c.sevensat.util.extensions.toBitMap
+import fhnw.ws6c.sevensat.util.extensions.toDegrees
 
-class MapModel(private val context: Context) {
-  private val mapView: MapView = MapView(context)
-  private var satelliteAnnotationManager = mapView.annotations.createPointAnnotationManager()
-  private var pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
+class MapModel(private val context: Activity) {
+  private val userPositionCallbackKey     = "UserPosition"
+  private val mapView: MapView            = MapView(context)
+  private var satelliteAnnotationManager  = mapView.annotations.createPointAnnotationManager()
+  private var pointAnnotationManager      = mapView.annotations.createPointAnnotationManager()
   // this state must be kept, to remove or replace the listener later.
   private var satellitePointClickListener = OnPointAnnotationClickListener { false }
+  private var userLocationSubject         = UserLocationSubject(context){}
+  private val satellitePoints             = mutableListOf<PointAnnotation>()
+  private var flightLine                  = emptyList<PointAnnotation>()
+  fun getMapView()                        = mapView
+  private var currentUserAnnotation       : PointAnnotation?  = null
 
-  private val satellitePoints = mutableListOf<PointAnnotation>()
-  private var flightLine = emptyList<PointAnnotation>()
-  fun getMapContext() = context
-  fun getMapView() = mapView
+  fun addUserPositionToMap() {
+    userLocationSubject.addLocationObserver(userPositionCallbackKey) { location ->
+      deleteCurrentUserAnnotation()
+      AppCompatResources.getDrawable(context, R.drawable.userposition)?.toBitMap()?.let {
+          // Set options for the resulting symbol layer.
+          val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+            .withPoint(Point.fromLngLat(location.longitude, location.latitude))
+            .withIconImage(it)
+            .withIconColor("White")
+            .withIconSize(.5)
+        currentUserAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
+      }
+    }
+  }
+
+  fun flyToUserPosition() {
+    currentUserAnnotation?.let {
+      val location = it.point
+      val mapAnimationOptions = MapAnimationOptions.Builder().duration(1500L).build()
+      mapView.camera.easeTo(
+        CameraOptions.Builder()
+          // Centers the camera to the lng/lat specified.
+          .center(Point.fromLngLat(location.longitude().toDegrees(), location.latitude().toDegrees()))
+          // specifies the zoom value. Increase or decrease to zoom in or zoom out
+          .zoom(8.0)
+          // specify frame of reference from the center.
+          .padding(EdgeInsets(500.0, 0.0, 0.0, 0.0))
+          .build(),
+        mapAnimationOptions
+      )
+    }
+
+  }
 
   fun onSatellitePointClick(callback: (norad: Long) -> Unit) {
     // first remove old listener
@@ -67,7 +108,6 @@ class MapModel(private val context: Context) {
   }
 
   fun addFlightLine(points: List<SatPos>) {
-
     deleteCurrentMapLine()
     val start = System.currentTimeMillis()
     AppCompatResources.getDrawable(context, R.drawable.point)?.toBitMap()?.let {
@@ -94,4 +134,9 @@ class MapModel(private val context: Context) {
     pointAnnotationManager.delete(flightLine)
     flightLine = emptyList()
   }
+
+  private fun deleteCurrentUserAnnotation() =
+    currentUserAnnotation?.let {
+      pointAnnotationManager.delete(it)
+    }
 }
