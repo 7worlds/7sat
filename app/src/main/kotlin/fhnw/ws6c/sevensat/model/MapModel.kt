@@ -20,6 +20,8 @@ import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
 import fhnw.ws6c.sevensat.util.extensions.toBitMap
 import fhnw.ws6c.sevensat.util.extensions.toDegrees
+import fhnw.ws6c.sevensat.util.linalg.Linalg
+import java.util.*
 
 class MapModel(private val context: Activity) {
   private val userPositionCallbackKey     = "UserPosition"
@@ -84,27 +86,36 @@ class MapModel(private val context: Activity) {
 
   fun addSatellite(
     sat: Satellite,
-    satPosition: SatPos
+    satPosition: SatPos,
   ) {
     // Create an instance of the Annotation API and get the PointAnnotationManager.
-    AppCompatResources.getDrawable(context, R.drawable.sat)?.toBitMap()?.let {
+    AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let {
       this.clearSatellites()
       val data = JsonObject()
       data.addProperty("id", sat.noradId)
       // Set options for the resulting symbol layer.
       val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
         // Define a geographic coordinate.
-        .withPoint(com.mapbox.geojson.Point.fromLngLat(satPosition.longDeg(), satPosition.latDeg()))
+        .withPoint(Point.fromLngLat(satPosition.longDeg(), satPosition.latDeg()))
         .withIconImage(it)
         .withIconColor("White")
         .withIconSize(.5)
-        .withIconRotate(90.0)
+        .withIconRotate(-getSatelliteRotation(sat, satPosition))
         .withData(data)
 
       // Add the resulting pointAnnotation to the map.
       val newSatellitePoint = satelliteAnnotationManager.create(pointAnnotationOptions)
       satellitePoints.add(newSatellitePoint)
     }
+  }
+
+
+  private fun getSatelliteRotation(sat: Satellite, currentPosition: SatPos): Double {
+    val futurePoint = sat.getPosition(Date().time + 10)
+    return Linalg.calculateAngle(
+      Point.fromLngLat(currentPosition.longitude, currentPosition.latitude),
+      Point.fromLngLat(futurePoint.longitude, futurePoint.latitude)
+    )
   }
 
   fun addFlightLine(points: List<SatPos>) {
