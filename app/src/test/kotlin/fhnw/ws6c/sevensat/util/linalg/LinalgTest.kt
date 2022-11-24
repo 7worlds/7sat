@@ -15,7 +15,7 @@ class LinalgTest {
     val angle = Linalg.angleBetweenPoints(p1,p2)
 
     //then
-    assert(angle > 102.5 && angle < 102.6)
+    assert(angle < -102.5 && angle > -102.6)
   }
 
 }
