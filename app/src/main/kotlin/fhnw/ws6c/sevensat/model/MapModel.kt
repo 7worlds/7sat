@@ -100,7 +100,7 @@ class MapModel(private val context: Activity) {
         .withIconImage(it)
         .withIconColor("White")
         .withIconSize(.5)
-        .withIconRotate(-getSatelliteRotation(sat, satPosition))
+        .withIconRotate(getSatelliteRotation(sat, satPosition))
         .withData(data)
 
       // Add the resulting pointAnnotation to the map.
@@ -111,8 +111,8 @@ class MapModel(private val context: Activity) {
 
 
   private fun getSatelliteRotation(sat: Satellite, currentPosition: SatPos): Double {
-    val futurePoint = sat.getPosition(Date().time + 10)
-    return Linalg.calculateAngle(
+    val futurePoint = sat.getPosition(Date().time + 1000)
+    return Linalg.angleBetweenPoints(
       Point.fromLngLat(currentPosition.longitude, currentPosition.latitude),
       Point.fromLngLat(futurePoint.longitude, futurePoint.latitude)
     )

@@ -1,7 +1,6 @@
 package fhnw.ws6c.sevensat.util.linalg
 
 import com.mapbox.geojson.Point
-import fhnw.ws6c.sevensat.data.service.ApiService
 import org.junit.Test
 
 class LinalgTest {
@@ -13,7 +12,7 @@ class LinalgTest {
     val p2 = Point.fromLngLat(1.0, 7.0)
 
     // when
-    val angle = Linalg.calculateAngle(p1,p2)
+    val angle = Linalg.angleBetweenPoints(p1,p2)
 
     //then
     assert(angle > 102.5 && angle < 102.6)
