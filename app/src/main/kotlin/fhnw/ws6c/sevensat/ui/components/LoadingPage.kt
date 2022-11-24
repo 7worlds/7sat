@@ -31,7 +31,6 @@ fun LoadingUI(model: SevenSatModel) {
   )
   var activeText by remember { mutableStateOf(0) };
 
-
   LaunchedEffect(Unit) {
     while( activeText< radioMessages.size-1) {
       activeText +=1;
@@ -56,15 +55,4 @@ fun LoadingUI(model: SevenSatModel) {
     }
   }
 
-}
-
-@Composable
-fun HelloContent(name: String, onNameChange: (String) -> Unit) {
-  Column(modifier = Modifier.padding(16.dp)) {
-    Text(
-      text = "Hello, $name",
-      modifier = Modifier.padding(bottom = 8.dp),
-      style = MaterialTheme.typography.h5
-    )
-  }
 }
