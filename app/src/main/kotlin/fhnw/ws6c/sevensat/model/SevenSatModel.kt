@@ -3,10 +3,7 @@ package fhnw.ws6c.sevensat.model
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
-import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.plugin.animation.flyTo
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -28,7 +25,7 @@ class SevenSatModel(
   val mainHandler = Handler(Looper.getMainLooper())
   val satellitesMap = mutableStateMapOf<Satellite, SatPos>()
   val selectedSatellites = mutableStateListOf<Satellite>()
-  var activescreen by mutableStateOf(Screen.LOADING)
+  var activeScreen by mutableStateOf(Screen.LOADING)
 
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 

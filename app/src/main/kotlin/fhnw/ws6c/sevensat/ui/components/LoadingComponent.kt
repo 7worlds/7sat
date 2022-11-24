@@ -30,7 +30,7 @@ fun Loading() {
   LaunchedEffect(animateFloat) {
     animateFloat.animateTo(
       targetValue = 100f,
-      animationSpec = tween(durationMillis = 1000000, easing = LinearEasing))
+      animationSpec = tween(durationMillis = 2000000, easing = LinearEasing))
   }
 
   var angleInDegrees = (animateFloat.value * 360.0)
@@ -38,55 +38,17 @@ fun Loading() {
   var x = -(radius * sin(Math.toRadians(angleInDegrees))).toFloat()+350f
   var y = (radius * cos(Math.toRadians(angleInDegrees))).toFloat()+350f
 
-  val satImage = ImageBitmap.imageResource(id = R.drawable.satelitt)
-  val worldImage = ImageBitmap.imageResource(id = R.drawable.world)
+  val satImage = ImageBitmap.imageResource(id = R.drawable.satelitt,)
 
-  Row{
-    Canvas(modifier = Modifier.width(300.dp).height(300.dp)){
-
-      drawImage(
-        image = worldImage,
-        topLeft = Offset(180f, 180f))
-
+  Box()
+  {
+    Image(painter = painterResource(id = R.drawable.world), contentDescription = "welt", modifier = Modifier.size(170.dp).align(Alignment.Center))
+    Canvas(modifier = Modifier.width(220.dp).height(250.dp).rotate(angleInDegrees.toFloat() ).align(Alignment.Center)){
       drawImage(
         image = satImage,
-        topLeft = Offset(x, y),
       )
     }
 
     
-  }
-}
-
-
-
-
-@Composable
-fun Sat() {
-  Image(
-    painter = painterResource(id = R.drawable.satelitt),
-    contentDescription = null,
-    modifier = Modifier
-      .rotate(90f)
-      .size(75.dp)
-  )
-}
-
-@Composable
-fun SatPosition(
-  modifier: Modifier,
-  xOffset: Int,
-  item: @Composable () -> Unit
-) {
-  // outer box
-  Box(modifier) {
-    // inner box
-    Box(
-      Modifier
-        .offset(x = xOffset.dp)
-        .align(Alignment.CenterStart)
-    ) {
-      item()
-    }
   }
 }
