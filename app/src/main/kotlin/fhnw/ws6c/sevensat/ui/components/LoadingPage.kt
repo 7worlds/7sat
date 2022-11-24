@@ -25,7 +25,7 @@ fun LoadingUI(model: SevenSatModel) {
       .fillMaxWidth(),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally) {
-      Image(painter = painterResource(id = R.drawable.logo), contentDescription = "welt", modifier = Modifier.height(40.dp))
+      Image(painter = painterResource(id = R.drawable.logo), contentDescription = "welt", modifier = Modifier.size(150.dp))
       Loading()
     }
 
