@@ -2,12 +2,8 @@ package fhnw.ws6c.sevensat.model
 
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
-import com.mapbox.geojson.Point
+import androidx.compose.runtime.*
 import com.mapbox.maps.MapView
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.plugin.animation.flyTo
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -25,10 +21,11 @@ class SevenSatModel(
   val stringService: Service<Map<Long, Triple<String, String, String>>>
 ) {
   private val backgroundJob = SupervisorJob()
-  private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
-  val mainHandler = Handler(Looper.getMainLooper())
-  val satellitesMap = mutableStateMapOf<Satellite, SatPos>()
-  val selectedSatellites = mutableStateListOf<Satellite>()
+  private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)
+  val mainHandler           = Handler(Looper.getMainLooper())
+  val satellitesMap         = mutableStateMapOf<Satellite, SatPos>()
+  val selectedSatellites    = mutableStateListOf<Satellite>()
+  var activeScreen by mutableStateOf(Screen.LOADING)
 
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 
@@ -43,7 +40,7 @@ class SevenSatModel(
     })
   }
 
-  fun loadSatellites(mapView: MapView) {
+  fun loadSatellites() {
     val tleCall = TleCall(25544)
     modelScope.launch {
       jsonService.loadRemoteData(tleCall);

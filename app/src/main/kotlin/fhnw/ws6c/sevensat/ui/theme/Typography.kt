@@ -1,10 +1,11 @@
 package fhnw.ws6c.sevensat.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-
 
 // Set of Material typography styles to start with
 val typography = Typography(
@@ -23,12 +24,17 @@ val typography = Typography(
                 fontWeight    = FontWeight.Black,
                 lineHeight    = 14.sp
         ),
-
+        h6 = TextStyle(
+                fontSize      = 16.sp,
+                fontWeight    = FontWeight.Medium,
+                fontStyle = FontStyle.Italic,
+                lineHeight    = 14.sp,
+                color = Color(0xFFFFFFFF)
+        ),
         body1 = TextStyle(
                 fontSize      = 12.sp,
                 fontWeight    = FontWeight.Normal,
                 lineHeight    = 13.sp,
 
         ),
-
 )

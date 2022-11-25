@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   mapModel.addUserPositionToMap()
-  model.loadSatellites(mapModel.getMapView())
+  model.loadSatellites()
   model.refreshSatellites()
   Row {
     Box(
@@ -82,7 +82,7 @@ fun onSatelliteClick(model: SevenSatModel, clickedSatelliteNorad: Long, scope: C
   val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
     val sat = found.entries.iterator().next().key
-    model.selectedSatellites.add(sat);
+    model.selectedSatellites.add(sat)
     scope.launch {scaffoldState.bottomSheetState.expand()}
   }
   println(clickedSatelliteNorad)
