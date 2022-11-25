@@ -24,16 +24,15 @@ fun LoadingUI(model: SevenSatModel) {
   var radioMessages = arrayListOf(
     "'Loading'",
     "'ISS - can you hear me? - over'",
-    "'Loud an clearly commander - over'",
+    "'Loud and clearly commander - over'",
     "'We are sending you all of our Space data right now.- over'",
     "'Roger that, data is being prepared - over and out'",
-    "---"
   )
   var activeText by remember { mutableStateOf(0) };
 
   LaunchedEffect(Unit) {
     while( activeText< radioMessages.size-1) {
-      activeText +=1;
+      activeText +=1
       delay(5000)
     }
   }

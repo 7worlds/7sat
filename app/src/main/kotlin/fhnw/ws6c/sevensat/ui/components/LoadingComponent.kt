@@ -3,26 +3,22 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fhnw.ws6c.R
-import java.lang.Math.cos
-import java.lang.Math.sin
 
-@Preview
 @Composable
 fun Loading() {
 
@@ -34,9 +30,6 @@ fun Loading() {
   }
 
   var angleInDegrees = (animateFloat.value * 360.0)
-  val radius = 350f
-  var x = -(radius * sin(Math.toRadians(angleInDegrees))).toFloat()+350f
-  var y = (radius * cos(Math.toRadians(angleInDegrees))).toFloat()+350f
 
   val satImage = ImageBitmap.imageResource(id = R.drawable.satelitt,)
 
