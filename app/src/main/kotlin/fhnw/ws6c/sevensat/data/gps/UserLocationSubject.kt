@@ -17,7 +17,7 @@ class UserLocationSubject(
   private val minLocationUpdateFrequencyMs: Long  = 10000,
   private val maxLocationUpdateFrequencyMs: Long  = 5000,
   private val locationUpdatePriority      : Int   = LocationRequest.PRIORITY_HIGH_ACCURACY,
-  onPermissionDenied:   () -> Unit
+  onPermissionDenied: () -> Unit
 ) {
   private val locationCallback        : LocationCallback
   private val onNewLocationCallbacks  = mutableMapOf<String, (location: Location) -> Unit>()
@@ -44,8 +44,7 @@ class UserLocationSubject(
   /**
    * @param onNewLocation do not call this function on location changes anymore.
    */
-  fun removeLocationObserver(key: String) =
-    onNewLocationCallbacks.remove(key)
+  fun removeLocationObserver(key: String) = onNewLocationCallbacks.remove(key)
 
   /**
    * Cancel location updates at all.

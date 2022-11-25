@@ -13,7 +13,7 @@ import fhnw.ws6c.sevensat.ui.SevenSatUI
 
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
-  private val jsonService = ApiService()
+  private val jsonService   = ApiService()
   private val stringService = TleService()
 
 
