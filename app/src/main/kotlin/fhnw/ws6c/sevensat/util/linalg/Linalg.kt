@@ -9,13 +9,14 @@ import kotlin.math.sqrt
 object Linalg {
 
   fun angleBetweenPoints(point1: Point, point2: Point): Double {
-    val vec1X = point2.longitude() - point1.longitude()
-    val vec1Y = point2.latitude() - point1.latitude()
-    val vec2X = 1.0
-    val vec2Y = 0.0
+    val vec1X     = point2.longitude() - point1.longitude()
+    val vec1Y     = point2.latitude()  - point1.latitude()
+    val vec2X     = 1.0
+    val vec2Y     = 0.0
     val inBetween =
       dotProduct(vec1X, vec2X, vec1Y, vec2Y) / vectorNorm(vec1X, vec1Y) * vectorNorm(vec2X, vec2Y)
-    val angle = acos(inBetween).toDegrees()
+    val angle     = acos(inBetween).toDegrees()
+
     // it makes a difference if the satellites flying in south or north direction.
     return if (point2.latitude() < point1.latitude()) angle else -angle
   }

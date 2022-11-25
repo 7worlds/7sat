@@ -15,12 +15,12 @@ import com.google.android.gms.location.LocationResult
 class UserLocationSubject(
   private val activity: Activity,
   private val minLocationUpdateFrequencyMs: Long  = 10000,
-  private val maxLocationUpdateFrequencyMs: Long  = 5000L,
+  private val maxLocationUpdateFrequencyMs: Long  = 5000,
   private val locationUpdatePriority      : Int   = LocationRequest.PRIORITY_HIGH_ACCURACY,
   onPermissionDenied:   () -> Unit
 ) {
   private val locationCallback        : LocationCallback
-  private val onNewLocationCallbacks  = mutableMapOf<String, (location: Location)  -> Unit>()
+  private val onNewLocationCallbacks  = mutableMapOf<String, (location: Location) -> Unit>()
   private val locationProvider by lazy { LocationServices.getFusedLocationProviderClient(activity) }
 
   private val permissions = arrayOf(
@@ -37,8 +37,8 @@ class UserLocationSubject(
   /**
    * @param onNewLocation gets called as soon as a new location is provided.
    */
-  fun addLocationObserver(key: String, onNewLocation: (location: Location)  -> Unit){
-    onNewLocationCallbacks[key] = (onNewLocation)
+  fun addLocationObserver(key: String, onNewLocation: (location: Location) -> Unit) {
+    onNewLocationCallbacks[key] = onNewLocation
   }
 
   /**
@@ -52,7 +52,7 @@ class UserLocationSubject(
    */
   fun cancelLocationListener() = locationProvider.removeLocationUpdates(locationCallback)
 
-  private fun initializeLocationListener(onPermissionDenied: () -> Unit)  {
+  private fun initializeLocationListener(onPermissionDenied: () -> Unit) {
     if (permissions.oneOfGranted()) listenToNewLocations()
     else onPermissionDenied()
   }
@@ -70,9 +70,9 @@ class UserLocationSubject(
    * Defines a repetitive notification request
    */
   private fun locationRequest() = LocationRequest.create().apply {
-    interval = minLocationUpdateFrequencyMs
+    interval        = minLocationUpdateFrequencyMs
     fastestInterval = maxLocationUpdateFrequencyMs
-    priority = locationUpdatePriority
+    priority        = locationUpdatePriority
   }
 
   private fun  createLocationCallback() = object : LocationCallback() {

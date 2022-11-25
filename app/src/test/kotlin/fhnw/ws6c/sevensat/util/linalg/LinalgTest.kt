@@ -17,5 +17,4 @@ class LinalgTest {
     //then
     assert(angle < -102.5 && angle > -102.6)
   }
-
 }

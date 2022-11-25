@@ -67,7 +67,6 @@ class MapModel(private val context: Activity) {
         mapAnimationOptions
       )
     }
-
   }
 
   fun onSatellitePointClick(callback: (norad: Long) -> Unit) {
