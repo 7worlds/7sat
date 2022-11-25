@@ -21,8 +21,7 @@ import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SevenSatUI(model: SevenSatModel, activity: ComponentActivity) {
-  val mapModel = MapModel(activity)
+fun SevenSatUI(model: SevenSatModel, mapModel: MapModel, activity: ComponentActivity) {
   val scope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState(
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)

@@ -59,6 +59,8 @@ dependencies {
 
     implementation 'androidx.activity:activity-compose:1.5.1'
 
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
+
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0'
 
     //  implementation 'androidx.fragment:fragment-ktx:1.4.1'

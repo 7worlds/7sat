@@ -49,7 +49,6 @@ class SevenSatModel(
       satellitesMap[sat] = sat.getPosition(Date().time)
       calculateISSLine()
     }
-
   }
 
   private fun calculateISSLine() {

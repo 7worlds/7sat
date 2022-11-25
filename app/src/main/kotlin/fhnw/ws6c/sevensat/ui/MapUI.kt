@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+  mapModel.addUserPositionToMap()
   model.loadSatellites(mapModel.getMapView())
   model.refreshSatellites()
   Row {
