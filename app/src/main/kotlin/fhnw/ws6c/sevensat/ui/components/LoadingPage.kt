@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.model.Screen
@@ -21,14 +19,14 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun LoadingUI(model: SevenSatModel) {
-  var radioMessages = arrayListOf(
+  val radioMessages = arrayListOf(
     "'Loading'",
     "'ISS - can you hear me? - over'",
     "'Loud and clearly commander - over'",
     "'We are sending you all of our Space data right now.- over'",
     "'Roger that, data is being prepared - over and out'",
   )
-  var activeText by remember { mutableStateOf(0) };
+  var activeText by remember { mutableStateOf(0) }
 
   LaunchedEffect(Unit) {
     while( activeText< radioMessages.size-1) {
@@ -37,7 +35,7 @@ fun LoadingUI(model: SevenSatModel) {
     }
   }
 
-  Box (modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),)
+  Box (modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background))
    {
     Column(modifier = Modifier
       .fillMaxHeight()
@@ -53,5 +51,4 @@ fun LoadingUI(model: SevenSatModel) {
       Text(text = radioMessages[activeText], style = MaterialTheme.typography.h6)
     }
   }
-
 }

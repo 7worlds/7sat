@@ -119,7 +119,6 @@ class MapModel(private val context: Activity) {
 
   fun addFlightLine(points: List<SatPos>) {
     deleteCurrentMapLine()
-    val start = System.currentTimeMillis()
     AppCompatResources.getDrawable(context, R.drawable.point)?.toBitMap()?.let {
       val pointAnnotations = points.map { point ->
         // Set options for the resulting symbol layer.
@@ -131,7 +130,6 @@ class MapModel(private val context: Activity) {
         pointAnnotationManager.create(pointAnnotationOptions)
       }
       flightLine = pointAnnotations
-      val end = System.currentTimeMillis()
     }
   }
 

@@ -25,23 +25,31 @@ fun Loading() {
   val animateFloat = remember { Animatable(0f) }
   LaunchedEffect(animateFloat) {
     animateFloat.animateTo(
-      targetValue = 100f,
-      animationSpec = tween(durationMillis = 2000000, easing = LinearEasing))
+      targetValue   = 100f,
+      animationSpec = tween(durationMillis = 2000000, easing = LinearEasing)
+    )
   }
 
-  var angleInDegrees = (animateFloat.value * 360.0)
-
-  val satImage = ImageBitmap.imageResource(id = R.drawable.satelitt,)
+  val angleInDegrees = (animateFloat.value * 360.0)
+  val satImage       = ImageBitmap.imageResource(id = R.drawable.sat)
 
   Box()
   {
-    Image(painter = painterResource(id = R.drawable.world), contentDescription = "welt", modifier = Modifier.size(170.dp).align(Alignment.Center))
-    Canvas(modifier = Modifier.width(220.dp).height(250.dp).rotate(angleInDegrees.toFloat() ).align(Alignment.Center)){
+    Image(
+      painter             = painterResource(id = R.drawable.world),
+      contentDescription  = "welt",
+      modifier            = Modifier.size(170.dp).align(Alignment.Center)
+    )
+    Canvas(
+      modifier = Modifier
+        .width(220.dp)
+        .height(250.dp)
+        .rotate(angleInDegrees.toFloat())
+        .align(Alignment.Center)
+    ) {
       drawImage(
         image = satImage,
       )
     }
-
-    
   }
 }

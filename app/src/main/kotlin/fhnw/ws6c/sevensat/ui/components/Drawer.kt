@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Drawer(model: SevenSatModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   val checkedState = remember { mutableStateOf(false) }
   Column(modifier = Modifier
     .padding(20.dp)

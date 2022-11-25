@@ -21,10 +21,10 @@ class SevenSatModel(
   val stringService: Service<Map<Long, Triple<String, String, String>>>
 ) {
   private val backgroundJob = SupervisorJob()
-  private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
-  val mainHandler = Handler(Looper.getMainLooper())
-  val satellitesMap = mutableStateMapOf<Satellite, SatPos>()
-  val selectedSatellites = mutableStateListOf<Satellite>()
+  private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)
+  val mainHandler           = Handler(Looper.getMainLooper())
+  val satellitesMap         = mutableStateMapOf<Satellite, SatPos>()
+  val selectedSatellites    = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.LOADING)
 
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
@@ -40,7 +40,7 @@ class SevenSatModel(
     })
   }
 
-  fun loadSatellites(mapView: MapView) {
+  fun loadSatellites() {
     val tleCall = TleCall(25544)
     modelScope.launch {
       jsonService.loadRemoteData(tleCall);

@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 private val Colors = darkColors(
   //Background colors
   primary          = Color(0xFFFED428),
-  secondary          = Color(0xFFFFFFFF),
+  secondary        = Color(0xFFFFFFFF),
   background       = Color(0xFF1A1F25),
   error            = Color(0xFFCF6679),
 
@@ -20,7 +20,7 @@ private val Colors = darkColors(
   onError          = Color.Black,
 )
 @Composable
-fun SevenSatTheme(content: @Composable() () -> Unit) {
+fun SevenSatTheme(content: @Composable () -> Unit) {
   MaterialTheme(
     colors     = Colors,
     typography = typography,
