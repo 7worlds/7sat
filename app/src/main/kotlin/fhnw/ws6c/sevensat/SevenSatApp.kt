@@ -1,9 +1,11 @@
 package fhnw.ws6c.sevensat
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import fhnw.ws6c.EmobaApp
+import fhnw.ws6c.sevensat.data.celestrak.TleCall
 import fhnw.ws6c.sevensat.data.service.ApiService
 import fhnw.ws6c.sevensat.data.service.TleService
 import fhnw.ws6c.sevensat.model.Screen
@@ -12,6 +14,8 @@ import fhnw.ws6c.sevensat.model.SevenSatModel
 import fhnw.ws6c.sevensat.ui.SevenSatUI
 import fhnw.ws6c.sevensat.ui.components.LoadingUI
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
+import fhnw.ws6c.R
+import kotlinx.coroutines.*
 
 
 object SevenSatApp : EmobaApp {
@@ -19,9 +23,29 @@ object SevenSatApp : EmobaApp {
   private val jsonService = ApiService()
   private val stringService = TleService()
 
-
   override fun initialize(activity: ComponentActivity) {
     model = SevenSatModel(jsonService, stringService)
+    loadTleAsync(activity)
+  }
+
+  private fun loadTleAsync(activity: ComponentActivity) {
+    val backgroundJob = SupervisorJob()
+    val coroutine     = CoroutineScope(backgroundJob + Dispatchers.IO)
+    val service       = TleService()
+    val call          = TleCall()
+
+    coroutine.launch {
+      service.loadRemoteData(call)
+      val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+      val editor  = prefs.edit()
+      val data    = call.getResponse()
+
+      editor.clear()
+      data?.forEach{ entry ->
+        editor.putString(entry.key.toString(), entry.value.toList().joinToString(";"))
+      }
+      editor.apply()
+    }
   }
 
   @Composable
@@ -36,8 +60,4 @@ object SevenSatApp : EmobaApp {
       }
     }
   }
-
-
-
-
 }

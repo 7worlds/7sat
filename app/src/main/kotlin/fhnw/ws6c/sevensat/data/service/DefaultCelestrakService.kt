@@ -41,7 +41,6 @@ class DefaultCelestrakService : Service<Map<Long, Triple<String, String, String>
       val id = t.third.split(" ")[1].toLong()
       result[id] = t
     }
-    println(result)
     call.setResponse(result)
   }
 

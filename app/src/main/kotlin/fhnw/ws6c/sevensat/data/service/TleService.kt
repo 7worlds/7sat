@@ -13,10 +13,9 @@ class TleService : RemoteService<Map<Long, Triple<String, String, String>>>() {
     val it = reader.lineSequence().iterator()
 
     while(it.hasNext()) {
-      var fst = ""
       var snd = ""
       var thd = ""
-      if(it.hasNext()) fst = it.next()
+      val fst = it.next()
       if(it.hasNext()) snd = it.next()
       if(it.hasNext()) thd = it.next()
       val t = Triple(fst, snd, thd)

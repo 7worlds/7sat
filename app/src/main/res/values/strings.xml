@@ -2,4 +2,5 @@
     <string name="app_name">7Sat</string>
     <string name="mapbox_access_token">pk.eyJ1Ijoid3lzc3RvYmkiLCJhIjoiY2w5NnZxNzZyMDRvZTQxbXFjczFkeXN5ZyJ9.5wbPmj-1400ovcYCYSSF3g</string>
     <string name="MAPBOX_DOWNLOADS_TOKEN"></string>
+    <string name="tle_preferences">tle_data</string>
 </resources>
