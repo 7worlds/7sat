@@ -1,9 +1,10 @@
 package fhnw.ws6c.sevensat.model
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
-import com.mapbox.maps.MapView
+import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -35,20 +36,26 @@ class SevenSatModel(
         satellitesMap.keys.forEach { satellite ->
           satellitesMap[satellite] = satellite.getPosition(Date().time)
         }
-        mainHandler.postDelayed(this, 10000)
+        mainHandler.postDelayed(this, 5000)
       }
     })
   }
 
-  fun loadSatellites() {
-    val tleCall = TleCall(25544)
-    modelScope.launch {
-      jsonService.loadRemoteData(tleCall);
-      val sat = SatelliteBuilder()
-        .withN2yoTleJsonData(tleCall.getResponse()!!).build()
-      satellitesMap[sat] = sat.getPosition(Date().time)
-      calculateISSLine()
+  fun loadSatellites(context: Context) {
+    val prefs      = context.getSharedPreferences(context.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+    val satellites =
+      prefs.all.entries.take(50).map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
+    satellites.forEach {
+      satellitesMap[it] = it.getPosition(Date().time)
     }
+
+//    modelScope.launch {
+//      jsonService.loadRemoteData(tleCall);
+//      val sat = SatelliteBuilder().withPlainTextTleData(context, 25544).build()
+//      satellitesMap[sat] = sat.getPosition(Date().time)
+//
+//      calculateISSLine()
+//    }
   }
 
   private fun calculateISSLine() {

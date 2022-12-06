@@ -1,5 +1,6 @@
 package fhnw.ws6c.sevensat.ui
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
@@ -24,7 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   mapModel.addUserPositionToMap()
-  model.loadSatellites()
+  model.loadSatellites(LocalContext.current)
   model.refreshSatellites()
   Row {
     Box(
@@ -49,6 +51,7 @@ private fun MapView(
   AndroidView(
     modifier = Modifier,
     update = {
+      mapModel.clearSatellites()
       model.satellitesMap.forEach { satellite ->
         mapModel.addSatellite(satellite.key, satellite.value)
       }

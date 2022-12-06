@@ -89,7 +89,6 @@ class MapModel(private val context: Activity) {
   ) {
     // Create an instance of the Annotation API and get the PointAnnotationManager.
     AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let {
-      this.clearSatellites()
       val data = JsonObject()
       data.addProperty("id", sat.noradId)
       // Set options for the resulting symbol layer.
@@ -133,7 +132,7 @@ class MapModel(private val context: Activity) {
     }
   }
 
-  private fun clearSatellites() {
+  fun clearSatellites() {
     satelliteAnnotationManager.delete(satellitePoints)
     satellitePoints.clear()
   }
