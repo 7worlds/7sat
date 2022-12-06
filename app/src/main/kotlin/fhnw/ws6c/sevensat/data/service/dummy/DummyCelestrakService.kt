@@ -1,14 +1,12 @@
-package fhnw.ws6c.sevensat.data.service
+package fhnw.ws6c.sevensat.data.service.dummy
 
 import fhnw.ws6c.sevensat.data.ApiCallable
-import fhnw.ws6c.sevensat.data.n2yo.PositionCall
-import fhnw.ws6c.sevensat.data.n2yo.TleCall
+import fhnw.ws6c.sevensat.data.service.Service
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
-import java.util.Collections
 
-class DefaultCelestrakService : Service<Map<Long, Triple<String, String, String>>> {
+class DummyCelestrakService : Service<Map<Long, Triple<String, String, String>>> {
 
   override fun loadRemoteData(call: ApiCallable<Map<Long, Triple<String, String, String>>>) {
 

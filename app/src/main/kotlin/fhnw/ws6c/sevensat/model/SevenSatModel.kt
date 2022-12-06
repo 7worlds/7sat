@@ -45,7 +45,7 @@ class SevenSatModel(
     modelScope.launch {
       jsonService.loadRemoteData(tleCall);
       val sat = SatelliteBuilder()
-        .withTleJsonData(tleCall.getResponse()!!).build()
+        .withN2yoTleJsonData(tleCall.getResponse()!!).build()
       satellitesMap[sat] = sat.getPosition(Date().time)
       calculateISSLine()
     }

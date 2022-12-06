@@ -1,7 +1,11 @@
 package fhnw.ws6c.sevensat.model.satellite
 
+import android.content.Context
+import androidx.activity.ComponentActivity
+import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.model.orbitaldata.OrbitalData
 import fhnw.ws6c.sevensat.util.tle.TLEParser
+import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
@@ -9,12 +13,13 @@ class SatelliteBuilder {
   var noradId:      Long   = -1
   var name:         String = ""
   var description:  String = ""
+  var image:        String = ""
   var tleLine1:     String = ""
   var tleLine2:     String = ""
   var coordinates:  Map<Long, Triple<Double, Double, Double>> = Collections.emptyMap() // lat, lng, alt
   var orbitalData: OrbitalData? = null
 
-  fun withTleJsonData(jsonObject: JSONObject) : SatelliteBuilder{
+  fun withN2yoTleJsonData(jsonObject: JSONObject) : SatelliteBuilder {
     val info  = jsonObject.getJSONObject("info")
     noradId   = info.getLong  ("satid")
     name      = info.getString("satname")
@@ -25,6 +30,17 @@ class SatelliteBuilder {
 
     val tleParser = TLEParser()
     // TODO: what todo if tle is empty or invalid?
+    orbitalData = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
+    return this
+  }
+
+  fun withPlainTextTleData(activity: Context, id: Long = noradId) : SatelliteBuilder {
+    val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+    val tleData = prefs.getString(id.toString(), "")
+    val lines = tleData?.split(";")
+    tleLine1 = lines?.get(1) ?: ""
+    tleLine2 = lines?.get(2) ?: ""
+    val tleParser = TLEParser()
     orbitalData = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
     return this
   }
@@ -47,9 +63,18 @@ class SatelliteBuilder {
     return this
   }
 
-  fun build() : Satellite {
+  fun withDetails(jsonObject: JSONObject): SatelliteBuilder {
 
-//      tleParser.parseSingleTLE(name, tleLine1, tleLine2)
+    try {
+      val data = jsonObject.getJSONArray("values")[0] as JSONObject
+      image = data.getString("image")
+    } catch (jsonException: JSONException) {
+      System.err.println("Couldn't parse json data! " + jsonException.message)
+    }
+    return this;
+  }
+
+  fun build() : Satellite {
       return Satellite(this)
   }
 }

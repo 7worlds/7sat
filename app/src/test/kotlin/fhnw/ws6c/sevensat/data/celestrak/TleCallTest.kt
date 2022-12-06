@@ -1,8 +1,7 @@
 package fhnw.ws6c.sevensat.data.celestrak
 
-import fhnw.ws6c.sevensat.data.service.DefaultCelestrakService
+import fhnw.ws6c.sevensat.data.service.dummy.DummyCelestrakService
 import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
 import org.junit.Test
 
 class TleCallTest {
@@ -11,7 +10,7 @@ class TleCallTest {
   fun getStringResponse() {
     //given
     val call = TleCall()
-    val service = DefaultCelestrakService()
+    val service = DummyCelestrakService()
 
     //when
     service.loadRemoteData(call)

@@ -31,14 +31,13 @@ object SevenSatApp : EmobaApp {
   private fun loadTleAsync(activity: ComponentActivity) {
     val backgroundJob = SupervisorJob()
     val coroutine     = CoroutineScope(backgroundJob + Dispatchers.IO)
-    val service       = TleService()
-    val call          = TleCall()
+    val tleCall       = TleCall()
 
     coroutine.launch {
-      service.loadRemoteData(call)
+      TleService().loadRemoteData(tleCall)
       val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
       val editor  = prefs.edit()
-      val data    = call.getResponse()
+      val data    = tleCall.getResponse()
 
       editor.clear()
       data?.forEach{ entry ->

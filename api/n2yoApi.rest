@@ -41,6 +41,16 @@ GET http://tle.ivanstanojevic.me/api/tle
 
 
 
+
+
+
+### NATNOGS DB ###
+GET https://db.satnogs.org/api/satellites/?norad_cat_id=25544 HTTP/1.1
+Content-Type: application/json
+
+
+
+
 ### DEPRECATED ###
 
 # https://rapidapi.com/uphere.space/api/uphere-space1
