@@ -55,6 +55,7 @@ private fun MapView(
       model.satellitesMap.forEach { satellite ->
         mapModel.addSatellite(satellite.key, satellite.value)
       }
+      //TODO: very slow for many points
       mapModel.addFlightLine(model.clickedSatelliteRoute)
     },
     factory = { context ->
@@ -89,5 +90,5 @@ fun onSatelliteClick(model: SevenSatModel, clickedSatelliteNorad: Long, scope: C
     model.selectedSatellites.add(sat)
     scope.launch {scaffoldState.bottomSheetState.expand()}
   }
-  println(clickedSatelliteNorad)
+  println("Clicked Norad: $clickedSatelliteNorad")
 }
