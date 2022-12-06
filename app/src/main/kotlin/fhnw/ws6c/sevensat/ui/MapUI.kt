@@ -84,6 +84,7 @@ private fun MapView(
 fun onSatelliteClick(model: SevenSatModel, clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
+    scope.launch { model.calculateFlightLineForSatellite(clickedSatelliteNorad) }
     val sat = found.entries.iterator().next().key
     model.selectedSatellites.add(sat)
     scope.launch {scaffoldState.bottomSheetState.expand()}

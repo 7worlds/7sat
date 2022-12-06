@@ -35,6 +35,7 @@ class SatelliteBuilder {
   }
 
   fun withPlainTextTleData(activity: Context, id: Long = noradId) : SatelliteBuilder {
+    noradId = id
     val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
     val tleData = prefs.getString(id.toString(), "")
     val lines = tleData?.split(";")
