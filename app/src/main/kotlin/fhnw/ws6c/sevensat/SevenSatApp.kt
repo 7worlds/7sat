@@ -25,7 +25,7 @@ object SevenSatApp : EmobaApp {
 
   override fun initialize(activity: ComponentActivity) {
     model = SevenSatModel(jsonService, stringService)
-    loadTleAsync(activity)
+//    loadTleAsync(activity)
   }
 
   private fun loadTleAsync(activity: ComponentActivity) {

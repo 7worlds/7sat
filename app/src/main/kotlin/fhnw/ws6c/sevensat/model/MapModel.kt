@@ -1,19 +1,18 @@
 package fhnw.ws6c.sevensat.model
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Color
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.gson.JsonObject
-import com.mapbox.geojson.Point
+import com.mapbox.geojson.*
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.*
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.gps.UserLocationSubject
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -23,10 +22,13 @@ import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
 
+
+
 class MapModel(private val context: Activity) {
   private val userPositionCallbackKey     = "UserPosition"
   private val mapView: MapView            = MapView(context)
   private var satelliteAnnotationManager  = mapView.annotations.createPointAnnotationManager()
+  private var polyLineAnnotationManager       = mapView.annotations.createPolylineAnnotationManager()
   private var pointAnnotationManager      = mapView.annotations.createPointAnnotationManager()
   // this state must be kept, to remove or replace the listener later.
   private var satellitePointClickListener = OnPointAnnotationClickListener { false }
@@ -118,21 +120,47 @@ class MapModel(private val context: Activity) {
 
   fun addFlightLine(points: List<SatPos>) {
     deleteCurrentMapLine()
-    AppCompatResources.getDrawable(context, R.drawable.point)?.toBitMap()?.let {
-      val pointAnnotations = points.map { point ->
-        // Set options for the resulting symbol layer.
-        val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-          .withPoint(Point.fromLngLat(point.longDeg(), point.latDeg()))
-          .withIconImage(it)
-          .withIconColor("White")
-          .withIconSize(.1)
-        pointAnnotationManager.create(pointAnnotationOptions)
+    if (points.isNotEmpty()) {
+      val multiLineString = getFlightLinesFromPoints(points)
+
+      multiLineString.lineStrings().forEach {
+        val polyLineAnnotationOptions = PolylineAnnotationOptions()
+          .withLineColor(Color.RED)
+          .withLineWidth(2.0)
+          .withGeometry(it)
+        polyLineAnnotationManager.create(polyLineAnnotationOptions)
       }
-      flightLine = pointAnnotations
     }
   }
 
+  @SuppressLint("Range")
+  private fun getFlightLinesFromPoints(points: List<SatPos>): MultiLineString {
+    val ps = points.map { Point.fromLngLat(it.longDeg(), it.latDeg()) }
+    var lastPoint = ps.first()
+    val lineParts = mutableListOf<LineString>()
+
+    val separatorPoint = ps.find {
+      val result = lastPoint.longitude() > it.longitude()
+      lastPoint = it
+      result
+    } ?: ps.last()
+
+    val separator = ps.indexOf(separatorPoint)
+    val firstPart = ps.subList(0, separator).toMutableList()
+
+    if (separator != ps.lastIndex) {
+      firstPart += Point.fromLngLat(360.0, separatorPoint.latitude())
+      val secondPart = mutableListOf(Point.fromLngLat(0.0, separatorPoint.latitude()))
+      secondPart += ps.subList(separator, ps.lastIndex)
+      lineParts.add(LineString.fromLngLats(secondPart))
+    }
+    lineParts.add(LineString.fromLngLats(firstPart))
+
+    return MultiLineString.fromLineStrings(lineParts);
+  }
+
   fun clearSatellites() {
+    polyLineAnnotationManager.deleteAll()
     satelliteAnnotationManager.delete(satellitePoints)
     satellitePoints.clear()
   }

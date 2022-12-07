@@ -28,7 +28,7 @@ class SevenSatModel(
   val mainHandler           = Handler(Looper.getMainLooper())
   val satellitesMap         = mutableStateMapOf<Satellite, SatPos>()
   val selectedSatellites    = mutableStateListOf<Satellite>()
-  var activeScreen by mutableStateOf(Screen.LOADING)
+  var activeScreen by mutableStateOf(Screen.HOME)
 
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 
@@ -53,7 +53,7 @@ class SevenSatModel(
 
     modelScope.launch {
     val satellites =
-      prefs.all.entries.take(50)
+      prefs.all.entries.take(50)//.filter { it.key.equals("43556") || it.key.equals("25544") }
         .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
         satellitesMap[it] = it.getPosition(Date().time)
@@ -72,8 +72,8 @@ class SevenSatModel(
         val start = System.currentTimeMillis()
         satellite.getPosition(calendar.time.time)
 
-        val step = 5;
-        val pointCount = getAmountOfPointsForSatellites(satellite, step)
+        val step = 1
+        val pointCount = getAmountOfPointsForSatellites(satellite) / step
 
         for (i in 0..pointCount step step) {
           calendar.add(Calendar.MINUTE, step)
@@ -90,10 +90,10 @@ class SevenSatModel(
   /**
    * how many points are needed to add a point all "minutes"-minute to orbit half of the earth?
    */
-  private fun getAmountOfPointsForSatellites(satellite: Satellite, minutes: Int): Int {
+  private fun getAmountOfPointsForSatellites(satellite: Satellite): Int {
     val calendar = Calendar.getInstance()
     val positionNow = satellite.getPosition(calendar.time.time)
-    calendar.add(Calendar.MINUTE, minutes)
+    calendar.add(Calendar.MINUTE, 1)
     val positionIn1Min = satellite.getPosition(calendar.time.time)
 
     val kmIn1Min = haversine(positionNow, positionIn1Min)
