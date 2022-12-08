@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import fhnw.ws6c.EmobaApp
 import fhnw.ws6c.sevensat.data.celestrak.TleCall
 import fhnw.ws6c.sevensat.data.service.ApiService
@@ -20,11 +21,21 @@ import kotlinx.coroutines.*
 
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
+  private lateinit var mapModel: MapModel
   private val jsonService = ApiService()
   private val stringService = TleService()
 
   override fun initialize(activity: ComponentActivity) {
+    mapModel = MapModel(activity)
     model = SevenSatModel(jsonService, stringService)
+    mapModel.addUserPositionToMap()
+    model.loadSatellites(activity)
+    model.refreshSatellites {
+      mapModel.clearSatellites()
+      it.forEach { satellite ->
+        mapModel.addSatellite(satellite.key, satellite.value)
+      }
+    }
 //    loadTleAsync(activity)
   }
 
@@ -49,7 +60,6 @@ object SevenSatApp : EmobaApp {
 
   @Composable
   override fun CreateUI(activity: ComponentActivity) {
-    val mapModel = MapModel(activity)
     SevenSatTheme {
       Crossfade(targetState = model.activeScreen) { screen ->
         when (screen) {

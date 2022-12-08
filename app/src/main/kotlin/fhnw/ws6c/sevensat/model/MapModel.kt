@@ -34,7 +34,6 @@ class MapModel(private val context: Activity) {
   private var satellitePointClickListener = OnPointAnnotationClickListener { false }
   private var userLocationSubject         = UserLocationSubject(context){}
   private val satellitePoints             = mutableListOf<PointAnnotation>()
-  private var flightLine                  = emptyList<PointAnnotation>()
   fun getMapView()                        = mapView
   private var currentUserAnnotation       : PointAnnotation?  = null
 
@@ -147,6 +146,7 @@ class MapModel(private val context: Activity) {
     val firstPart = ps.subList(0, separator).toMutableList()
 
     if (separator != ps.lastIndex) {
+      // add 0 & 360 longitude point to point list
       val sepLong = separatorPoint.longitude()
       var firstPartEnd = 0.0
       var secondPartStart = 360.0
@@ -166,14 +166,12 @@ class MapModel(private val context: Activity) {
   }
 
   fun clearSatellites() {
-    polyLineAnnotationManager.deleteAll()
     satelliteAnnotationManager.delete(satellitePoints)
     satellitePoints.clear()
   }
 
   private fun deleteCurrentMapLine() {
-    pointAnnotationManager.delete(flightLine)
-    flightLine = emptyList()
+    polyLineAnnotationManager.deleteAll()
   }
 
   private fun deleteCurrentUserAnnotation() =

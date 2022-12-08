@@ -32,13 +32,14 @@ class SevenSatModel(
 
   val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 
-  fun refreshSatellites() {
+  fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
           satellitesMap.keys.forEach { satellite ->
             satellitesMap[satellite] = satellite.getPosition(Date().time)
           }
+          onRefreshed(satellitesMap)
         }
         mainHandler.postDelayed(this, 5000)
       }
@@ -72,11 +73,11 @@ class SevenSatModel(
         val start = System.currentTimeMillis()
         satellite.getPosition(calendar.time.time)
 
-        val step = 1
-        val pointCount = getAmountOfPointsForSatellites(satellite) / step
+        val factor = 1
+        val pointCount = getAmountOfPointsForSatellites(satellite) * factor
 
-        for (i in 0..pointCount step step) {
-          calendar.add(Calendar.MINUTE, step)
+        for (i in 0..pointCount step 1) {
+          calendar.add(Calendar.SECOND, 60 / factor)
           points.add(satellite.getPosition(calendar.time.time))
         }
 
