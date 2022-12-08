@@ -21,7 +21,7 @@ import fhnw.ws6c.sevensat.util.extensions.toBitMap
 import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
-
+import kotlin.math.absoluteValue
 
 
 class MapModel(private val context: Activity) {
@@ -122,11 +122,10 @@ class MapModel(private val context: Activity) {
     deleteCurrentMapLine()
     if (points.isNotEmpty()) {
       val multiLineString = getFlightLinesFromPoints(points)
-
       multiLineString.lineStrings().forEach {
         val polyLineAnnotationOptions = PolylineAnnotationOptions()
-          .withLineColor(Color.RED)
           .withLineWidth(2.0)
+          .withLineColor(Color.WHITE)
           .withGeometry(it)
         polyLineAnnotationManager.create(polyLineAnnotationOptions)
       }
@@ -138,9 +137,8 @@ class MapModel(private val context: Activity) {
     val ps = points.map { Point.fromLngLat(it.longDeg(), it.latDeg()) }
     var lastPoint = ps.first()
     val lineParts = mutableListOf<LineString>()
-
     val separatorPoint = ps.find {
-      val result = lastPoint.longitude() > it.longitude()
+      val result = (lastPoint.longitude() - it.longitude()).absoluteValue > 180
       lastPoint = it
       result
     } ?: ps.last()
@@ -149,8 +147,16 @@ class MapModel(private val context: Activity) {
     val firstPart = ps.subList(0, separator).toMutableList()
 
     if (separator != ps.lastIndex) {
-      firstPart += Point.fromLngLat(360.0, separatorPoint.latitude())
-      val secondPart = mutableListOf(Point.fromLngLat(0.0, separatorPoint.latitude()))
+      val sepLong = separatorPoint.longitude()
+      var firstPartEnd = 0.0
+      var secondPartStart = 360.0
+      if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue){
+        // nearer to zero than 360
+        firstPartEnd = secondPartStart
+        secondPartStart = 0.0
+      }
+      firstPart += Point.fromLngLat(firstPartEnd, separatorPoint.latitude())
+      val secondPart = mutableListOf(Point.fromLngLat(secondPartStart, separatorPoint.latitude()))
       secondPart += ps.subList(separator, ps.lastIndex)
       lineParts.add(LineString.fromLngLats(secondPart))
     }
