@@ -5,7 +5,7 @@ import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 
-class PositionCallTest : N2yoCallTest() {
+class PositionCallTest : JsonServiceTest() {
 
   private val issId = 25544L
   private val lng   = -76.014

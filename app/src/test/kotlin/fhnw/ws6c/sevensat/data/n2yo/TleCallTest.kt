@@ -5,7 +5,7 @@ import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 
-class TleCallTest : N2yoCallTest(){
+class TleCallTest : JsonServiceTest(){
 
   private val idISS = 25544L
 

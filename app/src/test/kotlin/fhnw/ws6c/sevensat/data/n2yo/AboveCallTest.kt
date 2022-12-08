@@ -1,15 +1,12 @@
 package fhnw.ws6c.sevensat.data.n2yo
 
 import fhnw.ws6c.sevensat.data.service.dummy.DummyN2yoService
-import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Test
-import java.util.stream.IntStream
-import java.util.stream.Stream
 
-class AboveCallTest : N2yoCallTest(){
+class AboveCallTest : JsonServiceTest(){
 
   private val lng   = -76.014
   private val lat   = 41.702

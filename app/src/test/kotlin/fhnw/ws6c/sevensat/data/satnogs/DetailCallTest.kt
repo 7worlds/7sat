@@ -1,11 +1,17 @@
 package fhnw.ws6c.sevensat.data.satnogs
 
+import fhnw.ws6c.sevensat.data.ApiCallable
+import fhnw.ws6c.sevensat.data.n2yo.JsonServiceTest
 import fhnw.ws6c.sevensat.data.service.dummy.DummySatnogsService
 import junit.framework.Assert.assertEquals
 import org.json.JSONObject
 import org.junit.Test
 
-class DetailCallTest {
+class DetailCallTest : JsonServiceTest() {
+
+  override fun newApiCall(): ApiCallable<JSONObject> {
+    return DetailByIdCall(25544);
+  }
 
   @Test
   fun testGetResponse() {
