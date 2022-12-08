@@ -1,7 +1,7 @@
 package fhnw.ws6c.sevensat.data.service
 
 import fhnw.ws6c.sevensat.data.ApiCallable
-import fhnw.ws6c.sevensat.data.celestrak.TleCall
+import fhnw.ws6c.sevensat.data.celestrak.TleAllCall
 import fhnw.ws6c.sevensat.data.n2yo.n2yoApiKey
 import fhnw.ws6c.sevensat.data.n2yo.n2yoBaseURL
 import junit.framework.Assert.*
@@ -47,7 +47,7 @@ class SatelliteServiceTest {
   fun simpleRequestTest() {
 
     //given
-    val service = ApiService()
+    val service = JsonService()
     val call = createRequestObject ({ "/tle/25544/" }, {} )
 
     //when
@@ -63,7 +63,7 @@ class SatelliteServiceTest {
   fun callThrowsJSONExceptionTest() {
 
     //given
-    val service = ApiService()
+    val service = JsonService()
     val call = createRequestObject({ "/tobias/bräm/" }, {})
 
     //when
@@ -79,7 +79,7 @@ class SatelliteServiceTest {
 
     //given
     val errorMessage = "Something went wrong"
-    val service = ApiService()
+    val service = JsonService()
     val call = createRequestObject({ "/tle/25544/" }, { throw IOException(errorMessage) })
 
     //when
@@ -95,8 +95,8 @@ class SatelliteServiceTest {
   fun tleServiceTest() {
 
     //given
-    val service = TleService()
-    val tleCall = TleCall()
+    val service = PlainTextService()
+    val tleCall = TleAllCall()
 
     //when
     service.loadRemoteData(tleCall)

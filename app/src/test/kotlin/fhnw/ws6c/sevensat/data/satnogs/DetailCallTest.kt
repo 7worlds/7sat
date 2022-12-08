@@ -1,7 +1,6 @@
 package fhnw.ws6c.sevensat.data.satnogs
 
 import fhnw.ws6c.sevensat.data.service.dummy.DummySatnogsService
-import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
 import org.json.JSONObject
 import org.junit.Test
@@ -12,7 +11,7 @@ class DetailCallTest {
   fun testGetResponse() {
     // given
     val service = DummySatnogsService()
-    val call    = DetailCall(25544)
+    val call    = DetailByIdCall(25544)
 
     // when
     service.loadRemoteData(call)

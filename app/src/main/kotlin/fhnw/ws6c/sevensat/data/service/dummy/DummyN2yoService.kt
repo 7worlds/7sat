@@ -1,8 +1,9 @@
 package fhnw.ws6c.sevensat.data.service.dummy
 
 import fhnw.ws6c.sevensat.data.ApiCallable
-import fhnw.ws6c.sevensat.data.n2yo.PositionCall
-import fhnw.ws6c.sevensat.data.n2yo.TleCall
+import fhnw.ws6c.sevensat.data.n2yo.AboveCall
+import fhnw.ws6c.sevensat.data.n2yo.PositionByIdCall
+import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.sevensat.data.service.Service
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -13,13 +14,14 @@ class DummyN2yoService : Service<JSONObject> {
 
     var data = ""
     when (call) {
-      is TleCall      -> data = tleDefaultData()
-      is PositionCall -> data = positionDefaultData()
+      is TleByIDCall      -> data = tleDefaultData()
+      is PositionByIdCall -> data = positionDefaultData()
+      is AboveCall        -> data = aboveDefaultData()
     }
     call.setResponse(JSONObject(data))
   }
 
-  fun tleDefaultData(): String {
+  private fun tleDefaultData(): String {
     return """
       {
         "info": {
@@ -32,7 +34,7 @@ class DummyN2yoService : Service<JSONObject> {
     """.trimIndent()
   }
 
-  fun positionDefaultData(): String {
+  private fun positionDefaultData(): String {
     return """
       {
         "info": {
@@ -54,6 +56,38 @@ class DummyN2yoService : Service<JSONObject> {
           }
         ]
       }
+    """.trimIndent()
+  }
+
+  private fun aboveDefaultData(): String {
+    return """
+            {
+              "info": {
+                "category": "ANY",
+                "transactionscount": 2,
+                "satcount": 2
+              },
+              "above": [
+                {
+                  "satid": 4708,
+                  "satname": "THORAD AGENA D DEB",
+                  "intDesignator": "1970-025BW",
+                  "launchDate": "1970-04-08",
+                  "satlat": 40.9775,
+                  "satlng": -77.1527,
+                  "satalt": 962.5594
+                },
+                {
+                  "satid": 10441,
+                  "satname": "COSMOS 839 DEB",
+                  "intDesignator": "1976-067S",
+                  "launchDate": "1976-07-08",
+                  "satlat": 40.4484,
+                  "satlng": -74.1042,
+                  "satalt": 1910.1397
+                },
+              ]
+            }
     """.trimIndent()
   }
 

@@ -10,13 +10,13 @@ class TleCallTest : N2yoCallTest(){
   private val idISS = 25544L
 
   override fun newApiCall(): N2yoCall {
-    return TleCall(idISS)
+    return TleByIDCall(idISS)
   }
 
   @Test
   fun resultTest() {
     //given
-    val call = TleCall(idISS)
+    val call = TleByIDCall(idISS)
     val service = DummyN2yoService()
 
     //when

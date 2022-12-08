@@ -7,7 +7,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 
-class ApiService : RemoteService<JSONObject>() {
+class JsonService : RemoteService<JSONObject>() {
 
   override fun collectingStrategy(connection: HttpURLConnection): JSONObject {
     val reader = BufferedReader(InputStreamReader(connection.inputStream))

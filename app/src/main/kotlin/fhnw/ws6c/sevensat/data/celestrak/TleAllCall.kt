@@ -5,7 +5,7 @@ import fhnw.ws6c.sevensat.data.ApiCallable
 const val celestrakBaseURL = "https://celestrak.org/NORAD/elements/gp.php"
 
 
-class TleCall: ApiCallable<Map<Long, Triple<String, String, String>>> {
+class TleAllCall: ApiCallable<Map<Long, Triple<String, String, String>>> {
   var mapResponse: Map<Long, Triple<String, String, String>>?   = null
   var exception:    Exception?    = null
 

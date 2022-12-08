@@ -12,13 +12,13 @@ class PositionCallTest : N2yoCallTest() {
   private val lat   = 41.702
 
   override fun newApiCall(): N2yoCall {
-    return PositionCall(issId, 1, lng, lat)
+    return PositionByIdCall(issId, 1, lng, lat)
   }
 
   @Test
   fun resultTest() {
     //given
-    val call = PositionCall(issId, 1, lng, lat)
+    val call = PositionByIdCall(issId, 1, lng, lat)
     val service = DummyN2yoService()
 
     //when

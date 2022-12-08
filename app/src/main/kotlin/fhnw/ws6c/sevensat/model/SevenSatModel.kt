@@ -3,8 +3,7 @@ package fhnw.ws6c.sevensat.model
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
-import com.mapbox.maps.MapView
-import fhnw.ws6c.sevensat.data.n2yo.TleCall
+import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
@@ -41,7 +40,7 @@ class SevenSatModel(
   }
 
   fun loadSatellites() {
-    val tleCall = TleCall(25544)
+    val tleCall = TleByIDCall(25544)
     modelScope.launch {
       jsonService.loadRemoteData(tleCall);
       val sat = SatelliteBuilder()

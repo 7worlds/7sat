@@ -1,8 +1,8 @@
 package fhnw.ws6c.sevensat.model.satellite
 
-import fhnw.ws6c.sevensat.data.n2yo.PositionCall
-import fhnw.ws6c.sevensat.data.n2yo.TleCall
-import fhnw.ws6c.sevensat.data.satnogs.DetailCall
+import fhnw.ws6c.sevensat.data.n2yo.PositionByIdCall
+import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
+import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
 import fhnw.ws6c.sevensat.data.service.dummy.DummyCelestrakService
 import fhnw.ws6c.sevensat.data.service.dummy.DummyN2yoService
 import fhnw.ws6c.sevensat.data.service.dummy.DummySatnogsService
@@ -20,9 +20,9 @@ class SatelliteBuilderTest {
     val celestrakService = DummyCelestrakService()
     val satnogsService   = DummySatnogsService()
 
-    val posCall          = PositionCall(-1, -1, -1, -1)
-    val tleCall          = TleCall(25544)
-    val detailCall       = DetailCall(25544)
+    val posCall          = PositionByIdCall(-1, -1, -1, -1)
+    val tleCall          = TleByIDCall(25544)
+    val detailCall       = DetailByIdCall(25544)
 
     //when
     n2yService.loadRemoteData(posCall)

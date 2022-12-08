@@ -1,6 +1,6 @@
 package fhnw.ws6c.sevensat.data.n2yo
 
-class PositionCall(
+class PositionByIdCall(
   satelliteId : Number,
   timeInSec   : Number,
   longitude   : Number,
