@@ -26,11 +26,10 @@ class SevenSatModel(
   private val backgroundJob = SupervisorJob()
   private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler           = Handler(Looper.getMainLooper())
-  val satellitesMap         = mutableStateMapOf<Satellite, SatPos>()
+  val satellitesMap         = mutableMapOf<Satellite, SatPos>()
   val selectedSatellites    = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.HOME)
 
-  val clickedSatelliteRoute = mutableStateListOf<SatPos>()
 
   fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
@@ -62,9 +61,8 @@ class SevenSatModel(
     }
   }
 
-  fun calculateFlightLineForSatellite(noradId: Long) {
+  fun calculateFlightLineForSatellite(noradId: Long, onCalculated: (List<SatPos>) -> Unit) {
     modelScope.launch {
-      clickedSatelliteRoute.clear()
       val satellite = satellitesMap.keys.find { it.noradId == noradId }
       if (satellite != null) {
         val calendar = Calendar.getInstance()
@@ -80,10 +78,9 @@ class SevenSatModel(
           calendar.add(Calendar.SECOND, 60 / factor)
           points.add(satellite.getPosition(calendar.time.time))
         }
-
+        onCalculated(points)
         val end = System.currentTimeMillis()
         println("it took ${(end - start) / 1000} seconds")
-        clickedSatelliteRoute.addAll(points)
       }
     }
   }
