@@ -17,7 +17,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.*
+
+const val TWO_DAYS_IN_MILLIS = 172_800_000
 
 class SevenSatModel(
   private val jsonService: Service<JSONObject>,
@@ -26,9 +29,9 @@ class SevenSatModel(
   private val backgroundJob = SupervisorJob()
   private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler           = Handler(Looper.getMainLooper())
-  val satellitesMap         = mutableMapOf<Satellite, SatPos>()
+  val satellitesMap         = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites    = mutableStateListOf<Satellite>()
-  var activeScreen by mutableStateOf(Screen.HOME)
+  var activeScreen by mutableStateOf(Screen.LOADING)
 
 
   fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
@@ -45,21 +48,38 @@ class SevenSatModel(
     })
   }
 
-  fun loadSatellites(context: Context) {
-    val prefs = context.getSharedPreferences(
-      context.getString(R.string.tle_preferences),
-      Context.MODE_PRIVATE
-    )
+  fun sharedPrefsTLEsExist(context: Context): Boolean{
+    val prefs = getTLEsFromSharedPrefs(context)
+    return prefs.all.containsKey(context.getString(R.string.last_tle_sync))
+  }
+
+  fun sharedPrefsTLEsAreUpToDate(context: Context): Boolean {
+    val prefs = getTLEsFromSharedPrefs(context)
+    if (!prefs.all.containsKey(context.getString(R.string.last_tle_sync))) return false
+    val loadingDateMillis = prefs.getLong(context.getString(R.string.last_tle_sync), 0)
+
+    return Date().time - loadingDateMillis < TWO_DAYS_IN_MILLIS
+  }
+
+  fun readTLEsFromSharedPrefs(context: Context, onLoaded: (Map<Satellite, SatPos>) -> Unit) {
+    val prefs = getTLEsFromSharedPrefs(context)
 
     modelScope.launch {
-    val satellites =
-      prefs.all.entries.take(50)//.filter { it.key.equals("43556") || it.key.equals("25544") }
-        .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
+      val satellites =
+        prefs.all.entries.take(50)//.filter { it.key.equals("43556") || it.key.equals("25544") }
+          .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
         satellitesMap[it] = it.getPosition(Date().time)
       }
+      onLoaded(satellitesMap)
     }
   }
+
+  private fun getTLEsFromSharedPrefs(context: Context) =
+    context.getSharedPreferences(
+      context.getString(R.string.tle_preferences),
+      Context.MODE_PRIVATE
+    )
 
   fun calculateFlightLineForSatellite(noradId: Long, onCalculated: (List<SatPos>) -> Unit) {
     modelScope.launch {
