@@ -1,19 +1,18 @@
 package fhnw.ws6c.sevensat.model
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Color
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.gson.JsonObject
-import com.mapbox.geojson.Point
+import com.mapbox.geojson.*
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.*
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.gps.UserLocationSubject
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -22,17 +21,19 @@ import fhnw.ws6c.sevensat.util.extensions.toBitMap
 import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
+import kotlin.math.absoluteValue
+
 
 class MapModel(private val context: Activity) {
   private val userPositionCallbackKey     = "UserPosition"
   private val mapView: MapView            = MapView(context)
   private var satelliteAnnotationManager  = mapView.annotations.createPointAnnotationManager()
+  private var polyLineAnnotationManager       = mapView.annotations.createPolylineAnnotationManager()
   private var pointAnnotationManager      = mapView.annotations.createPointAnnotationManager()
   // this state must be kept, to remove or replace the listener later.
   private var satellitePointClickListener = OnPointAnnotationClickListener { false }
   private var userLocationSubject         = UserLocationSubject(context){}
   private val satellitePoints             = mutableListOf<PointAnnotation>()
-  private var flightLine                  = emptyList<PointAnnotation>()
   fun getMapView()                        = mapView
   private var currentUserAnnotation       : PointAnnotation?  = null
 
@@ -89,7 +90,6 @@ class MapModel(private val context: Activity) {
   ) {
     // Create an instance of the Annotation API and get the PointAnnotationManager.
     AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let {
-      this.clearSatellites()
       val data = JsonObject()
       data.addProperty("id", sat.noradId)
       // Set options for the resulting symbol layer.
@@ -119,28 +119,59 @@ class MapModel(private val context: Activity) {
 
   fun addFlightLine(points: List<SatPos>) {
     deleteCurrentMapLine()
-    AppCompatResources.getDrawable(context, R.drawable.point)?.toBitMap()?.let {
-      val pointAnnotations = points.map { point ->
-        // Set options for the resulting symbol layer.
-        val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-          .withPoint(Point.fromLngLat(point.longDeg(), point.latDeg()))
-          .withIconImage(it)
-          .withIconColor("White")
-          .withIconSize(.1)
-        pointAnnotationManager.create(pointAnnotationOptions)
+    if (points.isNotEmpty()) {
+      val multiLineString = getFlightLinesFromPoints(points)
+      multiLineString.lineStrings().forEach {
+        val polyLineAnnotationOptions = PolylineAnnotationOptions()
+          .withLineWidth(2.0)
+          .withLineColor(Color.WHITE)
+          .withGeometry(it)
+        polyLineAnnotationManager.create(polyLineAnnotationOptions)
       }
-      flightLine = pointAnnotations
     }
   }
 
-  private fun clearSatellites() {
+  @SuppressLint("Range")
+  private fun getFlightLinesFromPoints(points: List<SatPos>): MultiLineString {
+    val ps = points.map { Point.fromLngLat(it.longDeg(), it.latDeg()) }
+    var lastPoint = ps.first()
+    val lineParts = mutableListOf<LineString>()
+    val separatorPoint = ps.find {
+      val result = (lastPoint.longitude() - it.longitude()).absoluteValue > 180
+      lastPoint = it
+      result
+    } ?: ps.last()
+
+    val separator = ps.indexOf(separatorPoint)
+    val firstPart = ps.subList(0, separator).toMutableList()
+
+    if (separator != ps.lastIndex) {
+      // add 0 & 360 longitude point to point list
+      val sepLong = separatorPoint.longitude()
+      var firstPartEnd = 0.0
+      var secondPartStart = 360.0
+      if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue){
+        // nearer to zero than 360
+        firstPartEnd = secondPartStart
+        secondPartStart = 0.0
+      }
+      firstPart += Point.fromLngLat(firstPartEnd, separatorPoint.latitude())
+      val secondPart = mutableListOf(Point.fromLngLat(secondPartStart, separatorPoint.latitude()))
+      secondPart += ps.subList(separator, ps.lastIndex)
+      lineParts.add(LineString.fromLngLats(secondPart))
+    }
+    lineParts.add(LineString.fromLngLats(firstPart))
+
+    return MultiLineString.fromLineStrings(lineParts);
+  }
+
+  fun clearSatellites() {
     satelliteAnnotationManager.delete(satellitePoints)
     satellitePoints.clear()
   }
 
   private fun deleteCurrentMapLine() {
-    pointAnnotationManager.delete(flightLine)
-    flightLine = emptyList()
+    polyLineAnnotationManager.deleteAll()
   }
 
   private fun deleteCurrentUserAnnotation() =

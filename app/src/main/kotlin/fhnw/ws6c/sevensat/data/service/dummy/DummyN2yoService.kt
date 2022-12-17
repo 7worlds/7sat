@@ -1,12 +1,13 @@
-package fhnw.ws6c.sevensat.data.service
+package fhnw.ws6c.sevensat.data.service.dummy
 
 import fhnw.ws6c.sevensat.data.ApiCallable
 import fhnw.ws6c.sevensat.data.n2yo.PositionCall
 import fhnw.ws6c.sevensat.data.n2yo.TleCall
+import fhnw.ws6c.sevensat.data.service.Service
 import org.json.JSONObject
 import java.net.HttpURLConnection
 
-class DefaultN2yoService : Service<JSONObject> {
+class DummyN2yoService : Service<JSONObject> {
 
   override fun loadRemoteData(call: ApiCallable<JSONObject>) {
 

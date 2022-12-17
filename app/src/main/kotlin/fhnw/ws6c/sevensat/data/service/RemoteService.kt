@@ -16,6 +16,7 @@ abstract class RemoteService<T> : Service<T> {
     try {
       val url = URL(call.getTargetUrl())
       val connection = url.openConnection() as HttpURLConnection
+      connection.setRequestProperty("Accept", "application/json")
       connection.connect()
       try {
         val answer = collectingStrategy(connection)
@@ -23,7 +24,6 @@ abstract class RemoteService<T> : Service<T> {
       } catch (jsonError: JSONException) {
         call.setError(jsonError)
       }
-
     } catch (ioError: IOException) {
       call.setError(ioError)
     }

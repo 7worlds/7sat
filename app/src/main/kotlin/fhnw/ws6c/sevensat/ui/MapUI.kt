@@ -23,9 +23,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
-  mapModel.addUserPositionToMap()
-  model.loadSatellites()
-  model.refreshSatellites()
   Row {
     Box(
       contentAlignment = Alignment.Center,
@@ -49,10 +46,6 @@ private fun MapView(
   AndroidView(
     modifier = Modifier,
     update = {
-      model.satellitesMap.forEach { satellite ->
-        mapModel.addSatellite(satellite.key, satellite.value)
-      }
-      mapModel.addFlightLine(model.clickedSatelliteRoute)
     },
     factory = { context ->
       ResourceOptionsManager.getDefault(context, context.getString(R.string.mapbox_access_token))
@@ -60,6 +53,7 @@ private fun MapView(
       mapModel.onSatellitePointClick { norad ->
         onSatelliteClick(
           model,
+          mapModel,
           norad,
           scope,
           scaffoldState
@@ -78,12 +72,20 @@ private fun MapView(
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-fun onSatelliteClick(model: SevenSatModel, clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+fun onSatelliteClick(model: SevenSatModel, mapModel: MapModel,clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
   val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
+      model.calculateFlightLineForSatellite(clickedSatelliteNorad){ route ->
+        mapModel.addFlightLine(route)
+      }
     val sat = found.entries.iterator().next().key
     model.selectedSatellites.add(sat)
-    scope.launch {scaffoldState.bottomSheetState.expand()}
+    scope.launch {
+      if (scaffoldState.bottomSheetState.isExpanded) {
+        scaffoldState.bottomSheetState.collapse()
+      }
+      scaffoldState.bottomSheetState.expand()
+    }
   }
-  println(clickedSatelliteNorad)
+  println("Clicked Norad: $clickedSatelliteNorad")
 }
