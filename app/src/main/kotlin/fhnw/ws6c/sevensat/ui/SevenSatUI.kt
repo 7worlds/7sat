@@ -15,7 +15,6 @@ import fhnw.ws6c.sevensat.model.SevenSatModel
 import fhnw.ws6c.sevensat.ui.components.Drawer
 
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
@@ -23,26 +22,26 @@ fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
   val scaffoldState = rememberBottomSheetScaffoldState(
     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
   )
-    BottomSheetScaffold(
-      scaffoldState =         scaffoldState,
-      drawerContent =         { Drawer(scope, scaffoldState) },
-      drawerBackgroundColor = MaterialTheme.colors.background,
-      drawerGesturesEnabled = false,
-      sheetContent =          { BottomSheet(scope, scaffoldState, model) },
-      sheetGesturesEnabled =  true,
-      sheetContentColor =     MaterialTheme.colors.secondary,
-      sheetBackgroundColor =  MaterialTheme.colors.background,
-      sheetPeekHeight =       0.dp,
-      sheetShape =            RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp),
-      content =
-      {
-        Box(modifier = Modifier.padding(3.dp)) {
-          Column(
-            modifier = Modifier.padding(it)
-          ) {
-            MapUI(model, mapModel,scope, scaffoldState)
-          }
+  BottomSheetScaffold(
+    scaffoldState = scaffoldState,
+    drawerContent = { Drawer(scope, scaffoldState) },
+    drawerBackgroundColor = MaterialTheme.colors.background,
+    drawerGesturesEnabled = false,
+    sheetContent = { BottomSheet(scope, scaffoldState, model) },
+    sheetGesturesEnabled = true,
+    sheetContentColor = MaterialTheme.colors.secondary,
+    sheetBackgroundColor = MaterialTheme.colors.background,
+    sheetPeekHeight = 0.dp,
+    sheetShape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp),
+    content =
+    {
+      Box(modifier = Modifier.padding(3.dp)) {
+        Column(
+          modifier = Modifier.padding(it)
+        ) {
+          MapUI(model, mapModel, scope, scaffoldState)
         }
       }
-    )
-  }
+    }
+  )
+}

@@ -15,20 +15,68 @@ import fhnw.ws6c.sevensat.ui.SevenSatUI
 import fhnw.ws6c.sevensat.ui.components.LoadingUI
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import fhnw.ws6c.R
+import fhnw.ws6c.sevensat.model.TWO_DAYS_IN_MILLIS
+import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
+import fhnw.ws6c.sevensat.model.satellite.Satellite
 import kotlinx.coroutines.*
+import java.util.Date
 
 
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
   private val jsonService = JsonService()
   private val stringService = PlainTextService()
+  private lateinit var mapModel: MapModel
 
   override fun initialize(activity: ComponentActivity) {
+    mapModel = MapModel(activity)
     model = SevenSatModel(jsonService, stringService)
-    loadTleAsync(activity)
+    initSatellitesOnMap(activity)
   }
 
-  private fun loadTleAsync(activity: ComponentActivity) {
+  @Composable
+  override fun CreateUI(activity: ComponentActivity) {
+    SevenSatTheme {
+      Crossfade(targetState = model.activeScreen) { screen ->
+        when (screen) {
+          Screen.HOME     -> SevenSatUI(model = model, mapModel)
+          Screen.LOADING  -> LoadingUI(model = model)
+        }
+      }
+    }
+  }
+
+  private fun initSatellitesOnMap(activity: ComponentActivity) {
+    if (!model.sharedPrefsTLEsExist(activity)) {
+      // no data present, load tle and display
+      loadLatestTLEData(activity) { initializeAppWithCurrentTLEs(activity) }
+    } else if (model.sharedPrefsTLEsAreUpToDate(activity)) {
+      // data is up to date, display it
+      initializeAppWithCurrentTLEs(activity)
+
+    } else {
+      // data is present but not up to date
+      // display current data
+      initializeAppWithCurrentTLEs(activity)
+      // load new data in background
+      loadLatestTLEData(activity) {
+        model.readTLEsFromSharedPrefs(activity) {
+          refreshSatellitesOnMap(it)
+        }
+      }
+    }
+  }
+
+  private fun initializeAppWithCurrentTLEs(activity: ComponentActivity) {
+    model.readTLEsFromSharedPrefs(activity) {
+      refreshSatellitesOnMap(it)
+      model.activeScreen = Screen.HOME
+      mapModel.addUserPositionToMap()
+      model.refreshSatellites { refreshSatellitesOnMap(it) }
+    }
+  }
+
+  private fun loadLatestTLEData(activity: ComponentActivity, onLoaded: () -> Unit) {
     val backgroundJob = SupervisorJob()
     val coroutine     = CoroutineScope(backgroundJob + Dispatchers.IO)
     val tleCall       = TleAllCall()
@@ -43,20 +91,16 @@ object SevenSatApp : EmobaApp {
       data?.forEach{ entry ->
         editor.putString(entry.key.toString(), entry.value.toList().joinToString(";"))
       }
+      editor.putLong(activity.getString(R.string.last_tle_sync), Date().time)
       editor.apply()
+      onLoaded()
     }
   }
 
-  @Composable
-  override fun CreateUI(activity: ComponentActivity) {
-    val mapModel = MapModel(activity)
-    SevenSatTheme {
-      Crossfade(targetState = model.activeScreen) { screen ->
-        when (screen) {
-          Screen.HOME     -> SevenSatUI(model = model, mapModel)
-          Screen.LOADING  -> LoadingUI(model = model)
-        }
-      }
+  private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) {
+    mapModel.clearSatellites()
+    satellitesMap.forEach { satellite ->
+      mapModel.addSatellite(satellite.key, satellite.value)
     }
   }
 }
