@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
+import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_CIRCUMFERENCE
@@ -48,6 +49,7 @@ class SevenSatModel(
     })
   }
 
+
   fun sharedPrefsTLEsExist(context: Context): Boolean{
     val prefs = getTLEsFromSharedPrefs(context)
     return prefs.all.containsKey(context.getString(R.string.last_tle_sync))
@@ -82,29 +84,26 @@ class SevenSatModel(
     )
 
   fun calculateFlightLineForSatellite(noradId: Long, onCalculated: (List<SatPos>) -> Unit) {
-    modelScope.launch {
-      val satellite = satellitesMap.keys.find { it.noradId == noradId }
-      if (satellite != null) {
-        val calendar = Calendar.getInstance()
-        calendar.time = Date()
-        val points = mutableListOf<SatPos>()
-        val start = System.currentTimeMillis()
-        satellite.getPosition(calendar.time.time)
+    val satellite = satellitesMap.keys.find { it.noradId == noradId }
+    if (satellite != null) {
+      val calendar = Calendar.getInstance()
+      calendar.time = Date()
+      val points = mutableListOf<SatPos>()
+      val start = System.currentTimeMillis()
+      satellite.getPosition(calendar.time.time)
 
-        val factor = 1
-        val pointCount = getAmountOfPointsForSatellites(satellite) * factor
+      val factor = 1
+      val pointCount = getAmountOfPointsForSatellites(satellite) * factor
 
-        for (i in 0..pointCount step 1) {
-          calendar.add(Calendar.SECOND, 60 / factor)
-          points.add(satellite.getPosition(calendar.time.time))
-        }
-        onCalculated(points)
-        val end = System.currentTimeMillis()
-        println("it took ${(end - start) / 1000} seconds")
+      for (i in 0..pointCount step 1) {
+        calendar.add(Calendar.SECOND, 60 / factor)
+        points.add(satellite.getPosition(calendar.time.time))
       }
+      onCalculated(points)
+      val end = System.currentTimeMillis()
+      println("it took ${(end - start) / 1000} seconds")
     }
   }
-
   /**
    * how many points are needed to add a point all "minutes"-minute to orbit half of the earth?
    */
@@ -135,4 +134,5 @@ class SevenSatModel(
   }
 
   private fun deg2rad(x: Double) = x
+
 }

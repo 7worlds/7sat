@@ -5,9 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import fhnw.ws6c.EmobaApp
-import fhnw.ws6c.sevensat.data.celestrak.TleCall
-import fhnw.ws6c.sevensat.data.service.ApiService
-import fhnw.ws6c.sevensat.data.service.TleService
+import fhnw.ws6c.sevensat.data.celestrak.TleAllCall
+import fhnw.ws6c.sevensat.data.service.JsonService
+import fhnw.ws6c.sevensat.data.service.PlainTextService
 import fhnw.ws6c.sevensat.model.Screen
 import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
@@ -24,9 +24,9 @@ import java.util.Date
 
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
+  private val jsonService = JsonService()
+  private val stringService = PlainTextService()
   private lateinit var mapModel: MapModel
-  private val jsonService = ApiService()
-  private val stringService = TleService()
 
   override fun initialize(activity: ComponentActivity) {
     mapModel = MapModel(activity)
@@ -79,13 +79,13 @@ object SevenSatApp : EmobaApp {
   private fun loadLatestTLEData(activity: ComponentActivity, onLoaded: () -> Unit) {
     val backgroundJob = SupervisorJob()
     val coroutine     = CoroutineScope(backgroundJob + Dispatchers.IO)
-    val tleCall       = TleCall()
+    val tleCall       = TleAllCall()
 
     coroutine.launch {
-      TleService().loadRemoteData(tleCall)
-      val prefs           = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
-      val editor          = prefs.edit()
-      val data            = tleCall.getResponse()
+      PlainTextService().loadRemoteData(tleCall)
+      val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+      val editor  = prefs.edit()
+      val data    = tleCall.getResponse()
 
       editor.clear()
       data?.forEach{ entry ->
@@ -103,5 +103,4 @@ object SevenSatApp : EmobaApp {
       mapModel.addSatellite(satellite.key, satellite.value)
     }
   }
-
 }

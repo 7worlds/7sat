@@ -9,7 +9,7 @@ class TleCallTest {
   @Test
   fun getStringResponse() {
     //given
-    val call = TleCall()
+    val call = TleAllCall()
     val service = DummyCelestrakService()
 
     //when

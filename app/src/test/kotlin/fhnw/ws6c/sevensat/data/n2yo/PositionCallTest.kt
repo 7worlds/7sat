@@ -5,20 +5,20 @@ import fhnw.ws6c.sevensat.model.satellite.SatelliteBuilder
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 
-class PositionCallTest : N2yoCallTest() {
+class PositionCallTest : JsonServiceTest() {
 
   private val issId = 25544L
   private val lng   = -76.014
   private val lat   = 41.702
 
   override fun newApiCall(): N2yoCall {
-    return PositionCall(issId, 1, lng, lat)
+    return PositionByIdCall(issId, 1, lng, lat)
   }
 
   @Test
   fun resultTest() {
     //given
-    val call = PositionCall(issId, 1, lng, lat)
+    val call = PositionByIdCall(issId, 1, lng, lat)
     val service = DummyN2yoService()
 
     //when

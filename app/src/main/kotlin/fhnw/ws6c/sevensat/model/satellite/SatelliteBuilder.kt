@@ -65,7 +65,6 @@ class SatelliteBuilder {
   }
 
   fun withDetails(jsonObject: JSONObject): SatelliteBuilder {
-
     try {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
       image = data.getString("image")

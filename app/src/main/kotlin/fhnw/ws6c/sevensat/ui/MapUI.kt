@@ -13,6 +13,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
 import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.extension.style.layers.properties.generated.ProjectionName
+import com.mapbox.maps.extension.style.projection.generated.Projection
+import com.mapbox.maps.extension.style.projection.generated.setProjection
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
@@ -66,6 +69,7 @@ private fun MapView(
           cameraOptions {
             zoom(19.0)
           }
+          it.setProjection(Projection(ProjectionName.GLOBE))
         }
       }
     })

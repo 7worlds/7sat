@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 const val satnogsBaseUrl = "https://db.satnogs.org/api"
 
-class DetailCall(satelliteId: Number) : ApiCallable<JSONObject> {
+class DetailByIdCall(satelliteId: Number) : ApiCallable<JSONObject> {
   var resp:      JSONObject?   = null
   var exception: Exception?    = null
   private val id               = satelliteId

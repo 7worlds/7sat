@@ -1,16 +1,16 @@
 package fhnw.ws6c.sevensat.data.n2yo
 
-import fhnw.ws6c.sevensat.data.service.ApiService
-import fhnw.ws6c.sevensat.data.service.RemoteService
+import fhnw.ws6c.sevensat.data.ApiCallable
+import fhnw.ws6c.sevensat.data.service.JsonService
 import junit.framework.Assert.assertEquals
 import org.json.JSONObject
 import org.junit.Test
 
-abstract class N2yoCallTest {
+abstract class JsonServiceTest {
 
-  private lateinit var call:  N2yoCall
+  private lateinit var call:  ApiCallable<JSONObject>
 
-  abstract fun newApiCall() : N2yoCall
+  abstract fun newApiCall() : ApiCallable<JSONObject>
 
   private fun setup(){
     call = newApiCall();
@@ -20,7 +20,7 @@ abstract class N2yoCallTest {
   fun loadFromUrlTest() {
     //given
     setup()
-    val service = ApiService()
+    val service = JsonService()
 
     //when
     service.loadRemoteData(call)

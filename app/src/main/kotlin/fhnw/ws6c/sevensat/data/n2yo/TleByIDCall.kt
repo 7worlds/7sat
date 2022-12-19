@@ -1,6 +1,6 @@
 package fhnw.ws6c.sevensat.data.n2yo
 
-class TleCall(satelliteId: Number) : N2yoCall() {
+class TleByIDCall(satelliteId: Number) : N2yoCall() {
 
   private val identifier  = "tle"
   private val id          = satelliteId
