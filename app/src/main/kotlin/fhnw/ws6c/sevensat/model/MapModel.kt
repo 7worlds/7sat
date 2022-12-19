@@ -84,27 +84,27 @@ class MapModel(private val context: Activity) {
     satelliteAnnotationManager.addClickListener(satellitePointClickListener)
   }
 
-  fun addSatellite(
-    sat: Satellite,
-    satPosition: SatPos,
+  fun addSatellites(
+    satellites: Map<Satellite, SatPos>
   ) {
     // Create an instance of the Annotation API and get the PointAnnotationManager.
-    AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let {
-      val data = JsonObject()
-      data.addProperty("id", sat.noradId)
-      // Set options for the resulting symbol layer.
-      val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-        // Define a geographic coordinate.
-        .withPoint(Point.fromLngLat(satPosition.longDeg(), satPosition.latDeg()))
-        .withIconImage(it)
-        .withIconColor("White")
-        .withIconSize(.5)
-        .withIconRotate(getSatelliteRotation(sat, satPosition))
-        .withData(data)
-
+    AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let { icon ->
+      val annotations = satellites.map {
+        val data = JsonObject()
+        data.addProperty("id", it.key.noradId)
+        // Set options for the resulting symbol layer.
+        PointAnnotationOptions()
+          // Define a geographic coordinate.
+          .withPoint(Point.fromLngLat(it.value.longDeg(), it.value.latDeg()))
+          .withIconImage(icon)
+          .withIconColor("White")
+          .withIconSize(.5)
+          .withIconRotate(getSatelliteRotation(it.key, it.value))
+          .withData(data)
+      }
       // Add the resulting pointAnnotation to the map.
-      val newSatellitePoint = satelliteAnnotationManager.create(pointAnnotationOptions)
-      satellitePoints.add(newSatellitePoint)
+      val newSatellitePoint = satelliteAnnotationManager.create(annotations)
+      satellitePoints.addAll(newSatellitePoint)
     }
   }
 
