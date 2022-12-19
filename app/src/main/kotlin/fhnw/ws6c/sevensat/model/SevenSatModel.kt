@@ -90,14 +90,13 @@ class SevenSatModel(
       calendar.time = Date()
       val points = mutableListOf<SatPos>()
       val start = System.currentTimeMillis()
-      satellite.getPosition(calendar.time.time)
 
       val factor = 1
       val pointCount = getAmountOfPointsForSatellites(satellite) * factor
 
       for (i in 0..pointCount step 1) {
-        calendar.add(Calendar.SECOND, 60 / factor)
         points.add(satellite.getPosition(calendar.time.time))
+        calendar.add(Calendar.SECOND, 60 / factor)
       }
       onCalculated(points)
       val end = System.currentTimeMillis()

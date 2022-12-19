@@ -15,7 +15,6 @@ import fhnw.ws6c.sevensat.ui.SevenSatUI
 import fhnw.ws6c.sevensat.ui.components.LoadingUI
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import fhnw.ws6c.R
-import fhnw.ws6c.sevensat.model.TWO_DAYS_IN_MILLIS
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
 import kotlinx.coroutines.*
@@ -99,8 +98,6 @@ object SevenSatApp : EmobaApp {
 
   private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) {
     mapModel.clearSatellites()
-    satellitesMap.forEach { satellite ->
-      mapModel.addSatellite(satellite.key, satellite.value)
-    }
+    mapModel.addSatellites(satellitesMap)
   }
 }
