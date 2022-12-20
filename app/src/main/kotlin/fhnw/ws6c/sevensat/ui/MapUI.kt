@@ -77,19 +77,22 @@ private fun MapView(
 
 @OptIn(ExperimentalMaterialApi::class)
 fun onSatelliteClick(model: SevenSatModel, mapModel: MapModel,clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+
   val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
-      model.calculateFlightLineForSatellite(clickedSatelliteNorad){ route ->
-        mapModel.addFlightLine(route)
-      }
+
+    model.calculateFlightLineForSatellite(clickedSatelliteNorad){ route ->
+      mapModel.addFlightLine(route)
+    }
     val sat = found.entries.iterator().next().key
     model.selectedSatellites.add(sat)
-    scope.launch {
-      if (scaffoldState.bottomSheetState.isExpanded) {
-        scaffoldState.bottomSheetState.collapse()
-      }
-      scaffoldState.bottomSheetState.expand()
-    }
+//    scope.launch {
+//      if (scaffoldState.bottomSheetState.isExpanded) {
+//        scaffoldState.bottomSheetState.collapse()
+//      }
+//      scaffoldState.bottomSheetState.expand()
+//    }
+  } else {
   }
   println("Clicked Norad: $clickedSatelliteNorad")
 }

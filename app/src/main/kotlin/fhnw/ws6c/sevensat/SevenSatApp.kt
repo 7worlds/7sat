@@ -82,16 +82,23 @@ object SevenSatApp : EmobaApp {
 
     coroutine.launch {
       PlainTextService().loadRemoteData(tleCall)
-      val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
-      val editor  = prefs.edit()
-      val data    = tleCall.getResponse()
+      val prefs           = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+      val editor          = prefs.edit()
+      val data            = tleCall.getResponse()
+
+      val prefsSyncTime   = activity.getSharedPreferences(activity.getString(R.string.last_tle_sync), Context.MODE_PRIVATE)
+      val editorSyncTime  = prefsSyncTime.edit()
 
       editor.clear()
       data?.forEach{ entry ->
         editor.putString(entry.key.toString(), entry.value.toList().joinToString(";"))
       }
-      editor.putLong(activity.getString(R.string.last_tle_sync), Date().time)
       editor.apply()
+
+      editorSyncTime.clear()
+      editorSyncTime.putLong(activity.getString(R.string.last_tle_sync), Date().time)
+      editorSyncTime.apply()
+
       onLoaded()
     }
   }

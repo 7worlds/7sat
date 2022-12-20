@@ -51,12 +51,12 @@ class SevenSatModel(
 
 
   fun sharedPrefsTLEsExist(context: Context): Boolean{
-    val prefs = getTLEsFromSharedPrefs(context)
+    val prefs = getTLEsFromSharedPrefs(context, R.string.last_tle_sync)
     return prefs.all.containsKey(context.getString(R.string.last_tle_sync))
   }
 
   fun sharedPrefsTLEsAreUpToDate(context: Context): Boolean {
-    val prefs = getTLEsFromSharedPrefs(context)
+    val prefs = getTLEsFromSharedPrefs(context, R.string.last_tle_sync)
     if (!prefs.all.containsKey(context.getString(R.string.last_tle_sync))) return false
     val loadingDateMillis = prefs.getLong(context.getString(R.string.last_tle_sync), 0)
 
@@ -64,11 +64,11 @@ class SevenSatModel(
   }
 
   fun readTLEsFromSharedPrefs(context: Context, onLoaded: (Map<Satellite, SatPos>) -> Unit) {
-    val prefs = getTLEsFromSharedPrefs(context)
+    val prefs = getTLEsFromSharedPrefs(context, R.string.tle_preferences)
 
     modelScope.launch {
       val satellites =
-        prefs.all.entries.take(50)//.filter { it.key.equals("43556") || it.key.equals("25544") }
+        prefs.all.entries.take(100)//.filter { it.key.equals("43560") || it.key.equals("25544") }
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
         satellitesMap[it] = it.getPosition(Date().time)
@@ -77,9 +77,9 @@ class SevenSatModel(
     }
   }
 
-  private fun getTLEsFromSharedPrefs(context: Context) =
+  private fun getTLEsFromSharedPrefs(context: Context, filename: Int) =
     context.getSharedPreferences(
-      context.getString(R.string.tle_preferences),
+      context.getString(filename),
       Context.MODE_PRIVATE
     )
 
@@ -113,7 +113,8 @@ class SevenSatModel(
     val positionIn1Min = satellite.getPosition(calendar.time.time)
 
     val kmIn1Min = haversine(positionNow, positionIn1Min)
-    return (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
+    val numberOfPoints = (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
+    return if(numberOfPoints > 1000)  1000 else numberOfPoints
   }
 
 
