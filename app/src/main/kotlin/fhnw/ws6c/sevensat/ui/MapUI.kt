@@ -86,13 +86,12 @@ fun onSatelliteClick(model: SevenSatModel, mapModel: MapModel, clickedSatelliteN
     }
     val sat = found.entries.iterator().next().key
     model.selectedSatellites.add(sat)
-//    scope.launch {
-//      if (scaffoldState.bottomSheetState.isExpanded) {
-//        scaffoldState.bottomSheetState.collapse()
-//      }
-//      scaffoldState.bottomSheetState.expand()
-//    }
+    scope.launch {
+      if (scaffoldState.bottomSheetState.isExpanded) {
+        scaffoldState.bottomSheetState.collapse()
+      }
+      scaffoldState.bottomSheetState.expand()
+    }
   } else {
   }
-  println("Clicked Norad: $clickedSatelliteNorad")
 }

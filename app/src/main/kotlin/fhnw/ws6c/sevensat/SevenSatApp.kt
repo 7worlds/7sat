@@ -71,7 +71,7 @@ object SevenSatApp : EmobaApp {
       refreshSatellitesOnMap(it)
       model.activeScreen = Screen.HOME
       mapModel.addUserPositionToMap()
-      model.refreshSatellites { refreshSatellitesOnMap(it) }
+      model.refreshSatellites { satellites -> refreshSatellitesOnMap(satellites) }
     }
   }
 
@@ -103,8 +103,6 @@ object SevenSatApp : EmobaApp {
     }
   }
 
-  private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) {
-    mapModel.clearSatellites()
-    mapModel.addSatellites(satellitesMap)
-  }
+  private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) =
+    mapModel.refreshSatellitePositionOnMap(satellitesMap)
 }
