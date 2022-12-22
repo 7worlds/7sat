@@ -22,8 +22,6 @@ import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.math.sin
-import kotlin.math.tan
 
 
 class MapModel(private val context: Activity) {
@@ -148,41 +146,24 @@ class MapModel(private val context: Activity) {
     val firstPart = ps.subList(0, separator).toMutableList()
 
     if (separator != ps.lastIndex) {
-      val longBefore = ps[separator - 1].longitude()
-      val latBefore = ps[separator - 1].latitude()
+      // point in front of the separator point
+      val beforeSepLong = ps[separator - 1].longitude()
+      val beforeSepLat = ps[separator - 1].latitude()
 
-      val longAfter = separatorPoint.longitude()
-      val latAfter = separatorPoint.latitude()
-//      println("separator long: $longAfter  lat: $latAfter")
-//      println("before separator long: $longBefore  lat: $latBefore")
+      val dLong = 360 + separatorPoint.longitude() - beforeSepLong
+      val dNew = 360  - beforeSepLong
 
-      var dLong = 360 + longAfter - longBefore
-      var dNew = 360 - longBefore
-
-//      if(longBefore < longAfter) {
-//        dLong = 360 + longBefore - longAfter
-//        dNew = 360 - longAfter
-//      }
-
-      val dLat = latAfter - latBefore
+      val dLat = separatorPoint.latitude() - beforeSepLat
       val ratio = dLat / dLong
-      val angle = tan(ratio)
-//
-//      println("ratio $ratio")
-//      println("dLong: $dLong")
-//      println("dLat: $dLat")
-//      println("angle: $angle")
-//
-//      println("dNew: $dNew")
 
-      var boundaryLat = latBefore + ratio * dNew
-//      println("boundaryLat: $boundaryLat")
+      // calculates the latitude of the point for each side
+      val boundaryLat = beforeSepLat + ratio * dNew
 
       // add 0 & 360 longitude point to point list
       val sepLong = separatorPoint.longitude()
       var firstPartEnd = 0.0
       var secondPartStart = 360.0
-      if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue){
+      if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue) {
         // nearer to zero than 360
         firstPartEnd = secondPartStart
         secondPartStart = 0.0
