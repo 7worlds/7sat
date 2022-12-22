@@ -148,12 +148,12 @@ class MapModel(private val context: Activity) {
     if (separator != ps.lastIndex) {
       // point in front of the separator point
       val beforeSepLong = ps[separator - 1].longitude()
-      val beforeSepLat = ps[separator - 1].latitude()
+      val beforeSepLat  = ps[separator - 1].latitude()
 
       val dLong = 360 + separatorPoint.longitude() - beforeSepLong
-      val dNew = 360  - beforeSepLong
+      val dNew  = 360  - beforeSepLong
 
-      val dLat = separatorPoint.latitude() - beforeSepLat
+      val dLat  = separatorPoint.latitude() - beforeSepLat
       val ratio = dLat / dLong
 
       // calculates the latitude of the point for each side
