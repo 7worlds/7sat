@@ -36,17 +36,17 @@ class SevenSatModel(
 
 
   fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
-    mainHandler.post(object : Runnable {
-      override fun run() {
-        modelScope.run {
-          satellitesMap.keys.forEach { satellite ->
-            satellitesMap[satellite] = satellite.getPosition(Date().time)
-          }
-          onRefreshed(satellitesMap)
-        }
-        mainHandler.postDelayed(this, 5000)
-      }
-    })
+//    mainHandler.post(object : Runnable {
+//      override fun run() {
+//        modelScope.run {
+//          satellitesMap.keys.forEach { satellite ->
+//            satellitesMap[satellite] = satellite.getPosition(Date().time)
+//          }
+//          onRefreshed(satellitesMap)
+//        }
+//        mainHandler.postDelayed(this, 5000)
+//      }
+//    })
   }
 
 
