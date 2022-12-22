@@ -44,7 +44,7 @@ class SevenSatModel(
           }
           onRefreshed(satellitesMap)
         }
-        mainHandler.postDelayed(this, 5000)
+        mainHandler.postDelayed(this, 100)
       }
     })
   }
