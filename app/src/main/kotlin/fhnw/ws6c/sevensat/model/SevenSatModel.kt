@@ -22,6 +22,8 @@ import kotlin.math.*
 
 const val TWO_DAYS_IN_MILLIS = 172_800_000
 
+private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
+
 class SevenSatModel(
   private val jsonService: Service<JSONObject>,
 ) {
@@ -100,7 +102,7 @@ class SevenSatModel(
       }
       onCalculated(points)
       val end = System.currentTimeMillis()
-      println("it took ${(end - start) / 1000} seconds")
+      println("it took ${(end - start) / MAX_AMOUNT_OF_LINE_POINTS} seconds")
     }
   }
   /**
@@ -114,7 +116,7 @@ class SevenSatModel(
 
     val kmIn1Min = haversine(positionNow, positionIn1Min)
     val numberOfPoints = (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
-    return if(numberOfPoints > 1000)  1000 else numberOfPoints
+    return if(numberOfPoints > MAX_AMOUNT_OF_LINE_POINTS) MAX_AMOUNT_OF_LINE_POINTS else numberOfPoints
   }
 
 
