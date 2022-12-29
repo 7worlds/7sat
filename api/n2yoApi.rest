@@ -39,16 +39,20 @@ GET http://tle.ivanstanojevic.me/api/tle
 
 
 
-
-
+### NATNOGS DB ###
+GET https://db.satnogs.org/api/satellites/?norad_cat_id=52017 HTTP/1.1
+Content-Type: application/json
 
 
 
 ### NATNOGS DB ###
-GET https://db.satnogs.org/api/satellites/?norad_cat_id=25544 HTTP/1.1
+GET https://db.satnogs.org/api/satellites HTTP/1.1
 Content-Type: application/json
 
 
+### NATNOGS TLE ###
+GET https://db.satnogs.org/api/tle HTTP/1.1
+Content-Type: application/json
 
 
 ### DEPRECATED ###

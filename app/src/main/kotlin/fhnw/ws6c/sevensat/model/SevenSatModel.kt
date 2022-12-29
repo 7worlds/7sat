@@ -24,7 +24,6 @@ const val TWO_DAYS_IN_MILLIS = 172_800_000
 
 class SevenSatModel(
   private val jsonService: Service<JSONObject>,
-  val stringService: Service<Map<Long, Triple<String, String, String>>>
 ) {
   private val backgroundJob = SupervisorJob()
   private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)

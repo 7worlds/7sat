@@ -25,9 +25,9 @@ class DetailCallTest : JsonServiceTest() {
 
     //then
     val detailObject = result!!.getJSONArray("values")[0] as JSONObject
-    val name  = detailObject.getString("name");
-    val names = detailObject.getString("names");
-    val image = detailObject.getString("image");
+    val name  = detailObject.getString("name")
+    val names = detailObject.getString("names")
+    val image = detailObject.getString("image")
     assertEquals(name, "ISS")
     assertEquals(names, "ZARYA")
     assertEquals(image, "https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg")
