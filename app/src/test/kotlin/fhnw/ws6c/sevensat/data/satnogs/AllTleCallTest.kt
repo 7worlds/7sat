@@ -19,6 +19,19 @@ class AllTleCallTest : JsonServiceTest() {
     // given
     val service = DummySatnogsService()
     val call    = AllTleCall()
+    val allNames = listOf(
+      "ATHENOXAT 1",
+      "0 ISS (ZARYA)",
+      "NEMO-HD",
+      "0 UPMSAT-2"
+    )
+
+    val allIds = listOf(
+      41168L,
+      25544L,
+      46277L,
+      46276L,
+    )
 
     // when
     service.loadRemoteData(call)
@@ -26,6 +39,10 @@ class AllTleCallTest : JsonServiceTest() {
 
     //then
     val tleData = result!!.getJSONArray("values") as JSONArray
-//    assertEquals(name, "ISS")
+    for (i in 0 until tleData.length()){
+      val obj = tleData[i] as JSONObject
+      assertEquals(obj.getString("tle0"), allNames[i])
+      assertEquals(obj.getLong("norad_cat_id"), allIds[i])
+    }
   }
 }
