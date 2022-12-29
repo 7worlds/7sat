@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import fhnw.ws6c.EmobaApp
-import fhnw.ws6c.sevensat.data.celestrak.TleAllCall
 import fhnw.ws6c.sevensat.data.service.JsonService
-import fhnw.ws6c.sevensat.data.service.PlainTextService
 import fhnw.ws6c.sevensat.model.Screen
 import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
@@ -24,12 +22,11 @@ import java.util.Date
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
   private val jsonService = JsonService()
-  private val stringService = PlainTextService()
   private lateinit var mapModel: MapModel
 
   override fun initialize(activity: ComponentActivity) {
     mapModel = MapModel(activity)
-    model = SevenSatModel(jsonService, stringService)
+    model = SevenSatModel(jsonService)
     initSatellitesOnMap(activity)
   }
 
@@ -81,7 +78,7 @@ object SevenSatApp : EmobaApp {
     val tleCall       = TleAllCall()
 
     coroutine.launch {
-      PlainTextService().loadRemoteData(tleCall)
+      JsonService().loadRemoteData(tleCall)
       val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
       val editor  = prefs.edit()
       val data    = tleCall.getResponse()

@@ -1,6 +1,5 @@
 package fhnw.ws6c.sevensat.data.celestrak
 
-import fhnw.ws6c.sevensat.data.service.dummy.DummyCelestrakService
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 
