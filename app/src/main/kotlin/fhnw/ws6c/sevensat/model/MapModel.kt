@@ -9,6 +9,7 @@ import com.mapbox.geojson.*
 import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.circleLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationAlignment
 import com.mapbox.maps.extension.style.sources.addSource
@@ -43,7 +44,7 @@ class MapModel(private val context: Activity) {
   private var currentUserAnnotation: PointAnnotation? = null
 
   init {
-    initSatelliteLayer()
+    initSatelliteLayers()
     flyToUserPosition()
   }
 
@@ -56,7 +57,7 @@ class MapModel(private val context: Activity) {
         // Set options for the resulting symbol layer.
         val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
           .withPoint(Point.fromLngLat(location.longitude, location.latitude))
-          .withIconImage(it)
+   .withIconImage(it)
           .withIconColor("White")
           .withIconSize(.5)
         currentUserAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
@@ -83,20 +84,22 @@ class MapModel(private val context: Activity) {
   }
 
   fun refreshSatellitePositionOnMap(satellites: Map<Satellite, SatPos>) {
-    val noradKey = "norad"
-    val rotationAngleKey = "rotationAngle"
+    mapView.getMapboxMap().executeOnRenderThread {
+      val noradKey = "norad"
+      val rotationAngleKey = "rotationAngle"
 
-    val features = FeatureCollection.fromFeatures(satellites.map { entry ->
-      val norad = entry.key.noradId
-      val long = entry.value.longDeg()
-      val lat = entry.value.latDeg()
-      val data = JsonObject()
-      data.addProperty(noradKey, norad)
-      data.addProperty(rotationAngleKey, getSatelliteRotation(entry.key, entry.value))
-      Feature.fromGeometry(Point.fromLngLat(long,lat), data)
-    })
+      val features = FeatureCollection.fromFeatures(satellites.entries.map { entry ->
+        val norad = entry.key.noradId
+        val long = entry.value.longDeg()
+        val lat = entry.value.latDeg()
+        val altitude = 10000.0
 
-    mapView.getMapboxMap().executeOnRenderThread{
+        val data = JsonObject()
+        data.addProperty(noradKey, norad)
+        data.addProperty(rotationAngleKey, getSatelliteRotation(entry.key, entry.value))
+        Feature.fromGeometry(Point.fromLngLat(long, lat, altitude), data)
+      })
+
       mapView.getMapboxMap().getStyle { style ->
         val source = style.getSourceAs<GeoJsonSource>(context.getString(R.string.SATELLITES_SOURCE))
         source?.featureCollection(features)
@@ -141,13 +144,12 @@ class MapModel(private val context: Activity) {
     }
   }
 
-  private fun initSatelliteLayer () {
+  private fun initSatelliteLayers() {
     val satImageId = "sat_horizontal"
     val rotationAngleKey = "rotationAngle"
 
-      mapView.getMapboxMap().getStyle { style ->
-    AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let { icon ->
-
+    mapView.getMapboxMap().getStyle { style ->
+      AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let { icon ->
         style.addImage(
           satImageId,
           icon
@@ -157,17 +159,29 @@ class MapModel(private val context: Activity) {
         })
 
         style.addLayer(
+          circleLayer(
+            context.getString(R.string.SATELLITES_LAYER_CIRCLE),
+            context.getString(R.string.SATELLITES_SOURCE)
+          ) {
+            this.circleColor(Color.WHITE)
+            this.circleRadius(1.5)
+            this.maxZoom(4.5)
+          }
+        )
+
+        style.addLayer(
           symbolLayer(
             context.getString(R.string.SATELLITES_LAYER),
             context.getString(R.string.SATELLITES_SOURCE)
           ) {
             this.iconImage(satImageId)
-            this.iconSize(0.4)
+            this.iconSize(0.3)
+            this.minZoom(4.5)
             this.iconRotate(get { literal(rotationAngleKey) })
             this.iconRotationAlignment(IconRotationAlignment.MAP)
           })
       }
-    }
+      }
   }
 
   private fun getSatelliteRotation(sat: Satellite, currentPosition: SatPos): Double {
@@ -241,7 +255,6 @@ class MapModel(private val context: Activity) {
 
     return MultiLineString.fromLineStrings(lineParts);
   }
-
 
   private fun deleteCurrentMapLine() {
     polyLineAnnotationManager.deleteAll()

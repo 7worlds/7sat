@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
-import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_CIRCUMFERENCE
@@ -35,16 +34,19 @@ class SevenSatModel(
   var activeScreen by mutableStateOf(Screen.LOADING)
 
 
-  fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
+  fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
+          val then = System.currentTimeMillis()
           satellitesMap.keys.forEach { satellite ->
             satellitesMap[satellite] = satellite.getPosition(Date().time)
           }
           onRefreshed(satellitesMap)
+          val now = System.currentTimeMillis()
+          println("it took ${now-then} milliseconds!")
         }
-        mainHandler.postDelayed(this, 100)
+        mainHandler.postDelayed(this, 300)
       }
     })
   }
@@ -67,7 +69,7 @@ class SevenSatModel(
 
     modelScope.launch {
       val satellites =
-        prefs.all.entries.take(100)//.filter { it.key.equals("43560") || it.key.equals("25544") }
+        prefs.all.entries//.take(100)//.filter { it.key.equals("43560") || it.key.equals("25544") }
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
         satellitesMap[it] = it.getPosition(Date().time)
