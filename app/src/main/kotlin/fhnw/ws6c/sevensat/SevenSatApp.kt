@@ -17,6 +17,8 @@ import fhnw.ws6c.sevensat.data.satnogs.AllTleCall
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
 import kotlinx.coroutines.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.Date
 
 
@@ -83,11 +85,22 @@ object SevenSatApp : EmobaApp {
       val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
       val editor  = prefs.edit()
       val data    = tleCall.getResponse()
+      val allTle  = data?.getJSONArray("values") as JSONArray
 
       editor.clear()
-//      data?.forEach{ entry ->
-//        editor.putString(entry.key.toString(), entry.value.toList().joinToString(";"))
-//      }
+
+      for (i in 0 until allTle.length()) {
+        val tle = allTle[i] as JSONObject
+        editor.putString(
+          tle.getLong("norad_cat_id").toString(),
+          listOf(
+            tle.getString("tle0"),
+            tle.getString("tle1"),
+            tle.getString("tle2")
+          ).joinToString(";")
+        )
+      }
+
       editor.putLong(activity.getString(R.string.last_tle_sync), Date().time)
       editor.apply()
       onLoaded()
