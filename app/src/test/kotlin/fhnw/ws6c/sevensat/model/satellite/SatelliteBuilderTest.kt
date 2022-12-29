@@ -16,7 +16,6 @@ class SatelliteBuilderTest {
 
     //given
     val n2yService       = DummyN2yoService()
-    val celestrakService = DummyCelestrakService()
     val satnogsService   = DummySatnogsService()
 
     val posCall          = PositionByIdCall(-1, -1, -1, -1)

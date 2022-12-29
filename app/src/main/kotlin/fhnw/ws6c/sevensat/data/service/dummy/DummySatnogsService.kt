@@ -1,9 +1,6 @@
 package fhnw.ws6c.sevensat.data.service.dummy
 
 import fhnw.ws6c.sevensat.data.ApiCallable
-import fhnw.ws6c.sevensat.data.n2yo.AboveCall
-import fhnw.ws6c.sevensat.data.n2yo.PositionByIdCall
-import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.sevensat.data.satnogs.AllTleCall
 import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
 import fhnw.ws6c.sevensat.data.service.Service
@@ -51,7 +48,8 @@ class DummySatnogsService : Service<JSONObject> {
 
   private fun defaultTleData(): String {
     return """
-          [
+        {
+        values: [
               {
                   "tle0": "ATHENOXAT 1",
                   "tle1": "1 41168U 15077C   22362.57374461  .00025590  00000+0  87352-3 0  9990",
@@ -89,6 +87,7 @@ class DummySatnogsService : Service<JSONObject> {
                   "updated": "2022-12-28T19:23:56.811270+0000"
               }
           ]
+      }
     """.trimIndent()
   }
 

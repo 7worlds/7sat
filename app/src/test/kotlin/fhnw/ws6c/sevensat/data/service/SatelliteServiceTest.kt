@@ -1,7 +1,6 @@
 package fhnw.ws6c.sevensat.data.service
 
 import fhnw.ws6c.sevensat.data.ApiCallable
-import fhnw.ws6c.sevensat.data.celestrak.TleAllCall
 import fhnw.ws6c.sevensat.data.n2yo.n2yoApiKey
 import fhnw.ws6c.sevensat.data.n2yo.n2yoBaseURL
 import junit.framework.Assert.*
@@ -89,21 +88,5 @@ class SatelliteServiceTest {
     assertTrue(call.hasError())
     assertTrue(call.getError() is IOException)
     assertEquals(call.getError()?.message, errorMessage)
-  }
-
-  @Test
-  fun tleServiceTest() {
-
-    //given
-    val service = PlainTextService()
-    val tleCall = TleAllCall()
-
-    //when
-    service.loadRemoteData(tleCall)
-
-    //then
-    val result = tleCall.getResponse()
-    assertFalse(result!!.isEmpty())
-    assertEquals(result[25544]!!.first.trim(), "ISS (ZARYA)".trim())
   }
 }
