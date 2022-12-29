@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import fhnw.ws6c.EmobaApp
-import fhnw.ws6c.sevensat.data.celestrak.TleAllCall
 import fhnw.ws6c.sevensat.data.service.JsonService
-import fhnw.ws6c.sevensat.data.service.PlainTextService
 import fhnw.ws6c.sevensat.model.Screen
 import fhnw.ws6c.sevensat.model.MapModel
 import fhnw.ws6c.sevensat.model.SevenSatModel
@@ -15,21 +13,23 @@ import fhnw.ws6c.sevensat.ui.SevenSatUI
 import fhnw.ws6c.sevensat.ui.components.LoadingUI
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import fhnw.ws6c.R
+import fhnw.ws6c.sevensat.data.satnogs.AllTleCall
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
 import kotlinx.coroutines.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.Date
 
 
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
   private val jsonService = JsonService()
-  private val stringService = PlainTextService()
   private lateinit var mapModel: MapModel
 
   override fun initialize(activity: ComponentActivity) {
     mapModel = MapModel(activity)
-    model = SevenSatModel(jsonService, stringService)
+    model = SevenSatModel(jsonService)
     initSatellitesOnMap(activity)
   }
 
@@ -78,18 +78,29 @@ object SevenSatApp : EmobaApp {
   private fun loadLatestTLEData(activity: ComponentActivity, onLoaded: () -> Unit) {
     val backgroundJob = SupervisorJob()
     val coroutine     = CoroutineScope(backgroundJob + Dispatchers.IO)
-    val tleCall       = TleAllCall()
+    val tleCall       = AllTleCall()
 
     coroutine.launch {
-      PlainTextService().loadRemoteData(tleCall)
+      JsonService().loadRemoteData(tleCall)
       val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
       val editor  = prefs.edit()
       val data    = tleCall.getResponse()
+      val allTle  = data?.getJSONArray("values") as JSONArray
 
       editor.clear()
-      data?.forEach{ entry ->
-        editor.putString(entry.key.toString(), entry.value.toList().joinToString(";"))
+
+      for (i in 0 until allTle.length()) {
+        val tle = allTle[i] as JSONObject
+        editor.putString(
+          tle.getLong("norad_cat_id").toString(),
+          listOf(
+            tle.getString("tle0"),
+            tle.getString("tle1"),
+            tle.getString("tle2")
+          ).joinToString(";")
+        )
       }
+
       editor.putLong(activity.getString(R.string.last_tle_sync), Date().time)
       editor.apply()
       onLoaded()

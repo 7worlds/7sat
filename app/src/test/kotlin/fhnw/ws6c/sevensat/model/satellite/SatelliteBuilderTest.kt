@@ -3,7 +3,6 @@ package fhnw.ws6c.sevensat.model.satellite
 import fhnw.ws6c.sevensat.data.n2yo.PositionByIdCall
 import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
-import fhnw.ws6c.sevensat.data.service.dummy.DummyCelestrakService
 import fhnw.ws6c.sevensat.data.service.dummy.DummyN2yoService
 import fhnw.ws6c.sevensat.data.service.dummy.DummySatnogsService
 import junit.framework.Assert.assertEquals
@@ -17,7 +16,6 @@ class SatelliteBuilderTest {
 
     //given
     val n2yService       = DummyN2yoService()
-    val celestrakService = DummyCelestrakService()
     val satnogsService   = DummySatnogsService()
 
     val posCall          = PositionByIdCall(-1, -1, -1, -1)
