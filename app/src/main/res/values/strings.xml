@@ -4,4 +4,7 @@
     <string name="MAPBOX_DOWNLOADS_TOKEN"></string>
     <string name="tle_preferences">tle_data</string>
     <string name="last_tle_sync">last_tle_sync_date</string>
+    <string name="SATELLITES_LAYER">SATELLITES_LAYER</string>
+    <string name="SATELLITES_LAYER_CIRCLE">SATELLITES_LAYER_CIRCLE</string>
+    <string name="SATELLITES_SOURCE">SATELLITES_SOURCE</string>
 </resources>

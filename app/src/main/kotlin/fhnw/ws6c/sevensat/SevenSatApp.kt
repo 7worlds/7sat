@@ -71,7 +71,7 @@ object SevenSatApp : EmobaApp {
       refreshSatellitesOnMap(it)
       model.activeScreen = Screen.HOME
       mapModel.addUserPositionToMap()
-      model.refreshSatellites { refreshSatellitesOnMap(it) }
+      model.refreshSatellites { satellites -> refreshSatellitesOnMap(satellites) }
     }
   }
 
@@ -87,6 +87,9 @@ object SevenSatApp : EmobaApp {
       val data    = tleCall.getResponse()
       val allTle  = data?.getJSONArray("values") as JSONArray
 
+      val prefsSyncTime   = activity.getSharedPreferences(activity.getString(R.string.last_tle_sync), Context.MODE_PRIVATE)
+      val editorSyncTime  = prefsSyncTime.edit()
+
       editor.clear()
 
       for (i in 0 until allTle.length()) {
@@ -101,14 +104,16 @@ object SevenSatApp : EmobaApp {
         )
       }
 
-      editor.putLong(activity.getString(R.string.last_tle_sync), Date().time)
       editor.apply()
+
+      editorSyncTime.clear()
+      editorSyncTime.putLong(activity.getString(R.string.last_tle_sync), Date().time)
+      editorSyncTime.apply()
+
       onLoaded()
     }
   }
 
-  private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) {
-    mapModel.clearSatellites()
-    mapModel.addSatellites(satellitesMap)
-  }
+  private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) =
+    mapModel.refreshSatellitePositionOnMap(satellitesMap)
 }

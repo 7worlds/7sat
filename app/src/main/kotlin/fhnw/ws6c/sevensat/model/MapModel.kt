@@ -6,13 +6,21 @@ import android.graphics.Color
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.gson.JsonObject
 import com.mapbox.geojson.*
-import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.MapView
+import com.mapbox.maps.*
+import com.mapbox.maps.extension.style.expressions.dsl.generated.get
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.circleLayer
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationAlignment
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
+import com.mapbox.maps.extension.style.sources.getSourceAs
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.gps.UserLocationSubject
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -22,7 +30,7 @@ import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
 import kotlin.math.absoluteValue
-
+import kotlin.math.tan
 
 class MapModel(private val context: Activity) {
   private val userPositionCallbackKey     = "UserPosition"
@@ -34,8 +42,14 @@ class MapModel(private val context: Activity) {
   private var satellitePointClickListener = OnPointAnnotationClickListener { false }
   private var userLocationSubject         = UserLocationSubject(context){}
   private val satellitePoints             = mutableListOf<PointAnnotation>()
-  fun getMapView()                        = mapView
   private var currentUserAnnotation       : PointAnnotation?  = null
+
+  init {
+    initSatelliteLayers()
+    flyToUserPosition()
+  }
+
+  fun getMapView() = mapView
 
   fun addUserPositionToMap() {
     userLocationSubject.addLocationObserver(userPositionCallbackKey) { location ->
@@ -52,7 +66,63 @@ class MapModel(private val context: Activity) {
     }
   }
 
-  fun flyToUserPosition() {
+  fun addSatelliteClickListener(onClick: (norad: Long) -> Unit){
+    mapView.getMapboxMap().addOnMapClickListener {
+      val pixel = mapView.getMapboxMap().pixelForCoordinate(it)
+      mapView.getMapboxMap().queryRenderedFeatures(RenderedQueryGeometry(pixel),
+        RenderedQueryOptions(
+          listOf(context.getString(R.string.SATELLITES_LAYER)),
+          null
+        )
+      ) { found ->
+        if (found.isValue && found.value!!.isNotEmpty()) {
+          val norad = found.value!![0].feature.getStringProperty("norad").toLong()
+          println(norad)
+          onClick(norad)
+        }}
+      true
+    }
+  }
+
+  fun refreshSatellitePositionOnMap(satellites: Map<Satellite, SatPos>) {
+    mapView.getMapboxMap().executeOnRenderThread {
+      val noradKey = "norad"
+      val rotationAngleKey = "rotationAngle"
+
+      val features = FeatureCollection.fromFeatures(satellites.entries.map { entry ->
+        val norad = entry.key.noradId
+        val long = entry.value.longDeg()
+        val lat = entry.value.latDeg()
+        val altitude = 10000.0
+
+        val data = JsonObject()
+        data.addProperty(noradKey, norad)
+        data.addProperty(rotationAngleKey, getSatelliteRotation(entry.key, entry.value))
+        Feature.fromGeometry(Point.fromLngLat(long, lat, altitude), data)
+      })
+
+      mapView.getMapboxMap().getStyle { style ->
+        val source = style.getSourceAs<GeoJsonSource>(context.getString(R.string.SATELLITES_SOURCE))
+        source?.featureCollection(features)
+      }
+    }
+  }
+
+  fun addFlightLine(points: List<SatPos>) {
+    deleteCurrentMapLine()
+    if (points.isNotEmpty()) {
+      val multiLineString = getFlightLinesFromPoints(points)
+      multiLineString.lineStrings().forEach {
+        val polyLineAnnotationOptions = PolylineAnnotationOptions()
+          .withLineWidth(2.0)
+          .withLineColor(Color.WHITE)
+          .withGeometry(it)
+        polyLineAnnotationManager.create(polyLineAnnotationOptions)
+      }
+    }
+  }
+
+  private fun flyToUserPosition() {
     currentUserAnnotation?.let {
       val location = it.point
       val mapAnimationOptions = MapAnimationOptions.Builder().duration(1500L).build()
@@ -70,44 +140,45 @@ class MapModel(private val context: Activity) {
     }
   }
 
-  fun onSatellitePointClick(callback: (norad: Long) -> Unit) {
-    // first remove old listener
-    satelliteAnnotationManager.removeClickListener(satellitePointClickListener)
-    satellitePointClickListener = OnPointAnnotationClickListener { point ->
-      if (point.getData() is JsonObject) {
-        val norad = (point.getData() as JsonObject).get("id")?.asLong
-        if (norad != null) callback(norad)
-      }
-      false
-    }
-    // register new listener & call callback with norad
-    satelliteAnnotationManager.addClickListener(satellitePointClickListener)
-  }
+  private fun initSatelliteLayers() {
+    val satImageId = "sat_horizontal"
+    val rotationAngleKey = "rotationAngle"
 
-  fun addSatellites(
-    satellites: Map<Satellite, SatPos>
-  ) {
-    // Create an instance of the Annotation API and get the PointAnnotationManager.
-    AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let { icon ->
-      val annotations = satellites.map {
-        val data = JsonObject()
-        data.addProperty("id", it.key.noradId)
-        // Set options for the resulting symbol layer.
-        PointAnnotationOptions()
-          // Define a geographic coordinate.
-          .withPoint(Point.fromLngLat(it.value.longDeg(), it.value.latDeg()))
-          .withIconImage(icon)
-          .withIconColor("White")
-          .withIconSize(.5)
-          .withIconRotate(getSatelliteRotation(it.key, it.value))
-          .withData(data)
-      }
-      // Add the resulting pointAnnotation to the map.
-      val newSatellitePoint = satelliteAnnotationManager.create(annotations)
-      satellitePoints.addAll(newSatellitePoint)
-    }
-  }
+    mapView.getMapboxMap().getStyle { style ->
+      AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let { icon ->
+        style.addImage(
+          satImageId,
+          icon
+        )
+        style.addSource(geoJsonSource(context.getString(R.string.SATELLITES_SOURCE)) {
+          this.build()
+        })
 
+        style.addLayer(
+          circleLayer(
+            context.getString(R.string.SATELLITES_LAYER_CIRCLE),
+            context.getString(R.string.SATELLITES_SOURCE)
+          ) {
+            this.circleColor(Color.WHITE)
+            this.circleRadius(1.5)
+            this.maxZoom(4.5)
+          }
+        )
+
+        style.addLayer(
+          symbolLayer(
+            context.getString(R.string.SATELLITES_LAYER),
+            context.getString(R.string.SATELLITES_SOURCE)
+          ) {
+            this.iconImage(satImageId)
+            this.iconSize(0.3)
+            this.minZoom(4.5)
+            this.iconRotate(get { literal(rotationAngleKey) })
+            this.iconRotationAlignment(IconRotationAlignment.MAP)
+          })
+      }
+      }
+  }
 
   private fun getSatelliteRotation(sat: Satellite, currentPosition: SatPos): Double {
     val futurePoint = sat.getPosition(Date().time + 1000)
@@ -115,20 +186,6 @@ class MapModel(private val context: Activity) {
       Point.fromLngLat(currentPosition.longitude, currentPosition.latitude),
       Point.fromLngLat(futurePoint.longitude, futurePoint.latitude)
     )
-  }
-
-  fun addFlightLine(points: List<SatPos>) {
-    deleteCurrentMapLine()
-    if (points.isNotEmpty()) {
-      val multiLineString = getFlightLinesFromPoints(points)
-      multiLineString.lineStrings().forEach {
-        val polyLineAnnotationOptions = PolylineAnnotationOptions()
-          .withLineWidth(2.0)
-          .withLineColor(Color.WHITE)
-          .withGeometry(it)
-        polyLineAnnotationManager.create(polyLineAnnotationOptions)
-      }
-    }
   }
 
   @SuppressLint("Range")
@@ -146,28 +203,36 @@ class MapModel(private val context: Activity) {
     val firstPart = ps.subList(0, separator).toMutableList()
 
     if (separator != ps.lastIndex) {
+      // point in front of the separator point
+      val beforeSepLong = ps[separator - 1].longitude()
+      val beforeSepLat  = ps[separator - 1].latitude()
+
+      val dLong = 360 + separatorPoint.longitude() - beforeSepLong
+      val dNew  = 360  - beforeSepLong
+
+      val dLat  = separatorPoint.latitude() - beforeSepLat
+      val ratio = dLat / dLong
+
+      // calculates the latitude of the point for each side
+      val boundaryLat = beforeSepLat + ratio * dNew
+
       // add 0 & 360 longitude point to point list
       val sepLong = separatorPoint.longitude()
       var firstPartEnd = 0.0
       var secondPartStart = 360.0
-      if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue){
+      if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue) {
         // nearer to zero than 360
         firstPartEnd = secondPartStart
         secondPartStart = 0.0
       }
-      firstPart += Point.fromLngLat(firstPartEnd, separatorPoint.latitude())
-      val secondPart = mutableListOf(Point.fromLngLat(secondPartStart, separatorPoint.latitude()))
+      firstPart += Point.fromLngLat(firstPartEnd, boundaryLat)
+      val secondPart = mutableListOf(Point.fromLngLat(secondPartStart, boundaryLat))
       secondPart += ps.subList(separator, ps.lastIndex)
       lineParts.add(LineString.fromLngLats(secondPart))
     }
     lineParts.add(LineString.fromLngLats(firstPart))
 
     return MultiLineString.fromLineStrings(lineParts);
-  }
-
-  fun clearSatellites() {
-    satelliteAnnotationManager.delete(satellitePoints)
-    satellitePoints.clear()
   }
 
   private fun deleteCurrentMapLine() {

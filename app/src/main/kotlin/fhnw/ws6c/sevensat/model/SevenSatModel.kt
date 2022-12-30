@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
-import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_CIRCUMFERENCE
@@ -23,6 +22,8 @@ import kotlin.math.*
 
 const val TWO_DAYS_IN_MILLIS = 172_800_000
 
+private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
+
 class SevenSatModel(
   private val jsonService: Service<JSONObject>,
 ) {
@@ -34,28 +35,30 @@ class SevenSatModel(
   var activeScreen by mutableStateOf(Screen.LOADING)
 
 
-  fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
+  fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
+          val then = System.currentTimeMillis()
           satellitesMap.keys.forEach { satellite ->
             satellitesMap[satellite] = satellite.getPosition(Date().time)
           }
           onRefreshed(satellitesMap)
+          val now = System.currentTimeMillis()
+          println("it took ${now-then} milliseconds!")
         }
-        mainHandler.postDelayed(this, 5000)
+        mainHandler.postDelayed(this, 300)
       }
     })
   }
 
-
   fun sharedPrefsTLEsExist(context: Context): Boolean{
-    val prefs = getTLEsFromSharedPrefs(context)
+    val prefs = getTLEsFromSharedPrefs(context, R.string.last_tle_sync)
     return prefs.all.containsKey(context.getString(R.string.last_tle_sync))
   }
 
   fun sharedPrefsTLEsAreUpToDate(context: Context): Boolean {
-    val prefs = getTLEsFromSharedPrefs(context)
+    val prefs = getTLEsFromSharedPrefs(context, R.string.last_tle_sync)
     if (!prefs.all.containsKey(context.getString(R.string.last_tle_sync))) return false
     val loadingDateMillis = prefs.getLong(context.getString(R.string.last_tle_sync), 0)
 
@@ -63,11 +66,11 @@ class SevenSatModel(
   }
 
   fun readTLEsFromSharedPrefs(context: Context, onLoaded: (Map<Satellite, SatPos>) -> Unit) {
-    val prefs = getTLEsFromSharedPrefs(context)
+    val prefs = getTLEsFromSharedPrefs(context, R.string.tle_preferences)
 
     modelScope.launch {
       val satellites =
-        prefs.all.entries.take(50)//.filter { it.key.equals("43556") || it.key.equals("25544") }
+        prefs.all.entries//.take(100)//.filter { it.key.equals("43560") || it.key.equals("25544") }
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
         satellitesMap[it] = it.getPosition(Date().time)
@@ -76,9 +79,9 @@ class SevenSatModel(
     }
   }
 
-  private fun getTLEsFromSharedPrefs(context: Context) =
+  private fun getTLEsFromSharedPrefs(context: Context, filename: Int) =
     context.getSharedPreferences(
-      context.getString(R.string.tle_preferences),
+      context.getString(filename),
       Context.MODE_PRIVATE
     )
 
@@ -99,7 +102,7 @@ class SevenSatModel(
       }
       onCalculated(points)
       val end = System.currentTimeMillis()
-      println("it took ${(end - start) / 1000} seconds")
+      println("it took ${(end - start) / MAX_AMOUNT_OF_LINE_POINTS} seconds")
     }
   }
   /**
@@ -112,7 +115,8 @@ class SevenSatModel(
     val positionIn1Min = satellite.getPosition(calendar.time.time)
 
     val kmIn1Min = haversine(positionNow, positionIn1Min)
-    return (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
+    val numberOfPoints = (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
+    return if(numberOfPoints > MAX_AMOUNT_OF_LINE_POINTS) MAX_AMOUNT_OF_LINE_POINTS else numberOfPoints
   }
 
 

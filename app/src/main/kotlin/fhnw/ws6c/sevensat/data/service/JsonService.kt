@@ -13,7 +13,6 @@ class JsonService : RemoteService<JSONObject>() {
     val reader = BufferedReader(InputStreamReader(connection.inputStream))
     var result = reader.readText()
     reader.close()
-    println(result)
     val jsonToken = JSONTokener(result).nextValue()
     if (jsonToken is JSONArray) {
       result = """
