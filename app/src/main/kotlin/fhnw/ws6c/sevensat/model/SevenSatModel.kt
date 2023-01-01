@@ -5,7 +5,11 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
 import fhnw.ws6c.R
+import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
+import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
+import fhnw.ws6c.sevensat.data.service.JsonService
 import fhnw.ws6c.sevensat.data.service.Service
+import fhnw.ws6c.sevensat.data.service.dummy.DummySatnogsService
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_CIRCUMFERENCE
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_RADIUS
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -33,6 +37,20 @@ class SevenSatModel(
   val satellitesMap         = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites    = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.LOADING)
+
+
+  fun getSateliteDetails(context: Context, satelliteNorad: Long){
+    modelScope.run {
+      val detailCall       = DetailByIdCall(satelliteNorad)
+      val satnogsService   = JsonService()
+      satnogsService.loadRemoteData(detailCall)
+      val sat = SatelliteBuilder().withPlainTextTleData(context, satelliteNorad).withDetails(detailCall.getResponse()!!).build()
+      selectedSatellites.add(0, sat)
+    }
+
+    println("norad:"+satelliteNorad)
+
+    }
 
 
   fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {

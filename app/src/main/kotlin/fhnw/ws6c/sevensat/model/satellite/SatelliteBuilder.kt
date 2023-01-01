@@ -68,6 +68,7 @@ class SatelliteBuilder {
     try {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
       image = data.getString("image")
+      name = data.getString("name")
     } catch (jsonException: JSONException) {
       System.err.println("Couldn't parse json data! " + jsonException.message)
     }

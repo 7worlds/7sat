@@ -1,5 +1,6 @@
 package fhnw.ws6c.sevensat.ui
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
@@ -46,6 +48,7 @@ private fun MapView(
   scope: CoroutineScope,
   scaffoldState: BottomSheetScaffoldState
 ) {
+  val context = LocalContext.current
   AndroidView(
     modifier = Modifier,
     update = {
@@ -53,14 +56,15 @@ private fun MapView(
     factory = { context ->
       ResourceOptionsManager.getDefault(context, context.getString(R.string.mapbox_access_token))
       val map = mapModel.getMapView()
+
       mapModel.addSatelliteClickListener { norad ->
         onSatelliteClick(
           model,
           mapModel,
           norad,
           scope,
-          scaffoldState
-        )
+          scaffoldState,
+          context       )
       }
       map.apply {
         getMapboxMap().loadStyleUri(
@@ -76,22 +80,20 @@ private fun MapView(
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-fun onSatelliteClick(model: SevenSatModel, mapModel: MapModel, clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+fun onSatelliteClick(model: SevenSatModel, mapModel: MapModel, clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, context: Context) {
 
   val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
 
     model.calculateFlightLineForSatellite(clickedSatelliteNorad){ route ->
       mapModel.addFlightLine(route)
+      model.getSateliteDetails(context, clickedSatelliteNorad)
     }
-    val sat = found.entries.iterator().next().key
-    model.selectedSatellites.add(sat)
     scope.launch {
       if (scaffoldState.bottomSheetState.isExpanded) {
         scaffoldState.bottomSheetState.collapse()
       }
       scaffoldState.bottomSheetState.expand()
     }
-  } else {
   }
 }
