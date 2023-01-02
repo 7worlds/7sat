@@ -13,6 +13,8 @@ import fhnw.ws6c.sevensat.model.SevenSatModel
 import fhnw.ws6c.sevensat.ui.components.YoutubePlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -65,7 +67,7 @@ fun BottomSheet(
       Spacer(modifier = Modifier.height(20.dp))
 
       Text(text = "Höhe", style = MaterialTheme.typography.h2)
-      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.altitude.toString(), style = MaterialTheme.typography.body1)
+      Text(text = model.selectedSatellites[0].getPosition(Date().time).altitude.toInt().toString(), style = MaterialTheme.typography.body1)
       Spacer(modifier = Modifier.height(20.dp))
 
       Text(text = "NoradID", style = MaterialTheme.typography.h2)

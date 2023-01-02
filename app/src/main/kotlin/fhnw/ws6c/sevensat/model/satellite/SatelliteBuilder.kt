@@ -16,6 +16,9 @@ class SatelliteBuilder {
   var image:        String = ""
   var tleLine1:     String = ""
   var tleLine2:     String = ""
+  var launched: String = ""
+  var website: String=""
+  var countries: String= ""
   var coordinates:  Map<Long, Triple<Double, Double, Double>> = Collections.emptyMap() // lat, lng, alt
   var orbitalData: OrbitalData? = null
 
@@ -69,6 +72,9 @@ class SatelliteBuilder {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
       image = data.getString("image")
       name = data.getString("name")
+      launched = data.getString("launched")
+      website = data.getString("website")
+      countries = data.getString("countries")
 
     } catch (jsonException: JSONException) {
       System.err.println("Couldn't parse json data! " + jsonException.message)
@@ -84,6 +90,9 @@ class SatelliteBuilder {
     tleLine2 = satellite.tleLine2
     coordinates = satellite.coordinates
     orbitalData = satellite.orbitalData
+    launched = satellite.launched
+    website = satellite.website
+    countries = satellite.countries
     return this
   }
 

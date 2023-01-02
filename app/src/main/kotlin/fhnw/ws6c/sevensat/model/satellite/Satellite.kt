@@ -12,7 +12,10 @@ data class Satellite(
   var coordinates: Map<Long, Triple<Double, Double, Double>>, // lat, lng, alt
   var tleLine1: String,
   var tleLine2: String,
-  var orbitalData: OrbitalData
+  var orbitalData: OrbitalData,
+  var launched: String,
+  var website: String,
+  var countries: String
 ) {
   constructor(builder: SatelliteBuilder) : this(
     builder.noradId,
@@ -22,7 +25,10 @@ data class Satellite(
     builder.coordinates,
     builder.tleLine1,
     builder.tleLine2,
-    builder.orbitalData!!
+    builder.orbitalData!!,
+    builder.launched,
+    builder.website,
+    builder.countries
   )
 
   fun getPosition(timeStamp: Long): SatPos {
