@@ -69,10 +69,22 @@ class SatelliteBuilder {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
       image = data.getString("image")
       name = data.getString("name")
+
     } catch (jsonException: JSONException) {
       System.err.println("Couldn't parse json data! " + jsonException.message)
     }
-    return this;
+    return this
+  }
+  fun withSatellite(satellite: Satellite):SatelliteBuilder{
+    noradId = satellite.noradId as Long
+    name = satellite.name
+    description = satellite.description
+    image = satellite.image
+    tleLine1 = satellite.tleLine1
+    tleLine2 = satellite.tleLine2
+    coordinates = satellite.coordinates
+    orbitalData = satellite.orbitalData
+    return this
   }
 
   fun build() : Satellite {

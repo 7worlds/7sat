@@ -60,7 +60,7 @@ fun BottomSheet(
   Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
     Column (modifier = Modifier.width(150.dp)){
       Text(text = "Position", style = MaterialTheme.typography.h2)
-      Text(text = model.satellitesMap[model.selectedSatellites.first()]?.latDeg().toString(), style = MaterialTheme.typography.body1)
+      Text(text = model.selectedSatellites[0].orbitalData.incl.toInt().toString(), style = MaterialTheme.typography.body1)
       Text(text = model.satellitesMap[model.selectedSatellites.first()]?.longDeg().toString(), style = MaterialTheme.typography.body1)
       Spacer(modifier = Modifier.height(20.dp))
 

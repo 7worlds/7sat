@@ -5,11 +5,9 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
 import fhnw.ws6c.R
-import fhnw.ws6c.sevensat.data.n2yo.TleByIDCall
 import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
 import fhnw.ws6c.sevensat.data.service.JsonService
 import fhnw.ws6c.sevensat.data.service.Service
-import fhnw.ws6c.sevensat.data.service.dummy.DummySatnogsService
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_CIRCUMFERENCE
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_RADIUS
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -39,17 +37,16 @@ class SevenSatModel(
   var activeScreen by mutableStateOf(Screen.LOADING)
 
 
-  fun getSateliteDetails(context: Context, satelliteNorad: Long){
-    modelScope.run {
-      val detailCall       = DetailByIdCall(satelliteNorad)
+  fun getSatelliteDetails(satellite: Satellite){
+      val detailCall       = DetailByIdCall(satellite.noradId)
       val satnogsService   = JsonService()
       satnogsService.loadRemoteData(detailCall)
-      val sat = SatelliteBuilder().withPlainTextTleData(context, satelliteNorad).withDetails(detailCall.getResponse()!!).build()
+      val sat = SatelliteBuilder()
+        .withSatellite(satellite)
+        .withDetails(detailCall.getResponse()!!).build()
       selectedSatellites.add(0, sat)
-    }
 
-    println("norad:"+satelliteNorad)
-
+    println("norad:"+satellite.noradId)
     }
 
 
