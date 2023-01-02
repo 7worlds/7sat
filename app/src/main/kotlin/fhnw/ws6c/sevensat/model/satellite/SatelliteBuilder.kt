@@ -70,7 +70,7 @@ class SatelliteBuilder {
   fun withDetails(jsonObject: JSONObject): SatelliteBuilder {
     try {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
-      image = data.getString("image")
+      image = "https://db-satnogs.freetls.fastly.net/media/"+data.getString("image")
       name = data.getString("name")
       launched = data.getString("launched")
       website = data.getString("website")
