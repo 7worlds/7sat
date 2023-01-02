@@ -72,6 +72,15 @@ fun BottomSheet(
               .toString() + " m", style = MaterialTheme.typography.h3
           )
           Spacer(modifier = Modifier.height(20.dp))
+
+          Text(text = "Launched", style = MaterialTheme.typography.body1)
+          Text(text = model.selectedSatellites[0].launched, style = MaterialTheme.typography.h3)
+          Spacer(modifier = Modifier.height(20.dp))
+
+          Text(text = "Website", style = MaterialTheme.typography.body1)
+          Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
+          Spacer(modifier = Modifier.height(20.dp))
+
           //TODO attribut für speed auslesen
 //          Text(text = "Flight speed", style = MaterialTheme.typography.body1)
 //          Text(
@@ -84,23 +93,16 @@ fun BottomSheet(
         AsyncImage(
           model = model.selectedSatellites[0].image,
           contentDescription = "Forest Image",
-          modifier = Modifier.width(200.dp).height(200.dp).padding(20.dp, 0.dp, 0.dp, 0.dp),
+          modifier = Modifier
+            .width(200.dp)
+            .height(200.dp)
+            .padding(20.dp, 0.dp, 0.dp, 0.dp),
           error = painterResource(R.drawable.noimage),
           placeholder = painterResource(R.drawable.loading),
           alignment = Alignment.TopCenter
         )
       }
 
-      Text(text = "Launched", style = MaterialTheme.typography.body1)
-      Text(text = model.selectedSatellites[0].launched, style = MaterialTheme.typography.h3)
-      Spacer(modifier = Modifier.height(20.dp))
-
-
-      Text(text = "Website", style = MaterialTheme.typography.body1)
-      Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
-      Spacer(modifier = Modifier.height(20.dp))
-
-      Spacer(modifier = Modifier.height(20.dp))
 
     }
   }
