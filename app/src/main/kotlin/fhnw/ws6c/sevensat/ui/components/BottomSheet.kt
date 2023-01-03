@@ -91,7 +91,6 @@ fun BottomSheet(
             Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
             Spacer(modifier = Modifier.height(20.dp))
           }
-
         }
         AsyncImage(
           model = model.selectedSatellites[0].image,
