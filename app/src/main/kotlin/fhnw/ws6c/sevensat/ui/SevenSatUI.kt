@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FilterTiltShift
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -28,24 +30,10 @@ fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
   )
   BottomSheetScaffold(
     scaffoldState = scaffoldState,
-    drawerContent = { Drawer(scope, scaffoldState) },
+    drawerContent = { Drawer(scope, scaffoldState, model) },
     drawerBackgroundColor = MaterialTheme.colors.background,
+    drawerContentColor = MaterialTheme.colors.secondary,
     drawerGesturesEnabled = false,
-    topBar = {
-      TopAppBar (
-      ){
-        IconButtonSat(
-          onClick = {
-            scope.launch {
-              scaffoldState.drawerState.apply {
-                if (isClosed) open() else close()
-              }
-            }
-          },
-          icon = {Icon(Icons.Filled.FilterList, "Filterbutton", tint= MaterialTheme.colors.primary)}
-        )
-      }
-    },
     sheetContent = { BottomSheet(scope, scaffoldState, model) },
     sheetGesturesEnabled = true,
     sheetContentColor = MaterialTheme.colors.secondary,
@@ -54,11 +42,31 @@ fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
     sheetShape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp),
     content =
     {
-      Box(modifier = Modifier.padding(3.dp)) {
+      Box() {
+
         Column(
           modifier = Modifier.padding(it)
         ) {
           MapUI(model, mapModel, scope, scaffoldState)
+        }
+        Column (modifier = Modifier.padding(5.dp)){
+          IconButtonSat(
+            backgroundColor = MaterialTheme.colors.onSurface,
+            onClick = {
+              scope.launch {
+                scaffoldState.drawerState.apply {
+                  if (isClosed) open() else close()
+                }
+              }
+            },
+            icon = {
+              Icon(
+                Icons.Filled.FilterAlt,
+                "Filterbutton",
+                tint = MaterialTheme.colors.secondary
+              )
+            }
+          )
         }
       }
     }

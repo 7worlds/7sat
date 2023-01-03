@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -44,7 +45,9 @@ fun BottomSheet(
             style = MaterialTheme.typography.body1
           )
         }
-        IconButtonSat(onClick = {
+        IconButtonSat(
+          backgroundColor = MaterialTheme.colors.onSurface,
+          onClick = {
           scope.launch {
             if (scaffoldState.bottomSheetState.isCollapsed) {
               scaffoldState.bottomSheetState.expand()
@@ -52,15 +55,17 @@ fun BottomSheet(
               scaffoldState.bottomSheetState.collapse()
             }
           }
-        }) {
+        },
+        icon = {
           Icon(
-            Icons.Filled.Close, "close", tint = MaterialTheme.colors.secondary
+            Icons.Filled.Close, "close",
+            tint = MaterialTheme.colors.secondary
           )
 
-        }
+        })
       }
       Spacer(modifier = Modifier.height(20.dp))
-      Row(modifier = Modifier.fillMaxWidth()) {
+      Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Column(modifier = Modifier.width(150.dp)) {
           Text(text = "Countries", style = MaterialTheme.typography.body1)
           Text(text = model.selectedSatellites[0].countries, style = MaterialTheme.typography.h3)
