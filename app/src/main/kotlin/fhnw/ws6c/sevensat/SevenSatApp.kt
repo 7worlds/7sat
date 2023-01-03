@@ -29,7 +29,7 @@ object SevenSatApp : EmobaApp {
 
   override fun initialize(activity: ComponentActivity) {
     mapModel = MapModel(activity)
-    model = SevenSatModel(jsonService)
+    model = SevenSatModel(jsonService, mapModel)
     initSatellitesOnMap(activity)
   }
 

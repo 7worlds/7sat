@@ -30,6 +30,7 @@ private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
 
 class SevenSatModel(
   private val jsonService: Service<JSONObject>,
+  mapModel: MapModel,
 ) {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
@@ -38,6 +39,8 @@ class SevenSatModel(
   val filterdSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.LOADING)
+  var mapModel = mapModel
+
 
 
   /**
@@ -70,11 +73,15 @@ class SevenSatModel(
           println("Neu in Liste: " + noradID)
         }
       }
-      //TODO: Give filterd Map to UI
-      refreshSatellites { filterdSatellitesMap }
+
+      refreshSatellites { mapModel.refreshSatellitePositionOnMap(filterdSatellitesMap) }
+
     }
   }
-
+  fun removeFilter(){
+    filterdSatellitesMap.clear()
+    refreshSatellites { mapModel.refreshSatellitePositionOnMap(allSatellitesMap) }
+  }
 
   fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {

@@ -77,7 +77,7 @@ fun BottomSheet(
           Text(text = "Flight altitude", style = MaterialTheme.typography.body1)
           Text(
             text = model.selectedSatellites[0].getPosition(Date().time).altitude.toInt()
-              .toString() + " m", style = MaterialTheme.typography.h3
+              .toString() + " km", style = MaterialTheme.typography.h3
           )
           Spacer(modifier = Modifier.height(20.dp))
 
