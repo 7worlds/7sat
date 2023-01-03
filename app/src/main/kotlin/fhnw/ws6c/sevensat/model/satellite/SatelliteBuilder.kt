@@ -16,11 +16,11 @@ class SatelliteBuilder {
   var image:        String = ""
   var tleLine1:     String = ""
   var tleLine2:     String = ""
-  var launched: String = ""
-  var website: String=""
-  var countries: String= ""
+  var launched:     String = ""
+  var website:      String = ""
+  var countries:    String = ""
   var coordinates:  Map<Long, Triple<Double, Double, Double>> = Collections.emptyMap() // lat, lng, alt
-  var orbitalData: OrbitalData? = null
+  var orbitalData:  OrbitalData? = null
 
   fun withN2yoTleJsonData(jsonObject: JSONObject) : SatelliteBuilder {
     val info  = jsonObject.getJSONObject("info")
@@ -82,17 +82,17 @@ class SatelliteBuilder {
     return this
   }
   fun withSatellite(satellite: Satellite):SatelliteBuilder{
-    noradId = satellite.noradId as Long
-    name = satellite.name
+    noradId     = satellite.noradId as Long
+    name        = satellite.name
     description = satellite.description
-    image = satellite.image
-    tleLine1 = satellite.tleLine1
-    tleLine2 = satellite.tleLine2
+    image       = satellite.image
+    tleLine1    = satellite.tleLine1
+    tleLine2    = satellite.tleLine2
     coordinates = satellite.coordinates
     orbitalData = satellite.orbitalData
-    launched = satellite.launched
-    website = satellite.website
-    countries = satellite.countries
+    launched    = satellite.launched
+    website     = satellite.website
+    countries   = satellite.countries
     return this
   }
 

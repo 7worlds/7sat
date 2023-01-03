@@ -92,7 +92,7 @@ fun BottomSheet(
         }
         AsyncImage(
           model = model.selectedSatellites[0].image,
-          contentDescription = "Forest Image",
+          contentDescription = "Satellite Image",
           modifier = Modifier
             .width(200.dp)
             .height(200.dp)

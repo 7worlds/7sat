@@ -43,10 +43,9 @@ class SevenSatModel(
       satnogsService.loadRemoteData(detailCall)
       val sat = SatelliteBuilder()
         .withSatellite(satellite)
-        .withDetails(detailCall.getResponse()!!).build()
+        .withDetails(detailCall.getResponse()!!)
+        .build()
       selectedSatellites.add(0, sat)
-
-    println("norad:"+satellite.noradId)
     }
 
 

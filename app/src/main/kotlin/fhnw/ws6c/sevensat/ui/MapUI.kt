@@ -27,12 +27,17 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 private val backgroundJob = SupervisorJob()
-private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)
+private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapUI(model: SevenSatModel, mapModel: MapModel, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+fun MapUI(
+  model: SevenSatModel,
+  mapModel: MapModel,
+  scope: CoroutineScope,
+  scaffoldState: BottomSheetScaffoldState
+) {
   Row {
     Box(
       contentAlignment = Alignment.Center,
@@ -68,7 +73,7 @@ private fun MapView(
           norad,
           scope,
           scaffoldState
-          )
+        )
       }
       map.apply {
         getMapboxMap().loadStyleUri(
@@ -84,19 +89,23 @@ private fun MapView(
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-fun onSatelliteClick(model: SevenSatModel, mapModel: MapModel, clickedSatelliteNorad: Long, scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState) {
+fun onSatelliteClick(
+  model: SevenSatModel,
+  mapModel: MapModel,
+  clickedSatelliteNorad: Long,
+  scope: CoroutineScope,
+  scaffoldState: BottomSheetScaffoldState
+) {
 
   val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
 
-    model.calculateFlightLineForSatellite(clickedSatelliteNorad){ route ->
+    model.calculateFlightLineForSatellite(clickedSatelliteNorad) { route ->
       mapModel.addFlightLine(route)
     }
     modelScope.launch {
-    model.getSatelliteDetails(found.keys.first())
-
+      model.getSatelliteDetails(found.keys.first())
     }
-
     scope.launch {
       if (scaffoldState.bottomSheetState.isExpanded) {
         scaffoldState.bottomSheetState.collapse()
