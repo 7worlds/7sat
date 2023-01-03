@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.*
 import fhnw.ws6c.R
+import fhnw.ws6c.sevensat.data.celestrak.CategoryCall
 import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
 import fhnw.ws6c.sevensat.data.service.JsonService
 import fhnw.ws6c.sevensat.data.service.Service
@@ -17,10 +18,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.HashMap
 import kotlin.math.*
 
 const val TWO_DAYS_IN_MILLIS = 172_800_000
@@ -31,50 +32,68 @@ class SevenSatModel(
   private val jsonService: Service<JSONObject>,
 ) {
   private val backgroundJob = SupervisorJob()
-  private val modelScope    = CoroutineScope(backgroundJob + Dispatchers.IO)
-  val mainHandler           = Handler(Looper.getMainLooper())
-  val satellitesMap         = ConcurrentHashMap<Satellite, SatPos>()
-  val selectedSatellites    = mutableStateListOf<Satellite>()
+  private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
+  val mainHandler = Handler(Looper.getMainLooper())
+  val allSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
+  val filterdSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
+  val selectedSatellites = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.LOADING)
 
 
   /**
    * Gets Details about satelites, if user clicks on it
    */
-  fun getSatelliteDetails(satellite: Satellite){
-      val detailCall       = DetailByIdCall(satellite.noradId)
-      val satnogsService   = JsonService()
-      satnogsService.loadRemoteData(detailCall)
-      val sat = SatelliteBuilder()
-        .withSatellite(satellite)
-        .withDetails(detailCall.getResponse()!!)
-        .build()
-      selectedSatellites.add(0, sat)
-    }
+  fun getSatelliteDetails(satellite: Satellite) {
+    val detailCall = DetailByIdCall(satellite.noradId)
+    val satnogsService = JsonService()
+    satnogsService.loadRemoteData(detailCall)
+    val sat = SatelliteBuilder()
+      .withSatellite(satellite)
+      .withDetails(detailCall.getResponse()!!)
+      .build()
+    selectedSatellites.add(0, sat)
+  }
 
-//  fun filterwithName (name: String){
-//    val
-//    satellitesMap
-//  }
+  fun filterWithCategory(category: String) {
+    modelScope.launch {
+      val categoryCall = CategoryCall(category)
+      val celesTrakService = JsonService()
+      celesTrakService.loadRemoteData(categoryCall)
+      //Get new Data
+      val data = categoryCall.getResponse()!!.getJSONArray("values") as JSONArray
+      for (i in 0 until data.length()) {
+        val obj = data[i] as JSONObject
+        val noradID = (obj.getInt("NORAD_CAT_ID"))
+        val satellite = allSatellitesMap.keys.find { it.noradId == noradID.toLong() }
+        if (satellite != null) {
+          filterdSatellitesMap[satellite] = satellite.getPosition(Date().time)
+          println("Neu in Liste: " + noradID)
+        }
+      }
+      //TODO: Give filterd Map to UI
+      refreshSatellites { filterdSatellitesMap }
+    }
+  }
+
 
   fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
           val then = System.currentTimeMillis()
-          satellitesMap.keys.forEach { satellite ->
-            satellitesMap[satellite] = satellite.getPosition(Date().time)
+          allSatellitesMap.keys.forEach { satellite ->
+            allSatellitesMap[satellite] = satellite.getPosition(Date().time)
           }
-          onRefreshed(satellitesMap)
+          onRefreshed(allSatellitesMap)
           val now = System.currentTimeMillis()
-          println("it took ${now-then} milliseconds!")
+          println("it took ${now - then} milliseconds!")
         }
         mainHandler.postDelayed(this, 300)
       }
     })
   }
 
-  fun sharedPrefsTLEsExist(context: Context): Boolean{
+  fun sharedPrefsTLEsExist(context: Context): Boolean {
     val prefs = getTLEsFromSharedPrefs(context, R.string.last_tle_sync)
     return prefs.all.containsKey(context.getString(R.string.last_tle_sync))
   }
@@ -95,9 +114,10 @@ class SevenSatModel(
         prefs.all.entries//.take(100)//.filter { it.key.equals("43560") || it.key.equals("25544") }
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
-        satellitesMap[it] = it.getPosition(Date().time)
+        allSatellitesMap[it] = it.getPosition(Date().time)
       }
-      onLoaded(satellitesMap)
+
+      onLoaded(allSatellitesMap)
     }
   }
 
@@ -108,7 +128,7 @@ class SevenSatModel(
     )
 
   fun calculateFlightLineForSatellite(noradId: Long, onCalculated: (List<SatPos>) -> Unit) {
-    val satellite = satellitesMap.keys.find { it.noradId == noradId }
+    val satellite = allSatellitesMap.keys.find { it.noradId == noradId }
     if (satellite != null) {
       val calendar = Calendar.getInstance()
       calendar.time = Date()
@@ -127,6 +147,7 @@ class SevenSatModel(
       println("it took ${(end - start) / MAX_AMOUNT_OF_LINE_POINTS} seconds")
     }
   }
+
   /**
    * how many points are needed to add a point all "minutes"-minute to orbit half of the earth?
    */
@@ -138,7 +159,7 @@ class SevenSatModel(
 
     val kmIn1Min = haversine(positionNow, positionIn1Min)
     val numberOfPoints = (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
-    return if(numberOfPoints > MAX_AMOUNT_OF_LINE_POINTS) MAX_AMOUNT_OF_LINE_POINTS else numberOfPoints
+    return if (numberOfPoints > MAX_AMOUNT_OF_LINE_POINTS) MAX_AMOUNT_OF_LINE_POINTS else numberOfPoints
   }
 
 
@@ -150,11 +171,11 @@ class SevenSatModel(
     val dLat = deg2rad(point2.latitude - point1.latitude)  // deg2rad below
     val dLon = deg2rad(point2.longitude - point1.longitude)
     val a =
-      sin(dLat/2) * sin(dLat/2) +
+      sin(dLat / 2) * sin(dLat / 2) +
           cos(deg2rad(point1.latitude)) * cos(point2.latitude) *
-          sin(dLon/2) * sin(dLon/2)
-    val c = 2 * atan2(sqrt(a), sqrt(1-a))
-    return  EARTH_RADIUS * c; // Distance in km
+          sin(dLon / 2) * sin(dLon / 2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return EARTH_RADIUS * c; // Distance in km
   }
 
   private fun deg2rad(x: Double) = x

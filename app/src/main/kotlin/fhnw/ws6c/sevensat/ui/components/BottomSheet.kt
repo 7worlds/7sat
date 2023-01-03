@@ -80,6 +80,7 @@ fun BottomSheet(
               .toString() + " m", style = MaterialTheme.typography.h3
           )
           Spacer(modifier = Modifier.height(20.dp))
+
           if (model.selectedSatellites[0].launched!="null") {
             Text(text = "Launched", style = MaterialTheme.typography.body1)
             Text(text = model.selectedSatellites[0].launched, style = MaterialTheme.typography.h3)
@@ -90,13 +91,6 @@ fun BottomSheet(
             Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
             Spacer(modifier = Modifier.height(20.dp))
           }
-          //TODO attribut für speed auslesen
-//          Text(text = "Flight speed", style = MaterialTheme.typography.body1)
-//          Text(
-//            text = model.selectedSatellites[0].orbitalData.toString() + " km/h",
-//            style = MaterialTheme.typography.h3
-//          )
-//          Spacer(modifier = Modifier.height(20.dp))
 
         }
         AsyncImage(

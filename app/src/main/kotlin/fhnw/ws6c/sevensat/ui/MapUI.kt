@@ -1,6 +1,5 @@
 package fhnw.ws6c.sevensat.ui
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.mapbox.maps.ResourceOptionsManager
 import com.mapbox.maps.Style
@@ -97,7 +95,7 @@ fun onSatelliteClick(
   scaffoldState: BottomSheetScaffoldState
 ) {
 
-  val found = model.satellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
+  val found = model.allSatellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
 
     model.calculateFlightLineForSatellite(clickedSatelliteNorad) { route ->
