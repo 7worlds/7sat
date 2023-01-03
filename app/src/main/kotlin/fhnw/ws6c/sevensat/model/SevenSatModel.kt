@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.HashMap
 import kotlin.math.*
 
 const val TWO_DAYS_IN_MILLIS = 172_800_000
@@ -37,6 +38,9 @@ class SevenSatModel(
   var activeScreen by mutableStateOf(Screen.LOADING)
 
 
+  /**
+   * Gets Details about satelites, if user clicks on it
+   */
   fun getSatelliteDetails(satellite: Satellite){
       val detailCall       = DetailByIdCall(satellite.noradId)
       val satnogsService   = JsonService()
@@ -48,6 +52,10 @@ class SevenSatModel(
       selectedSatellites.add(0, sat)
     }
 
+//  fun filterwithName (name: String){
+//    val
+//    satellitesMap
+//  }
 
   fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {

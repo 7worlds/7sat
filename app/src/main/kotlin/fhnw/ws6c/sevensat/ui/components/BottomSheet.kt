@@ -67,9 +67,12 @@ fun BottomSheet(
       Spacer(modifier = Modifier.height(20.dp))
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Column(modifier = Modifier.width(150.dp)) {
-          Text(text = "Countries", style = MaterialTheme.typography.body1)
-          Text(text = model.selectedSatellites[0].countries, style = MaterialTheme.typography.h3)
-          Spacer(modifier = Modifier.height(20.dp))
+
+          if (model.selectedSatellites[0].countries.isNotEmpty()) {
+            Text(text = "Countries", style = MaterialTheme.typography.body1)
+            Text(text = model.selectedSatellites[0].countries, style = MaterialTheme.typography.h3)
+            Spacer(modifier = Modifier.height(20.dp))
+          }
 
           Text(text = "Flight altitude", style = MaterialTheme.typography.body1)
           Text(
@@ -77,15 +80,16 @@ fun BottomSheet(
               .toString() + " m", style = MaterialTheme.typography.h3
           )
           Spacer(modifier = Modifier.height(20.dp))
-
-          Text(text = "Launched", style = MaterialTheme.typography.body1)
-          Text(text = model.selectedSatellites[0].launched, style = MaterialTheme.typography.h3)
-          Spacer(modifier = Modifier.height(20.dp))
-
-          Text(text = "Website", style = MaterialTheme.typography.body1)
-          Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
-          Spacer(modifier = Modifier.height(20.dp))
-
+          if (model.selectedSatellites[0].launched!="null") {
+            Text(text = "Launched", style = MaterialTheme.typography.body1)
+            Text(text = model.selectedSatellites[0].launched, style = MaterialTheme.typography.h3)
+            Spacer(modifier = Modifier.height(20.dp))
+          }
+          if (model.selectedSatellites[0].website.isNotEmpty()) {
+            Text(text = "Website", style = MaterialTheme.typography.body1)
+            Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
+            Spacer(modifier = Modifier.height(20.dp))
+          }
           //TODO attribut für speed auslesen
 //          Text(text = "Flight speed", style = MaterialTheme.typography.body1)
 //          Text(
