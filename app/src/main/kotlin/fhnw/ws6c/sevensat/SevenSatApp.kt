@@ -24,12 +24,11 @@ import java.util.Date
 
 object SevenSatApp : EmobaApp {
   private lateinit var model: SevenSatModel
-  private val jsonService = JsonService()
   private lateinit var mapModel: MapModel
 
   override fun initialize(activity: ComponentActivity) {
     mapModel = MapModel(activity)
-    model = SevenSatModel(jsonService, mapModel)
+    model = SevenSatModel()
     initSatellitesOnMap(activity)
   }
 

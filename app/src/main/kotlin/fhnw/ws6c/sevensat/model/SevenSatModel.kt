@@ -28,10 +28,7 @@ const val TWO_DAYS_IN_MILLIS = 172_800_000
 
 private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
 
-class SevenSatModel(
-  private val jsonService: Service<JSONObject>,
-  mapModel: MapModel,
-) {
+class SevenSatModel {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())
@@ -39,9 +36,6 @@ class SevenSatModel(
   val filterdSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.LOADING)
-  var mapModel = mapModel
-
-
 
   /**
    * Gets Details about satelites, if user clicks on it
@@ -64,34 +58,31 @@ class SevenSatModel(
       celesTrakService.loadRemoteData(categoryCall)
       //Get new Data
       val data = categoryCall.getResponse()!!.getJSONArray("values") as JSONArray
+
+      // TODO refactor this code to 1. allow several filter & 2. do not recalculate
+      filterdSatellitesMap.clear()
       for (i in 0 until data.length()) {
         val obj = data[i] as JSONObject
         val noradID = (obj.getInt("NORAD_CAT_ID"))
         val satellite = allSatellitesMap.keys.find { it.noradId == noradID.toLong() }
-        if (satellite != null) {
-          filterdSatellitesMap[satellite] = satellite.getPosition(Date().time)
-          println("Neu in Liste: " + noradID)
-        }
+        if (satellite != null) allSatellitesMap[satellite]?.let { filterdSatellitesMap[satellite] = it }
       }
-
-      refreshSatellites { mapModel.refreshSatellitePositionOnMap(filterdSatellitesMap) }
-
     }
   }
   fun removeFilter(){
     filterdSatellitesMap.clear()
-    refreshSatellites { mapModel.refreshSatellitePositionOnMap(allSatellitesMap) }
+    allSatellitesMap.forEach { filterdSatellitesMap[it.key] = it.value }
   }
 
-  fun refreshSatellites(/*getVisibleSatellites: () -> List<Satellite>,*/ onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
+  fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
           val then = System.currentTimeMillis()
-          allSatellitesMap.keys.forEach { satellite ->
-            allSatellitesMap[satellite] = satellite.getPosition(Date().time)
+          filterdSatellitesMap.keys.forEach { satellite ->
+            filterdSatellitesMap[satellite] = satellite.getPosition(Date().time)
           }
-          onRefreshed(allSatellitesMap)
+          onRefreshed(filterdSatellitesMap)
           val now = System.currentTimeMillis()
           println("it took ${now - then} milliseconds!")
         }
@@ -118,10 +109,12 @@ class SevenSatModel(
 
     modelScope.launch {
       val satellites =
-        prefs.all.entries//.take(100)//.filter { it.key.equals("43560") || it.key.equals("25544") }
+        prefs.all.entries
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
-        allSatellitesMap[it] = it.getPosition(Date().time)
+        val position = it.getPosition(Date().time)
+        allSatellitesMap[it] = position
+        filterdSatellitesMap[it] = position
       }
 
       onLoaded(allSatellitesMap)
