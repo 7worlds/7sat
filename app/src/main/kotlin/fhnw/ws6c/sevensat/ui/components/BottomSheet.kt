@@ -1,5 +1,3 @@
-import android.text.util.Linkify
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
@@ -8,26 +6,18 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.model.SevenSatModel
-import fhnw.ws6c.sevensat.ui.components.YoutubePlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.*
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import java.time.ZonedDateTime
-import androidx.compose.ui.text.buildAnnotatedString
-import java.time.format.DateTimeFormatter
+import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
