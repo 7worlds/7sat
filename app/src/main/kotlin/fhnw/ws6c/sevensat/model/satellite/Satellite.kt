@@ -3,6 +3,10 @@ package fhnw.ws6c.sevensat.model.satellite
 import fhnw.ws6c.sevensat.model.orbitaldata.GeoPos
 import fhnw.ws6c.sevensat.model.orbitaldata.OrbitalData
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.util.Date
 
 data class Satellite(
   val noradId: Number,
@@ -13,7 +17,7 @@ data class Satellite(
   var tleLine1: String,
   var tleLine2: String,
   var orbitalData: OrbitalData,
-  var launched: String,
+  var launched: ZonedDateTime,
   var website: String,
   var countries: String
 ) {

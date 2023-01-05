@@ -1,5 +1,7 @@
+import android.text.util.Linkify
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -8,7 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import fhnw.ws6c.R
@@ -20,12 +25,16 @@ import java.time.LocalDateTime
 import java.util.*
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import java.time.ZonedDateTime
+import androidx.compose.ui.text.buildAnnotatedString
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheet(
   scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model: SevenSatModel
 ) {
+  val uriHandler = LocalUriHandler.current
   Column(
     modifier = Modifier
       .padding(20.dp)
@@ -81,15 +90,22 @@ fun BottomSheet(
           )
           Spacer(modifier = Modifier.height(20.dp))
 
-          if (model.selectedSatellites[0].launched!="null") {
+          if (!model.selectedSatellites[0].launched.isEqual(ZonedDateTime.parse("1001-01-28T00:00:00Z"))) {
             Text(text = "Launched", style = MaterialTheme.typography.body1)
-            Text(text = model.selectedSatellites[0].launched, style = MaterialTheme.typography.h3)
+            Text(text = model.selectedSatellites[0].launched.year.toString(), style = MaterialTheme.typography.h3)
             Spacer(modifier = Modifier.height(20.dp))
           }
+
+
           if (model.selectedSatellites[0].website.isNotEmpty()) {
             Text(text = "Website", style = MaterialTheme.typography.body1)
-            Text(text = model.selectedSatellites[0].website, style = MaterialTheme.typography.h3)
-            Spacer(modifier = Modifier.height(20.dp))
+            ClickableText(text = buildAnnotatedString {
+              pushStyle(SpanStyle(color = MaterialTheme.colors.secondary))
+              append(model.selectedSatellites[0].website)
+              toAnnotatedString()
+            } , onClick = {
+              uriHandler.openUri(model.selectedSatellites[0].website)
+            })
           }
         }
         AsyncImage(

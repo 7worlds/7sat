@@ -7,6 +7,10 @@ import fhnw.ws6c.sevensat.model.orbitaldata.OrbitalData
 import fhnw.ws6c.sevensat.util.tle.TLEParser
 import org.json.JSONException
 import org.json.JSONObject
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class SatelliteBuilder {
@@ -16,7 +20,7 @@ class SatelliteBuilder {
   var image:        String = ""
   var tleLine1:     String = ""
   var tleLine2:     String = ""
-  var launched:     String = ""
+  var launched:     ZonedDateTime= ZonedDateTime.parse("1001-01-28T00:00:00Z")
   var website:      String = ""
   var countries:    String = ""
   var coordinates:  Map<Long, Triple<Double, Double, Double>> = Collections.emptyMap() // lat, lng, alt
@@ -72,7 +76,10 @@ class SatelliteBuilder {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
       image = "https://db-satnogs.freetls.fastly.net/media/"+data.getString("image")
       name = data.getString("name")
-      launched = data.getString("launched")
+      var dateAsString = data.getString("launched")
+      if (dateAsString != "null"){
+        launched = ZonedDateTime.parse(dateAsString)
+      }
       website = data.getString("website")
       countries = data.getString("countries")
 
