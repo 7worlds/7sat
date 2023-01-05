@@ -28,6 +28,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
   val brightest = remember { mutableStateOf(false) }
   val recentlyLaunched = remember { mutableStateOf(false) }
   val weather = remember { mutableStateOf(false) }
+  var activefilters = remember {mutableListOf<String>()}
 
   Column(
     modifier = Modifier
@@ -68,8 +69,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
           onCheckedChange = {
             spaceStations.value = it
             if (spaceStations.value) {
-              model.filterWithCategory("stations")
-            } else {//TODO
+              activefilters.add("stations")
+            } else {
+              activefilters.remove("stations")
             }
           })
         Text(text = "Space Stations", style = MaterialTheme.typography.body1)
@@ -79,8 +81,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
           onCheckedChange = {
             starlink.value = it
             if (starlink.value) {
-              model.filterWithCategory("starlink")
-            } else {//TODO
+              activefilters.add("starlink")
+            } else {
+              activefilters.remove("starlink")
             }
           })
         Text(text = "Starlink", style = MaterialTheme.typography.body1)
@@ -90,8 +93,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
           onCheckedChange = {
             brightest.value = it
             if (brightest.value) {
-              model.filterWithCategory("visual")
-            } else {//TODO
+             activefilters.add("visual")
+            } else {
+              activefilters.remove("visual")
             }
           })
         Text(text = "Brightest", style = MaterialTheme.typography.body1)
@@ -101,8 +105,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
           onCheckedChange = {
             weather.value = it
             if (weather.value) {
-              model.filterWithCategory("weather")
-            } else {//TODO
+              activefilters.add("weather")
+            } else {
+              activefilters.remove("weather")
             }
           })
         Text(text = "Weather", style = MaterialTheme.typography.body1)
@@ -112,8 +117,9 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
           onCheckedChange = {
             recentlyLaunched.value = it
             if (recentlyLaunched.value) {
-              model.filterWithCategory("last-30-days")
-            } else {//TODO
+              activefilters.add("last-30-days")
+            } else {
+              activefilters.remove("last-30-days")
             }
           })
         Text(text = "Last 30 days' launched", style = MaterialTheme.typography.body1)
@@ -124,6 +130,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
 
       Button(onClick = {
         scope.launch {
+          model.filterWithCategories(activefilters);
           scaffoldState.drawerState.apply {
             if (isClosed) open() else close()
           }

@@ -8,7 +8,6 @@ import fhnw.ws6c.R
 import fhnw.ws6c.sevensat.data.celestrak.CategoryCall
 import fhnw.ws6c.sevensat.data.satnogs.DetailByIdCall
 import fhnw.ws6c.sevensat.data.service.JsonService
-import fhnw.ws6c.sevensat.data.service.Service
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_CIRCUMFERENCE
 import fhnw.ws6c.sevensat.model.orbitaldata.EARTH_RADIUS
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
@@ -28,12 +27,14 @@ const val TWO_DAYS_IN_MILLIS = 172_800_000
 
 private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
 
+private const val REFRESH_RATE = 5000L
+
 class SevenSatModel {
   private val backgroundJob = SupervisorJob()
   private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler = Handler(Looper.getMainLooper())
-  val allSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
-  val filterdSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
+  val allSatellitesMap= ConcurrentHashMap<Satellite, SatPos>()
+  var filterdSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites = mutableStateListOf<Satellite>()
   var activeScreen by mutableStateOf(Screen.LOADING)
 
@@ -51,22 +52,31 @@ class SevenSatModel {
     selectedSatellites.add(0, sat)
   }
 
-  fun filterWithCategory(category: String) {
+  fun filterWithCategories(categories: List<String>) {
+    var catNorads = mutableListOf<Number>()
     modelScope.launch {
-      val categoryCall = CategoryCall(category)
-      val celesTrakService = JsonService()
-      celesTrakService.loadRemoteData(categoryCall)
-      //Get new Data
-      val data = categoryCall.getResponse()!!.getJSONArray("values") as JSONArray
-
-      // TODO refactor this code to 1. allow several filter & 2. do not recalculate
-      filterdSatellitesMap.clear()
-      for (i in 0 until data.length()) {
-        val obj = data[i] as JSONObject
-        val noradID = (obj.getInt("NORAD_CAT_ID"))
-        val satellite = allSatellitesMap.keys.find { it.noradId == noradID.toLong() }
-        if (satellite != null) allSatellitesMap[satellite]?.let { filterdSatellitesMap[satellite] = it }
+      for (cat in categories) {
+        val categoryCall = CategoryCall(cat)
+        val celesTrakService = JsonService()
+        celesTrakService.loadRemoteData(categoryCall)
+        //Get new Data
+        val data = categoryCall.getResponse()!!.getJSONArray("values") as JSONArray
+        for (i in 0 until data.length()) {
+          val obj = data[i] as JSONObject
+          val noradID = (obj.getLong("NORAD_CAT_ID"))
+          catNorads.add(noradID);
+        }
       }
+      filterdSatellitesMap.clear()
+
+      val allNorads = allSatellitesMap.keys.map { it.noradId }
+      val filterdNorads = allNorads.filter { catNorads.contains(it)}
+      allSatellitesMap
+        .filterKeys { filterdNorads.contains(it.noradId) }
+        .forEach{
+          filterdSatellitesMap[it.key] = it.value
+        }
+
     }
   }
   fun removeFilter(){
@@ -86,7 +96,7 @@ class SevenSatModel {
           val now = System.currentTimeMillis()
           println("it took ${now - then} milliseconds!")
         }
-        mainHandler.postDelayed(this, 300)
+        mainHandler.postDelayed(this, REFRESH_RATE)
       }
     })
   }
