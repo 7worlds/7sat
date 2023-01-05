@@ -16,8 +16,11 @@ class SatelliteBuilder {
   var image:        String = ""
   var tleLine1:     String = ""
   var tleLine2:     String = ""
+  var launched:     String = ""
+  var website:      String = ""
+  var countries:    String = ""
   var coordinates:  Map<Long, Triple<Double, Double, Double>> = Collections.emptyMap() // lat, lng, alt
-  var orbitalData: OrbitalData? = null
+  var orbitalData:  OrbitalData? = null
 
   fun withN2yoTleJsonData(jsonObject: JSONObject) : SatelliteBuilder {
     val info  = jsonObject.getJSONObject("info")
@@ -67,11 +70,30 @@ class SatelliteBuilder {
   fun withDetails(jsonObject: JSONObject): SatelliteBuilder {
     try {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
-      image = data.getString("image")
+      image = "https://db-satnogs.freetls.fastly.net/media/"+data.getString("image")
+      name = data.getString("name")
+      launched = data.getString("launched")
+      website = data.getString("website")
+      countries = data.getString("countries")
+
     } catch (jsonException: JSONException) {
       System.err.println("Couldn't parse json data! " + jsonException.message)
     }
-    return this;
+    return this
+  }
+  fun withSatellite(satellite: Satellite):SatelliteBuilder{
+    noradId     = satellite.noradId as Long
+    name        = satellite.name
+    description = satellite.description
+    image       = satellite.image
+    tleLine1    = satellite.tleLine1
+    tleLine2    = satellite.tleLine2
+    coordinates = satellite.coordinates
+    orbitalData = satellite.orbitalData
+    launched    = satellite.launched
+    website     = satellite.website
+    countries   = satellite.countries
+    return this
   }
 
   fun build() : Satellite {
