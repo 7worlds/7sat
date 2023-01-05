@@ -56,13 +56,13 @@ fun Drawer(scope: CoroutineScope, scaffoldState: BottomSheetScaffoldState, model
           icon = {
             Icon(
               Icons.Outlined.Close,
-              "schliessen", tint = MaterialTheme.colors.secondary
+              "close", tint = MaterialTheme.colors.secondary
             )
           }
         )
       }
       Spacer(modifier = Modifier.height(20.dp))
-      Text(text = "Schnellfilter", style = MaterialTheme.typography.h3)
+      Text(text = "Speedfilter", style = MaterialTheme.typography.h3)
 
       Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = spaceStations.value,

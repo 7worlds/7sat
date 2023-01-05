@@ -73,10 +73,9 @@ class SevenSatModel {
       val filterdNorads = allNorads.filter { catNorads.contains(it)}
       allSatellitesMap
         .filterKeys { filterdNorads.contains(it.noradId) }
-        .forEach{
+        .forEach {
           filterdSatellitesMap[it.key] = it.value
         }
-
     }
   }
   fun removeFilter(){
