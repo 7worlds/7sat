@@ -13,10 +13,10 @@ private val Colors = darkColors(
   background       = Color(0xFF1A1F25),
   error            = Color(0xFFCF6679),
 
-  secondaryVariant = Color(0xFF666666),
-
+  secondaryVariant = Color(0xFFd8d8d8),
+  onSurface = Color(0xFF525457),
   onPrimary        = Color(0xFF1E1E1E),
-  onBackground     = Color(0xFFFED428),
+  onBackground     = Color(0xFFd8d8d8),
   onError          = Color.Black,
 )
 @Composable
