@@ -23,11 +23,9 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.*
 
-const val TWO_DAYS_IN_MILLIS = 172_800_000
-
+private const val TWO_DAYS_IN_MILLIS = 172_800_000
 private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
-
-private const val REFRESH_RATE = 5000L
+private const val REFRESH_RATE = 300L
 
 class SevenSatModel {
   private val backgroundJob = SupervisorJob()
