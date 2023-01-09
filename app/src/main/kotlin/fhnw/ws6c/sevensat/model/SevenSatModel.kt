@@ -64,7 +64,7 @@ class SevenSatModel {
   }
 
   fun filterWithCategories(categories: List<String>) {
-    var catNorads = mutableListOf<Number>()
+    val catNorads = mutableListOf<Number>()
     modelScope.launch {
       for (cat in categories) {
         val categoryCall = CategoryCall(cat)
@@ -75,18 +75,21 @@ class SevenSatModel {
         for (i in 0 until data.length()) {
           val obj = data[i] as JSONObject
           val noradID = (obj.getLong("NORAD_CAT_ID"))
-          catNorads.add(noradID);
+          catNorads.add(noradID)
         }
+          println("cat Norad $catNorads")
       }
       filterdSatellitesMap.clear()
 
       val allNorads = allSatellitesMap.keys.map { it.noradId }
+      println("all Norads ${allNorads.take(10)}")
       val filterdNorads = allNorads.filter { catNorads.contains(it)}
       allSatellitesMap
         .filterKeys { filterdNorads.contains(it.noradId) }
         .forEach {
           filterdSatellitesMap[it.key] = it.value
         }
+      println("cat Norad $filterdSatellitesMap")
     }
   }
   fun removeFilter(){
@@ -132,11 +135,10 @@ class SevenSatModel {
         prefs.all.entries
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
-        val position = it.getPosition(Date().time)
-        allSatellitesMap[it] = position
-        filterdSatellitesMap[it] = position
+        val pos = it.getPosition(Date().time)
+        filterdSatellitesMap[it] =  pos
+        allSatellitesMap[it] =  pos
       }
-
       onLoaded(allSatellitesMap)
     }
   }

@@ -13,7 +13,9 @@ import fhnw.ws6c.sevensat.ui.SevenSatUI
 import fhnw.ws6c.sevensat.ui.components.LoadingUI
 import fhnw.ws6c.sevensat.ui.theme.SevenSatTheme
 import fhnw.ws6c.R
+import fhnw.ws6c.sevensat.data.celestrak.TleAllCall
 import fhnw.ws6c.sevensat.data.satnogs.AllTleCall
+import fhnw.ws6c.sevensat.data.service.PlainTextService
 import fhnw.ws6c.sevensat.model.orbitaldata.SatPos
 import fhnw.ws6c.sevensat.model.satellite.Satellite
 import kotlinx.coroutines.*
@@ -81,32 +83,21 @@ object SevenSatApp : EmobaApp {
   private fun loadLatestTLEData(activity: ComponentActivity, onLoaded: () -> Unit) {
     val backgroundJob = SupervisorJob()
     val coroutine     = CoroutineScope(backgroundJob + Dispatchers.IO)
-    val tleCall       = AllTleCall()
+    val tleCall       = TleAllCall()
 
     coroutine.launch {
-      JsonService().loadRemoteData(tleCall)
-      val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
-      val editor  = prefs.edit()
-      val data    = tleCall.getResponse()
-      val allTle  = data?.getJSONArray("values") as JSONArray
+      PlainTextService().loadRemoteData(tleCall)
+      val prefs           = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+      val editor          = prefs.edit()
+      val data            = tleCall.getResponse()
 
       val prefsSyncTime   = activity.getSharedPreferences(activity.getString(R.string.last_tle_sync), Context.MODE_PRIVATE)
       val editorSyncTime  = prefsSyncTime.edit()
 
       editor.clear()
-
-      for (i in 0 until allTle.length()) {
-        val tle = allTle[i] as JSONObject
-        editor.putString(
-          tle.getLong("norad_cat_id").toString(),
-          listOf(
-            tle.getString("tle0"),
-            tle.getString("tle1"),
-            tle.getString("tle2")
-          ).joinToString(";")
-        )
+      data?.forEach{ entry ->
+        editor.putString(entry.key.toString(), entry.value.toList().joinToString(";"))
       }
-
       editor.apply()
 
       editorSyncTime.clear()
@@ -116,6 +107,7 @@ object SevenSatApp : EmobaApp {
       onLoaded()
     }
   }
+
 
   private fun refreshSatellitesOnMap(satellitesMap: Map<Satellite, SatPos>) =
     mapModel.refreshSatellitePositionOnMap(satellitesMap)
