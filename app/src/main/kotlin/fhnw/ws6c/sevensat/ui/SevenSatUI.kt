@@ -49,7 +49,7 @@ fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
         ) {
           MapUI(model, mapModel, scope, scaffoldState)
         }
-        Column (modifier = Modifier.padding(5.dp)){
+        Column (modifier = Modifier.padding(5.dp, 30.dp)){
           IconButtonSat(
             backgroundColor = MaterialTheme.colors.onSurface,
             onClick = {

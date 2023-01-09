@@ -13,7 +13,7 @@ fun IconButtonSat(onClick: () -> Unit, icon: @Composable () -> Unit, backgroundC
   IconButton(
     onClick = onClick,
     modifier = Modifier.clip(CircleShape)
-      .then(Modifier.size(40.dp))
+      .then(Modifier.size(45.dp))
       .background(backgroundColor)
   ) {
     icon()
