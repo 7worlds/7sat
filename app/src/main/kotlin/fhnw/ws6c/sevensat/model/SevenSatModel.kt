@@ -64,7 +64,7 @@ class SevenSatModel {
   }
 
   fun filterWithCategories(categories: List<String>) {
-    var catNorads = mutableListOf<Number>()
+    val catNorads = mutableListOf<Number>()
     modelScope.launch {
       for (cat in categories) {
         val categoryCall = CategoryCall(cat)
@@ -75,7 +75,7 @@ class SevenSatModel {
         for (i in 0 until data.length()) {
           val obj = data[i] as JSONObject
           val noradID = (obj.getLong("NORAD_CAT_ID"))
-          catNorads.add(noradID);
+          catNorads.add(noradID)
         }
       }
       filterdSatellitesMap.clear()
@@ -98,13 +98,10 @@ class SevenSatModel {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
-          val then = System.currentTimeMillis()
           filterdSatellitesMap.keys.forEach { satellite ->
             filterdSatellitesMap[satellite] = satellite.getPosition(Date().time)
           }
           onRefreshed(filterdSatellitesMap)
-          val now = System.currentTimeMillis()
-          println("it took ${now - then} milliseconds!")
         }
         mainHandler.postDelayed(this, REFRESH_RATE)
       }
@@ -132,11 +129,10 @@ class SevenSatModel {
         prefs.all.entries
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
-        val position = it.getPosition(Date().time)
-        allSatellitesMap[it] = position
-        filterdSatellitesMap[it] = position
+        val pos = it.getPosition(Date().time)
+        filterdSatellitesMap[it] =  pos
+        allSatellitesMap[it] =  pos
       }
-
       onLoaded(allSatellitesMap)
     }
   }
@@ -153,7 +149,6 @@ class SevenSatModel {
       val calendar = Calendar.getInstance()
       calendar.time = Date()
       val points = mutableListOf<SatPos>()
-      val start = System.currentTimeMillis()
 
       val factor = 1
       val pointCount = getAmountOfPointsForSatellites(satellite) * factor
@@ -163,8 +158,6 @@ class SevenSatModel {
         calendar.add(Calendar.SECOND, 60 / factor)
       }
       onCalculated(points)
-      val end = System.currentTimeMillis()
-      println("it took ${(end - start) / MAX_AMOUNT_OF_LINE_POINTS} seconds")
     }
   }
 

@@ -33,6 +33,8 @@ import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
 import kotlin.math.absoluteValue
 
+private const val SWAP_ZOOM_LEVEL = 4.2
+
 class MapModel(private val context: Activity) {
   private val userPositionCallbackKey     = "UserPosition"
   private val mapView: MapView            = MapView(context)
@@ -75,7 +77,6 @@ class MapModel(private val context: Activity) {
       ) { found ->
         if (found.isValue && found.value!!.isNotEmpty()) {
           val norad = found.value!![0].feature.getStringProperty("norad").toLong()
-          println(norad)
           onClick(norad)
         }}
       true
@@ -176,7 +177,7 @@ class MapModel(private val context: Activity) {
           ) {
             this.circleColor(Color.WHITE)
             this.circleRadius(1.5)
-            this.maxZoom(4.5)
+            this.maxZoom(SWAP_ZOOM_LEVEL)
           }
         )
 
@@ -187,7 +188,7 @@ class MapModel(private val context: Activity) {
           ) {
             this.iconImage(satImageId)
             this.iconSize(0.3)
-            this.minZoom(4.5)
+            this.minZoom(SWAP_ZOOM_LEVEL)
             this.iconRotate(get { literal(rotationAngleKey) })
             this.iconRotationAlignment(IconRotationAlignment.MAP)
           })
