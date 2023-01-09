@@ -28,12 +28,14 @@ private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
 private const val REFRESH_RATE = 300L
 
 class SevenSatModel {
-  private val backgroundJob = SupervisorJob()
-  private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
-  val mainHandler = Handler(Looper.getMainLooper())
-  val allSatellitesMap= ConcurrentHashMap<Satellite, SatPos>()
-  var filterdSatellitesMap = ConcurrentHashMap<Satellite, SatPos>()
-  val selectedSatellites = mutableStateListOf<Satellite>()
+  private val backgroundJob   = SupervisorJob()
+  private val modelScope      = CoroutineScope(backgroundJob + Dispatchers.IO)
+  val mainHandler             = Handler(Looper.getMainLooper())
+  val allSatellitesMap        = ConcurrentHashMap<Satellite, SatPos>()
+  var filterdSatellitesMap    = ConcurrentHashMap<Satellite, SatPos>()
+  val selectedSatellites      = mutableStateListOf<Satellite>()
+  var observedSatellite       = -1L;
+
   var activeScreen by mutableStateOf(Screen.LOADING)
 
   /**
@@ -48,6 +50,17 @@ class SevenSatModel {
       .withDetails(detailCall.getResponse()!!)
       .build()
     selectedSatellites.add(0, sat)
+  }
+
+  fun refreshFlightLines(onRefreshed: (List<SatPos>) -> Unit) {
+    mainHandler.post(object : Runnable {
+      override fun run() {
+        if(observedSatellite != -1L){
+          calculateFlightLineForSatellite(observedSatellite, onRefreshed)
+        }
+        mainHandler.postDelayed(this, 100)
+      }
+    })
   }
 
   fun filterWithCategories(categories: List<String>) {

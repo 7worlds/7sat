@@ -30,6 +30,10 @@ object SevenSatApp : EmobaApp {
     mapModel = MapModel(activity)
     model = SevenSatModel()
     initSatellitesOnMap(activity)
+
+    model.refreshFlightLines { route ->
+      mapModel.addFlightLine(route)
+    }
   }
 
   @Composable

@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 private val backgroundJob = SupervisorJob()
 private val modelScope = CoroutineScope(backgroundJob + Dispatchers.IO)
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapUI(
@@ -97,7 +96,7 @@ fun onSatelliteClick(
 
   val found = model.allSatellitesMap.filter { it.key.noradId == clickedSatelliteNorad }
   if (found.isNotEmpty()) {
-
+    model.observedSatellite = clickedSatelliteNorad
     model.calculateFlightLineForSatellite(clickedSatelliteNorad) { route ->
       mapModel.addFlightLine(route)
     }
