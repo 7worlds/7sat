@@ -29,7 +29,6 @@ class SatelliteBuilder {
   fun withN2yoTleJsonData(jsonObject: JSONObject) : SatelliteBuilder {
     val info  = jsonObject.getJSONObject("info")
     noradId   = info.getLong  ("satid")
-    name      = info.getString("satname")
 
     val tleLines = jsonObject.getString("tle").split("\n")
     tleLine1  = tleLines[0].dropLast(1) // remove "\r" at the end of the string
@@ -42,14 +41,15 @@ class SatelliteBuilder {
   }
 
   fun withPlainTextTleData(activity: Context, id: Long = noradId) : SatelliteBuilder {
-    noradId = id
-    val prefs   = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
-    val tleData = prefs.getString(id.toString(), "")
-    val lines = tleData?.split(";")
-    tleLine1 = lines?.get(1) ?: ""
-    tleLine2 = lines?.get(2) ?: ""
+    noradId       = id
+    val prefs     = activity.getSharedPreferences(activity.getString(R.string.tle_preferences), Context.MODE_PRIVATE)
+    val tleData   = prefs.getString(id.toString(), "")
+    val lines     = tleData?.split(";")
+    name          = lines?.get(0) ?: ""
+    tleLine1      = lines?.get(1) ?: ""
+    tleLine2      = lines?.get(2) ?: ""
     val tleParser = TLEParser()
-    orbitalData = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
+    orbitalData   = tleParser.parseSingleTLE(name, tleLine1, tleLine2)
     return this
   }
 
