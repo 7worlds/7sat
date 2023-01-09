@@ -77,7 +77,6 @@ class MapModel(private val context: Activity) {
       ) { found ->
         if (found.isValue && found.value!!.isNotEmpty()) {
           val norad = found.value!![0].feature.getStringProperty("norad").toLong()
-          println(norad)
           onClick(norad)
         }}
       true

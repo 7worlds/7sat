@@ -77,19 +77,16 @@ class SevenSatModel {
           val noradID = (obj.getLong("NORAD_CAT_ID"))
           catNorads.add(noradID)
         }
-          println("cat Norad $catNorads")
       }
       filterdSatellitesMap.clear()
 
       val allNorads = allSatellitesMap.keys.map { it.noradId }
-      println("all Norads ${allNorads.take(10)}")
       val filterdNorads = allNorads.filter { catNorads.contains(it)}
       allSatellitesMap
         .filterKeys { filterdNorads.contains(it.noradId) }
         .forEach {
           filterdSatellitesMap[it.key] = it.value
         }
-      println("cat Norad $filterdSatellitesMap")
     }
   }
   fun removeFilter(){
@@ -101,13 +98,10 @@ class SevenSatModel {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
-          val then = System.currentTimeMillis()
           filterdSatellitesMap.keys.forEach { satellite ->
             filterdSatellitesMap[satellite] = satellite.getPosition(Date().time)
           }
           onRefreshed(filterdSatellitesMap)
-          val now = System.currentTimeMillis()
-          println("it took ${now - then} milliseconds!")
         }
         mainHandler.postDelayed(this, REFRESH_RATE)
       }
@@ -155,7 +149,6 @@ class SevenSatModel {
       val calendar = Calendar.getInstance()
       calendar.time = Date()
       val points = mutableListOf<SatPos>()
-      val start = System.currentTimeMillis()
 
       val factor = 1
       val pointCount = getAmountOfPointsForSatellites(satellite) * factor
@@ -165,8 +158,6 @@ class SevenSatModel {
         calendar.add(Calendar.SECOND, 60 / factor)
       }
       onCalculated(points)
-      val end = System.currentTimeMillis()
-      println("it took ${(end - start) / MAX_AMOUNT_OF_LINE_POINTS} seconds")
     }
   }
 
