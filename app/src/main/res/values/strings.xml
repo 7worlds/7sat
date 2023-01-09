@@ -7,4 +7,6 @@
     <string name="SATELLITES_LAYER">SATELLITES_LAYER</string>
     <string name="SATELLITES_LAYER_CIRCLE">SATELLITES_LAYER_CIRCLE</string>
     <string name="SATELLITES_SOURCE">SATELLITES_SOURCE</string>
+    <string name="LINE_LAYER">LINE_LAYER</string>
+    <string name="LINE_SOURCE">LINE_SOURCE</string>
 </resources>

@@ -10,8 +10,10 @@ import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.circleLayer
+import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconRotationAlignment
+import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
@@ -30,21 +32,17 @@ import fhnw.ws6c.sevensat.util.extensions.toDegrees
 import fhnw.ws6c.sevensat.util.linalg.Linalg
 import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.math.tan
 
 class MapModel(private val context: Activity) {
   private val userPositionCallbackKey     = "UserPosition"
   private val mapView: MapView            = MapView(context)
-  private var satelliteAnnotationManager  = mapView.annotations.createPointAnnotationManager()
-  private var polyLineAnnotationManager       = mapView.annotations.createPolylineAnnotationManager()
   private var pointAnnotationManager      = mapView.annotations.createPointAnnotationManager()
   // this state must be kept, to remove or replace the listener later.
-  private var satellitePointClickListener = OnPointAnnotationClickListener { false }
   private var userLocationSubject         = UserLocationSubject(context){}
-  private val satellitePoints             = mutableListOf<PointAnnotation>()
   private var currentUserAnnotation       : PointAnnotation?  = null
 
   init {
+    initLineLayer()
     initSatelliteLayers()
     flyToUserPosition()
   }
@@ -109,15 +107,14 @@ class MapModel(private val context: Activity) {
   }
 
   fun addFlightLine(points: List<SatPos>) {
-    deleteCurrentMapLine()
-    if (points.isNotEmpty()) {
-      val multiLineString = getFlightLinesFromPoints(points)
-      multiLineString.lineStrings().forEach {
-        val polyLineAnnotationOptions = PolylineAnnotationOptions()
-          .withLineWidth(2.0)
-          .withLineColor(Color.WHITE)
-          .withGeometry(it)
-        polyLineAnnotationManager.create(polyLineAnnotationOptions)
+    val pointLists = getFlightLinesFromPoints(points).filter { it.size > 1 }
+    val feature = pointLists.map { Feature.fromGeometry(LineString.fromLngLats(it)) }
+    val features = FeatureCollection.fromFeatures(feature)
+
+    mapView.getMapboxMap().executeOnRenderThread {
+      mapView.getMapboxMap().getStyle { style ->
+        val source = style.getSourceAs<GeoJsonSource>(context.getString(R.string.LINE_SOURCE))
+        source?.featureCollection(features)
       }
     }
   }
@@ -136,6 +133,24 @@ class MapModel(private val context: Activity) {
           .padding(EdgeInsets(500.0, 0.0, 0.0, 0.0))
           .build(),
         mapAnimationOptions
+      )
+    }
+  }
+
+  private fun initLineLayer () {
+    mapView.getMapboxMap().getStyle { style ->
+      style.addSource(geoJsonSource(context.getString(R.string.LINE_SOURCE)){
+        this.build()
+      })
+      style.addLayer(
+        lineLayer(
+          context.getString(R.string.LINE_LAYER),
+          context.getString(R.string.LINE_SOURCE)
+        ) {
+          this.lineColor(Color.LTGRAY)
+          this.lineWidth(2.0)
+          this.lineJoin(LineJoin.ROUND)
+        }
       )
     }
   }
@@ -189,10 +204,9 @@ class MapModel(private val context: Activity) {
   }
 
   @SuppressLint("Range")
-  private fun getFlightLinesFromPoints(points: List<SatPos>): MultiLineString {
+  private fun getFlightLinesFromPoints(points: List<SatPos>): List<List<Point>> {
     val ps = points.map { Point.fromLngLat(it.longDeg(), it.latDeg()) }
     var lastPoint = ps.first()
-    val lineParts = mutableListOf<LineString>()
     val separatorPoint = ps.find {
       val result = (lastPoint.longitude() - it.longitude()).absoluteValue > 180
       lastPoint = it
@@ -202,41 +216,36 @@ class MapModel(private val context: Activity) {
     val separator = ps.indexOf(separatorPoint)
     val firstPart = ps.subList(0, separator).toMutableList()
 
+    var secondPart: List<Point> = emptyList()
+
     if (separator != ps.lastIndex) {
-      // point in front of the separator point
-      val beforeSepLong = ps[separator - 1].longitude()
-      val beforeSepLat  = ps[separator - 1].latitude()
+      val longBefore      = ps[separator - 1].longitude()
+      val latBefore       = ps[separator - 1].latitude()
 
-      val dLong = 360 + separatorPoint.longitude() - beforeSepLong
-      val dNew  = 360  - beforeSepLong
+      val longAfter       = separatorPoint.longitude()
+      val latAfter        = separatorPoint.latitude()
 
-      val dLat  = separatorPoint.latitude() - beforeSepLat
-      val ratio = dLat / dLong
+      val dLong           = 360 + longAfter - longBefore
+      val dNew            = 360 - longBefore
 
-      // calculates the latitude of the point for each side
-      val boundaryLat = beforeSepLat + ratio * dNew
+      val dLat            = latAfter - latBefore
+      val ratio           = dLat / dLong
 
-      // add 0 & 360 longitude point to point list
-      val sepLong = separatorPoint.longitude()
-      var firstPartEnd = 0.0
+      val boundaryLat     = latBefore + ratio * dNew
+      val sepLong         = separatorPoint.longitude()
+      var firstPartEnd    = 0.0
       var secondPartStart = 360.0
       if ((360 - sepLong).absoluteValue > (0 - sepLong).absoluteValue) {
         // nearer to zero than 360
-        firstPartEnd = secondPartStart
-        secondPartStart = 0.0
+        firstPartEnd      = secondPartStart
+        secondPartStart   = 0.0
       }
-      firstPart += Point.fromLngLat(firstPartEnd, boundaryLat)
-      val secondPart = mutableListOf(Point.fromLngLat(secondPartStart, boundaryLat))
-      secondPart += ps.subList(separator, ps.lastIndex)
-      lineParts.add(LineString.fromLngLats(secondPart))
+      firstPart           += Point.fromLngLat(firstPartEnd, boundaryLat)
+      secondPart          = mutableListOf(Point.fromLngLat(secondPartStart, boundaryLat))
+      secondPart          = secondPart + ps.subList(separator, ps.lastIndex)
     }
-    lineParts.add(LineString.fromLngLats(firstPart))
 
-    return MultiLineString.fromLineStrings(lineParts);
-  }
-
-  private fun deleteCurrentMapLine() {
-    polyLineAnnotationManager.deleteAll()
+    return listOf(firstPart, secondPart)
   }
 
   private fun deleteCurrentUserAnnotation() =
