@@ -2,9 +2,7 @@ package fhnw.ws6c.sevensat.ui
 
 import BottomSheet
 import IconButtonSat
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -43,7 +41,6 @@ fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
     content =
     {
       Box() {
-
         Column(
           modifier = Modifier.padding(it)
         ) {
@@ -68,6 +65,7 @@ fun SevenSatUI(model: SevenSatModel, mapModel: MapModel) {
             }
           )
         }
+        if(model.filtering) LinearProgressIndicator(color = MaterialTheme.colors.secondary, modifier = Modifier.fillMaxWidth())
       }
     }
   )

@@ -35,7 +35,7 @@ class SevenSatModel {
   var filterdSatellitesMap    = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites      = mutableStateListOf<Satellite>()
   var observedSatellite       = -1L;
-
+  var filtering by mutableStateOf(false)
   var activeScreen by mutableStateOf(Screen.LOADING)
 
   /**
@@ -64,6 +64,7 @@ class SevenSatModel {
   }
 
   fun filterWithCategories(categories: List<String>) {
+    filtering = true
     val catNorads = mutableListOf<Number>()
     modelScope.launch {
       for (cat in categories) {
@@ -87,6 +88,7 @@ class SevenSatModel {
         .forEach {
           filterdSatellitesMap[it.key] = it.value
         }
+      filtering = false
     }
   }
   fun removeFilter(){
