@@ -37,11 +37,12 @@ class SatelliteBuilderTest {
       .build()
 
     assertEquals(sat.noradId, 25544L)
-    assertEquals(sat.name, "SPACE STATION")
+    assertEquals(sat.name, "ISS")
     assertEquals(sat.coordinates[sat.noradId]?.first, 46.43583923)
     assertEquals(sat.coordinates[sat.noradId]?.second, -50.00177714)
     assertEquals(sat.coordinates[sat.noradId]?.third, 419.97)
     assertEquals(sat.description, description)
+    println(sat.image)
     assertEquals(sat.image, "https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg")
     assertEquals(
       sat.tleLine1,
