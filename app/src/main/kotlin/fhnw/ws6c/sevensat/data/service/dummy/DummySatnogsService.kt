@@ -27,7 +27,7 @@ class DummySatnogsService : Service<JSONObject> {
               "norad_cat_id": 25544,
               "name": "ISS",
               "names": "ZARYA",
-              "image": "https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg",
+              "image": "satellites/ISS.jpg",
               "status": "alive",
               "decayed": null,
               "launched": "1998-11-20T00:00:00Z",

@@ -29,7 +29,7 @@ class SatelliteBuilder {
   fun withN2yoTleJsonData(jsonObject: JSONObject) : SatelliteBuilder {
     val info  = jsonObject.getJSONObject("info")
     noradId   = info.getLong  ("satid")
-
+    name = info.getString("satname")
     val tleLines = jsonObject.getString("tle").split("\n")
     tleLine1  = tleLines[0].dropLast(1) // remove "\r" at the end of the string
     tleLine2  = tleLines[1]
