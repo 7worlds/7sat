@@ -30,6 +30,6 @@ class DetailCallTest : JsonServiceTest() {
     val image = detailObject.getString("image")
     assertEquals(name, "ISS")
     assertEquals(names, "ZARYA")
-    assertEquals(image, "https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg")
+    assertEquals(image, "satellites/ISS.jpg")
   }
 }
