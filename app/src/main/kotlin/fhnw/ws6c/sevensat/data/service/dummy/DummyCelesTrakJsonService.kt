@@ -2,19 +2,22 @@ package fhnw.ws6c.sevensat.data.service.dummy
 
 import fhnw.ws6c.sevensat.data.ApiCallable
 import fhnw.ws6c.sevensat.data.celestrak.CategoryCall
+import fhnw.ws6c.sevensat.data.satnogs.AllTleCall
 import fhnw.ws6c.sevensat.data.service.Service
 import org.json.JSONObject
 import java.net.HttpURLConnection
 
-class DummyCelesTrakService : Service<JSONObject> {
+class DummyCelesTrakJsonService: Service<JSONObject> {
 
   override fun loadRemoteData(call: ApiCallable<JSONObject>) {
 
     var data = ""
     when (call) {
+      // prepared for future calls
       is CategoryCall -> data = defaultStarlinkData()
     }
-    call.setResponse(JSONObject(data))
+      call.setResponse(JSONObject(data))
+
   }
 
 

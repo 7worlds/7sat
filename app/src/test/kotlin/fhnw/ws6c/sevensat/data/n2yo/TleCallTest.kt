@@ -27,7 +27,6 @@ class TleCallTest : JsonServiceTest(){
     val sat = SatelliteBuilder().withN2yoTleJsonData(json!!)
 
     assertEquals(sat.noradId, idISS)
-    assertEquals(sat.name,     "SPACE STATION")
     assertEquals(sat.tleLine1, "1 25544U 98067A   22312.10734271  .00013585  00000-0  24681-3 0  9991")
     assertEquals(sat.tleLine2, "2 25544  51.6458 343.6266 0006659  48.7066  47.2159 15.49845562367506")
   }

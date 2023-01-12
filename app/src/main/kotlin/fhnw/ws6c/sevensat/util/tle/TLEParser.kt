@@ -6,6 +6,7 @@ import fhnw.ws6c.sevensat.model.orbitaldata.NearEarthOrbitalData
 import fhnw.ws6c.sevensat.model.orbitaldata.OrbitalData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.InputStream
 import kotlin.math.pow
 
@@ -66,5 +67,22 @@ class TLEParser {
     } catch (exception: Exception) {
       return null
     }
+  }
+  fun getMapLineByLine (reader: BufferedReader)  : Map<Long, Triple<String,String, String>> {
+    val result = mutableMapOf<Long, Triple<String,String, String>>()
+
+    val it = reader.lineSequence().iterator()
+
+    while (it.hasNext()) {
+      var snd = ""
+      var thd = ""
+      val fst = it.next()
+      if (it.hasNext()) snd = it.next()
+      if (it.hasNext()) thd = it.next()
+      val t = Triple(fst, snd, thd)
+      val id = t.third.split(" ")[1].toLong()
+      result[id] = t
+    }
+    return result
   }
 }

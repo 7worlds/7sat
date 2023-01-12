@@ -5,16 +5,16 @@ import org.json.JSONObject
 const val celesTrakBaseUrl = "https://celestrak.org/NORAD/elements/gp.php"
 
 
-abstract class CelesTrakCall: ApiCallable<JSONObject> {
+abstract class CelesTrakCall<T>: ApiCallable<T> {
 
-  var jsonResponse: JSONObject?   = null
-  var exception:    Exception?    = null
+  var jsonResponse: T?       = null
+  var exception: Exception?  = null
 
-  override fun setResponse(response: JSONObject) {
+  override fun setResponse(response: T) {
     jsonResponse = response
   }
 
-  override fun getResponse(): JSONObject? {
+  override fun getResponse(): T? {
     return jsonResponse
   }
 
