@@ -85,18 +85,19 @@ class MapModel(private val context: Activity) {
 
   fun refreshSatellitePositionOnMap(satellites: Map<Satellite, SatPos>) {
     mapView.getMapboxMap().executeOnRenderThread {
-      val noradKey = "norad"
-      val rotationAngleKey = "rotationAngle"
+      val noradKey          = "norad"
+      val rotationAngleKey  = "rotationAngle"
 
       val features = FeatureCollection.fromFeatures(satellites.entries.map { entry ->
-        val norad = entry.key.noradId
-        val long = entry.value.longDeg()
-        val lat = entry.value.latDeg()
-        val altitude = 10000.0
-
-        val data = JsonObject()
+        val norad     = entry.key.noradId
+        val long      = entry.value.longDeg()
+        val lat       = entry.value.latDeg()
+        val altitude  = 10000.0
+        val data      = JsonObject()
+        var rotation  = getSatelliteRotation(entry.key, entry.value)
+        rotation      = if(rotation.isNaN()) 0.0 else rotation
         data.addProperty(noradKey, norad)
-        data.addProperty(rotationAngleKey, getSatelliteRotation(entry.key, entry.value))
+        data.addProperty(rotationAngleKey, rotation)
         Feature.fromGeometry(Point.fromLngLat(long, lat, altitude), data)
       })
 
@@ -108,9 +109,9 @@ class MapModel(private val context: Activity) {
   }
 
   fun addFlightLine(points: List<SatPos>) {
-    val pointLists = getFlightLinesFromPoints(points).filter { it.size > 1 }
-    val feature = pointLists.map { Feature.fromGeometry(LineString.fromLngLats(it)) }
-    val features = FeatureCollection.fromFeatures(feature)
+    val pointLists  = getFlightLinesFromPoints(points).filter { it.size > 1 }
+    val feature     = pointLists.map { Feature.fromGeometry(LineString.fromLngLats(it)) }
+    val features    = FeatureCollection.fromFeatures(feature)
 
     mapView.getMapboxMap().executeOnRenderThread {
       mapView.getMapboxMap().getStyle { style ->
@@ -157,8 +158,9 @@ class MapModel(private val context: Activity) {
   }
 
   private fun initSatelliteLayers() {
-    val satImageId = "sat_horizontal"
-    val rotationAngleKey = "rotationAngle"
+    println("MapModel.initSatelliteLayers")
+    val satImageId        = "sat_horizontal"
+    val rotationAngleKey  = "rotationAngle"
 
     mapView.getMapboxMap().getStyle { style ->
       AppCompatResources.getDrawable(context, R.drawable.sat_horizontal)?.toBitMap()?.let { icon ->
