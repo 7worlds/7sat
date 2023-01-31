@@ -75,7 +75,7 @@ class SatelliteBuilder {
       val data = jsonObject.getJSONArray("values")[0] as JSONObject
       image = "https://db-satnogs.freetls.fastly.net/media/"+data.getString("image")
       name = data.getString("name")
-      var dateAsString = data.getString("launched")
+      val dateAsString = data.getString("launched")
       if (dateAsString != "null"){
         launched = ZonedDateTime.parse(dateAsString)
       }
@@ -83,7 +83,7 @@ class SatelliteBuilder {
       countries = data.getString("countries")
 
     } catch (jsonException: JSONException) {
-      System.err.println("Couldn't parse json data! " + jsonException.message)
+      println("Couldn't parse json data! " + jsonException.message)
     }
     return this
   }

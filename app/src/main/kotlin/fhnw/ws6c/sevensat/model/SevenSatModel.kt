@@ -23,27 +23,27 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.*
 
-private const val TWO_DAYS_IN_MILLIS = 172_800_000
+private const val TWO_DAYS_IN_MILLIS        = 172_800_000
 private const val MAX_AMOUNT_OF_LINE_POINTS = 1000
-private const val REFRESH_RATE = 300L
+private const val REFRESH_RATE              = 300L
 
 class SevenSatModel {
   private val backgroundJob   = SupervisorJob()
   private val modelScope      = CoroutineScope(backgroundJob + Dispatchers.IO)
   val mainHandler             = Handler(Looper.getMainLooper())
   val allSatellitesMap        = ConcurrentHashMap<Satellite, SatPos>()
-  var filterdSatellitesMap    = ConcurrentHashMap<Satellite, SatPos>()
+  var filteredSatellitesMap   = ConcurrentHashMap<Satellite, SatPos>()
   val selectedSatellites      = mutableStateListOf<Satellite>()
   var observedSatellite       = -1L;
-  var filtering by mutableStateOf(false)
-  var activeScreen by mutableStateOf(Screen.LOADING)
+  var filtering     by mutableStateOf(false)
+  var activeScreen  by mutableStateOf(Screen.LOADING)
 
   /**
    * Gets Details about satelites, if user clicks on it
    */
   fun getSatelliteDetails(satellite: Satellite) {
-    val detailCall = DetailByIdCall(satellite.noradId)
-    val satnogsService = JsonService()
+    val detailCall      = DetailByIdCall(satellite.noradId)
+    val satnogsService  = JsonService()
     satnogsService.loadRemoteData(detailCall)
     val sat = SatelliteBuilder()
       .withSatellite(satellite)
@@ -68,42 +68,42 @@ class SevenSatModel {
     val catNorads = mutableListOf<Number>()
     modelScope.launch {
       for (cat in categories) {
-        val categoryCall = CategoryCall(cat)
-        val celesTrakService = JsonService()
+        val categoryCall      = CategoryCall(cat)
+        val celesTrakService  = JsonService()
         celesTrakService.loadRemoteData(categoryCall)
         //Get new Data
         val data = categoryCall.getResponse()!!.getJSONArray("values") as JSONArray
         for (i in 0 until data.length()) {
-          val obj = data[i] as JSONObject
+          val obj     = data[i] as JSONObject
           val noradID = (obj.getLong("NORAD_CAT_ID"))
           catNorads.add(noradID)
         }
       }
-      filterdSatellitesMap.clear()
+      filteredSatellitesMap.clear()
 
       val allNorads = allSatellitesMap.keys.map { it.noradId }
-      val filterdNorads = allNorads.filter { catNorads.contains(it)}
+      val filteredNorads = allNorads.filter { catNorads.contains(it)}
       allSatellitesMap
-        .filterKeys { filterdNorads.contains(it.noradId) }
+        .filterKeys { filteredNorads.contains(it.noradId) }
         .forEach {
-          filterdSatellitesMap[it.key] = it.value
+          filteredSatellitesMap[it.key] = it.value
         }
       filtering = false
     }
   }
   fun removeFilter(){
-    filterdSatellitesMap.clear()
-    allSatellitesMap.forEach { filterdSatellitesMap[it.key] = it.value }
+    filteredSatellitesMap.clear()
+    allSatellitesMap.forEach { filteredSatellitesMap[it.key] = it.value }
   }
 
   fun refreshSatellites(onRefreshed: (Map<Satellite, SatPos>) -> Unit) {
     mainHandler.post(object : Runnable {
       override fun run() {
         modelScope.run {
-          filterdSatellitesMap.keys.forEach { satellite ->
-            filterdSatellitesMap[satellite] = satellite.getPosition(Date().time)
+          filteredSatellitesMap.keys.forEach { satellite ->
+            filteredSatellitesMap[satellite] = satellite.getPosition(Date().time)
           }
-          onRefreshed(filterdSatellitesMap)
+          onRefreshed(filteredSatellitesMap)
         }
         mainHandler.postDelayed(this, REFRESH_RATE)
       }
@@ -132,8 +132,8 @@ class SevenSatModel {
           .map { SatelliteBuilder().withPlainTextTleData(context, it.key.toLong()).build() }
       satellites.forEach {
         val pos = it.getPosition(Date().time)
-        filterdSatellitesMap[it] =  pos
-        allSatellitesMap[it] =  pos
+        filteredSatellitesMap[it] =  pos
+        allSatellitesMap[it]      =  pos
       }
       onLoaded(allSatellitesMap)
     }
@@ -167,13 +167,13 @@ class SevenSatModel {
    * how many points are needed to add a point all "minutes"-minute to orbit half of the earth?
    */
   private fun getAmountOfPointsForSatellites(satellite: Satellite): Int {
-    val calendar = Calendar.getInstance()
+    val calendar    = Calendar.getInstance()
     val positionNow = satellite.getPosition(calendar.time.time)
     calendar.add(Calendar.MINUTE, 1)
     val positionIn1Min = satellite.getPosition(calendar.time.time)
 
-    val kmIn1Min = haversine(positionNow, positionIn1Min)
-    val numberOfPoints = (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
+    val kmIn1Min        = haversine(positionNow, positionIn1Min)
+    val numberOfPoints  = (EARTH_CIRCUMFERENCE / (2 * kmIn1Min)).roundToInt()
     return if (numberOfPoints > MAX_AMOUNT_OF_LINE_POINTS) MAX_AMOUNT_OF_LINE_POINTS else numberOfPoints
   }
 
